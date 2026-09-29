@@ -1,0 +1,2499 @@
+{
+  "name": "PreAuth Mind",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 30,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -480,
+        1280
+      ],
+      "id": "751e1312-a8ed-4915-963b-9dd3a4a053c5",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SVB1Kd3FGGuiUTJr",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب بيانات ملفات Google Drive مباشرة من العقدة الخاصة بها\nconst driveItems = $items(\"Search files and folders\") || [];\n\n// 2. جلب صفوف Google Sheet مباشرة من العقدة الخاصة بها\nconst sheetItems = $items(\"Get row(s) in sheet\") || [];\n\n// 3. تجميع كافة الـ IDs الموجودة بالفعل في الشيت\nconst processedIds = new Set();\nfor (const item of sheetItems) {\n  const row = item.json;\n  // البحث عن حقل الـ ID بغض النظر عن حالة الأحرف\n  const idValue = row.ID || row.id || row.Id;\n  if (idValue) {\n    processedIds.add(String(idValue).trim());\n  }\n}\n\n// 4. فلترة ملفات Drive للحصول على الملفات الجديدة فقط\nconst newFiles = [];\nfor (const item of driveItems) {\n  const file = item.json;\n  const fileId = String(file.id || file.Id).trim();\n  \n  // إذا لم يكن الـ ID موجوداً في الشيت، إذن هو ملف جديد\n  if (fileId && !processedIds.has(fileId)) {\n    newFiles.push({\n      json: {\n        fileId: fileId,\n        fileName: file.name || file.Name,\n        Id: fileId,\n        Name: file.name || file.Name\n      }\n    });\n  }\n}\n\nconsole.log(`إجمالي ملفات درايف: ${driveItems.length}`);\nconsole.log(`إجمالي ملفات الشيت: ${sheetItems.length}`);\nconsole.log(`الملفات الجديدة المطلوبة: ${newFiles.length}`);\n\n// إرجاع الملفات الجديدة فقط لتكملة الوركفلو\nreturn newFiles;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1952,
+        272
+      ],
+      "id": "554cc04f-9c2d-49fb-8860-182299b33c7e",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        400
+      ],
+      "id": "b55cea82-b3ed-43f5-b4d5-9406bf316366",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        144
+      ],
+      "id": "ea74f346-a957-49fd-b197-0a6e7dab8a10",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1SkKrTqtLigdwIHHejcY4nkxdJ_10z4vH",
+            "mode": "list",
+            "cachedResultName": "PreAuth Mind",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1SkKrTqtLigdwIHHejcY4nkxdJ_10z4vH"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        144
+      ],
+      "id": "d626c1d1-e53a-4436-86ce-e98ad291961b",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e5idwyqM1wMV9nTZ",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU",
+          "mode": "list",
+          "cachedResultName": "PreAuth Mind",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1488,
+        400
+      ],
+      "id": "1852d253-dbc6-4ce9-8268-9f082bb09514",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6BGY2HpmkdKmAXru",
+          "name": "Dent Audit Ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "id",
+              "field2": "Id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        272
+      ],
+      "id": "ac53b862-6aff-4333-94cd-b66276f7d0cb",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2512,
+        272
+      ],
+      "id": "17255899-92da-45b8-98b7-23f9a4f3251c",
+      "name": "Download file",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e5idwyqM1wMV9nTZ",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "={{ $json.Name }}",
+                "value": "={{ $json.Id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        3232,
+        576
+      ],
+      "id": "7ce8e194-14e2-4ec9-89e2-21515a28a3f7",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        576
+      ],
+      "id": "1738fe9c-9494-475e-b0dc-ae602ccef8c6",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2816,
+        272
+      ],
+      "id": "781c8c3e-774c-4c41-84dc-0fc9c6a310b5",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "preauth-mind",
+          "mode": "list",
+          "cachedResultName": "preauth-mind"
+        },
+        "embeddingBatchSize": 1,
+        "options": {
+          "pineconeNamespace": "={{ $('Set').item.json['Name '] }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        3104,
+        288
+      ],
+      "id": "a2a2ea00-7d40-42e3-9c97-ac4a8bea5819",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63de52de-791a-4351-a140-2f0e4534e898",
+              "name": "Name ",
+              "value": "={{ $json['Name '] }}",
+              "type": "string"
+            },
+            {
+              "id": "d0d34aeb-fc94-4047-9a95-98db578d2ad4",
+              "name": "Id",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        272
+      ],
+      "id": "ccfc0cbd-6cc4-468a-beaf-bfd879ad0fc6",
+      "name": "Set",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU",
+          "mode": "list",
+          "cachedResultName": "PreAuth Mind",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PW0SC7rRmDS477oHw8ZDCny8CKKRCgmR36cN-z1FKTU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name ": "={{ $json.fileName }}",
+            "Id": "={{ $json.fileId }}"
+          },
+          "matchingColumns": [
+            "Id"
+          ],
+          "schema": [
+            {
+              "id": "Name ",
+              "displayName": "Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2144,
+        272
+      ],
+      "id": "b644013d-26e6-4edc-842a-29ea2c23e6cd",
+      "name": "Append or update row in sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        1248
+      ],
+      "id": "0756b735-49a0-4ad6-8d9c-b243179f81e5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2336,
+        1488
+      ],
+      "id": "9662afd5-97b7-4b04-b25a-003fbb64cbfe",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "preauth-mind",
+          "mode": "list",
+          "cachedResultName": "preauth-mind"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1904,
+        1456
+      ],
+      "id": "84b68136-be92-4aa5-8032-a29428a5206c",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        1584
+      ],
+      "id": "376c1c3c-9d55-46bf-b350-d5963c2d86af",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Search and retrieve official pre-authorization clinical guidelines, required lab tests, and approval criteria for drugs and medical procedures."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        2128,
+        1248
+      ],
+      "id": "98d373f1-7b8a-46ba-b609-eec1ba87983f",
+      "name": "medical_authorization_rules"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content.parts[0].text }}",
+        "options": {
+          "systemMessage": "=You are 'Agent 2: The Medical Authorization Auditor'. You receive complete structured medical request data from Agent 1 (The Extractor).\n\n=== MANDATORY TOOL INSTRUCTION ===\n1. You MUST ALWAYS call the `medical_authorization_rules` tool immediately using the requested drug name and/or active ingredients (e.g., \"Mellitofix Met\" or \"Empagliflozin + Metformin\").\n2. Retrieve the official pre-authorization guidelines and step-therapy policies from the vector store before making any decision.\n\n=== STRICT ANTI-HALLUCINATION & COMPLIANCE EVALUATION RULES ===\n1. DO NOT REQUEST IDENTIFIERS: If National ID or Insurance ID are provided in the input, NEVER list them in \"النواقص والمستندات المطلوبة\".\n2. DO NOT QUESTION KNOWN DRUGS: If active ingredients (e.g., Empagliflozin + Metformin) are specified in the input, treat the drug as FULLY IDENTIFIED. Do NOT declare it unknown or request scientific name clarification.\n3. PRIOR FAILURE / STEP-THERAPY: If the input notes that the patient is uncontrolled on previous line therapy (e.g., \"uncontrolled on Vanvilda Plus / Amaryl\"), treat the step-therapy prerequisite as SATISFIED.\n4. LAB EVALUATION: Compare attached lab results (e.g., HbA1c values) against the retrieved policy criteria.\n\n=== DECISION LOGIC ===\n- APPROVED (مقبول): Clinical indication matches guidelines, step-therapy fulfilled, and all mandatory policy criteria/labs are met.\n- MORE_INFO_REQUIRED (مطلوب بيانات إضافية): Indication matches and step-therapy fulfilled, BUT a specific laboratory test or imaging explicitly required by policy is missing.\n- REJECTED (مرفوض): Clinical indication contradicts guidelines, contraindicated, or fails policy eligibility.\n\n=== MANDATORY OUTPUT FORMAT ===\nYou MUST format your final response strictly using these exact Arabic section headers so downstream processing can parse it correctly:\n\nالحالة: [Select ONE: مقبول OR مرفوض OR مطلوب بيانات إضافية]\nالسبب والتعليل الطبي: [Detailed clinical and policy rationale based on retrieved guidelines, patient history, and lab results without listing missing documents here]\nالنواقص والمستندات المطلوبة: [List ONLY legitimately missing tests or reports explicitly required by policy. If none are missing, write EXACTLY: لا يوجد]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2064,
+        1008
+      ],
+      "id": "9b45b269-d7af-4e7e-83f4-4a8a9a87f162",
+      "name": "The Auditor"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب مخرج نود الاستخراج الجديدة (Analyze document1)\nlet agent1Text = \"\";\ntry {\n  // محاولة قراءة النص من النود الجديدة Analyze document1\n  agent1Text = $(\"Extract All Data\").first().json.content.parts[0].text || \"\";\n} catch (e) {\n  try {\n    // Fallback لو اسم النود اتغير لـ Analyze document من غير رقم 1\n    agent1Text = $(\"Extract National Id \").first().json.content.parts[0].text || \"\";\n  } catch (err) {\n    agent1Text = \"\";\n  }\n}\n\n// 2. جلب مخرج The Auditor (أو النود اللي قبل Prepare Data مباشرة)\nconst agent2Text = $input.item.json.output || \"\";\n\n// 3. جلب بيانات الإيميل\nlet mailData = {};\ntry {\n  mailData = $(\"Binary File\").first().json || {};\n} catch (e) {\n  mailData = {};\n}\n\n// ===== دالة تحويل مخرج AI من JSON نصي إلى Object حقيقي =====\nfunction parseExtractorOutput(rawText) {\n  if (!rawText) return {};\n  // تنظيف أي ```json أو ``` احتياطية\n  const cleaned = rawText.replace(/```json/gi, \"\").replace(/```/g, \"\").trim();\n  try {\n    return JSON.parse(cleaned);\n  } catch (e) {\n    const match = cleaned.match(/\\{[\\s\\S]*\\}/);\n    if (match) {\n      try {\n        return JSON.parse(match[0]);\n      } catch (e2) {\n        return {};\n      }\n    }\n    return {};\n  }\n}\n\n// دالة مرنة للبحث عن السطر واستخراج قيمته\nfunction getCleanLine(text, label) {\n  if (!text) return \"غير محدد\";\n  const lines = text.split(\"\\n\");\n  for (let line of lines) {\n    if (line.toLowerCase().includes(label.toLowerCase())) {\n      let parts = line.split(\":\");\n      if (parts.length > 1) {\n        return parts.slice(1).join(\":\").replace(/[\\*]/g, \"\").trim();\n      }\n    }\n  }\n  return \"غير محدد\";\n}\n\n// دالة تحويل الأرقام العربية الشرقية (٠-٩) إلى أرقام إنجليزية (0-9)\nfunction convertArabicDigits(str) {\n  if (!str) return \"\";\n  return String(str).replace(/[٠-٩]/g, d => \"٠١٢٣٤٥٦٧٨٩\".indexOf(d));\n}\n\n// دالة تنظيف الرقم القومي وتصفية الـ 14 رقم\nfunction cleanNationalId(rawText) {\n  if (!rawText || rawText === \"غير محدد\" || rawText === null) return \"⚠️ فشل الاستخراج - يتطلب مراجعة يدوية\";\n\n  const rawStr = convertArabicDigits(String(rawText));\n  \n  // 1. البحث عن 14 رقم متتاليين\n  const match14 = rawStr.match(/\\d{14}/);\n  if (match14) return match14[0];\n\n  // 2. إذا لم يجد 14 رقم متصلين، يستخرج الأرقام\n  const digitsOnly = rawStr.replace(/[^\\d]/g, \"\");\n  if (digitsOnly.length >= 10) return digitsOnly;\n\n  return rawStr.replace(/\\(.*?\\)/g, \"\").trim();\n}\n\n// ===== استخراج بيانات الـ Extractor من الـ JSON مباشرة =====\nconst extracted = parseExtractorOutput(agent1Text);\nconst caseDetails = extracted.case_details || {};\nconst medsArray = Array.isArray(extracted.requested_medications) ? extracted.requested_medications : [];\n\nconst patientName = caseDetails.patient_name || null;\nconst age = caseDetails.age || null;\nconst facilityName = caseDetails.facility_name || null;\nconst diagnosis = caseDetails.diagnosis || null;\n\n// الرقم القومي\nconst nationalId = cleanNationalId(caseDetails.national_id);\n\n// الرقم التأميني\nlet insuranceNo = caseDetails.insurance_no;\nif (!insuranceNo || insuranceNo === \"null\") {\n  const fallbackInsurance = getCleanLine(agent2Text, \"الرقم التأميني\");\n  insuranceNo = fallbackInsurance !== \"غير محدد\" ? fallbackInsurance : \"غير محدد\";\n}\n\n// الأدوية المطلوبة\nconst requestedMedNames = medsArray\n  .map(m => m.medication_name)\n  .filter(Boolean);\nconst requestedMed = requestedMedNames.length > 0 ? requestedMedNames.join(\", \") : \"غير محدد\";\n\n// ===== استخراج بيانات The Auditor =====\nconst status = getCleanLine(agent2Text, \"الحالة\");\nconst reason = getCleanLine(agent2Text, \"السبب والتعليل الطبي\");\nconst missing = getCleanLine(agent2Text, \"النواقص والمستندات المطلوبة\");\n\nreturn {\n  json: {\n    timestamp: new Date().toISOString(),\n    message_id: mailData.messageId || \"N/A\",\n    sender_email: mailData.senderEmail || \"N/A\",\n    thread_id: mailData.threadId || \"N/A\",\n    age: age || \"غير محدد\",\n    patient_name: patientName || \"⚠️ فشل الاستخراج - يتطلب مراجعة يدوية\",\n    national_id: nationalId,\n    insurance_no: insuranceNo || \"غير محدد\",\n    diagnosis: diagnosis || \"غير محدد\",\n    facility_name: facilityName || \"غير محدد\",\n    requested_medication: requestedMed,\n    requested_medications_detailed: JSON.stringify(medsArray),\n    preauth_status: status !== \"غير محدد\" ? status : \"⚠️ يتطلب مراجعة يدوية - تعذر تحديد الحالة آليًا\",\n    decision_reason: reason !== \"غير محدد\" ? reason : agent2Text,\n    missing_requirements: missing !== \"غير محدد\" ? missing : \"راجع التقرير\",\n    full_report: agent2Text\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2624,
+        1232
+      ],
+      "id": "3e19c97c-2ecb-4718-9d39-de912bd39c23",
+      "name": "Prepare Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب البيانات القادمة من النود السابقة\nconst item = $input.item.json;\n\n// 2. استخراج إيميل الراسل بدقة\nlet senderEmail = \"unknown@domain.com\";\n\nif (item.from) {\n  if (typeof item.from === 'string') {\n    const emailMatch = item.from.match(/<([^>]+)>/) || item.from.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/);\n    senderEmail = emailMatch ? emailMatch[1] : item.from;\n  } else if (item.from.value && item.from.value[0] && item.from.value[0].address) {\n    senderEmail = item.from.value[0].address;\n  } else if (item.from.text) {\n    senderEmail = item.from.text;\n  }\n}\n\n// 3. استخراج كود/اسم المركز الطبي تلقائياً من الدومين\nlet hospitalCode = \"UNKNOWN_CENTER\";\nif (senderEmail && senderEmail.includes(\"@\")) {\n  const domainParts = senderEmail.split(\"@\")[1].split(\".\");\n  hospitalCode = domainParts[0].toUpperCase();\n}\n\n// 4. استخراج عنوان وقيم الرسالة\nconst subject = item.subject || item.snippet || \"No Subject\";\n\n// 5. تجهيز المخرج النهائي متضمناً الـ JSON والـ Binary معا\nreturn {\n  json: {\n    threadId: item.threadId || item.id || \"NO_THREAD_ID\",\n    messageId: item.id || \"NO_MSG_ID\",\n    senderEmail: senderEmail,\n    subject: subject,\n    hospitalCode: hospitalCode,\n    receivedAt: new Date().toISOString(),\n    snippet: item.snippet || \"\"\n  },\n  // السطر الجوهري لنقل ملفات الـ PDF والصور للنودز القادمة\n  binary: $input.item.binary || {}\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        1280
+      ],
+      "id": "cdc7a92f-0109-4fde-bc9e-988c0a4500f9",
+      "name": "Binary File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.preauth_status }}",
+              "rightValue": "مقبول",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3184,
+        1232
+      ],
+      "id": "450ec17e-4443-439d-990d-111c5e818137",
+      "name": "IF - Needs Human Review"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query",
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        2208
+      ],
+      "id": "659e7693-86ec-49cc-b25f-ab094a61096a",
+      "name": "Telegram Reviewer Response",
+      "webhookId": "3967bf6b-d8f3-40cf-97cc-d4252c1941a8",
+      "credentials": {
+        "telegramApi": {
+          "id": "Eb4iV2vTPVQbnm2g",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1504,
+        2208
+      ],
+      "id": "cc91f14d-9507-4bcd-800d-5aaf83af1cfc",
+      "name": "Acknowledge Button",
+      "webhookId": "9833a112-3ba8-4e3b-940b-90c7bf8e598e",
+      "credentials": {
+        "telegramApi": {
+          "id": "Eb4iV2vTPVQbnm2g",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// الوصول المباشر لمخرجات نود التليجرام الأولى بحسب اسمها exact\nconst telegramData = $(`Telegram Reviewer Response`).first().json;\n\n// فحص وجود الـ callback_query\nconst callbackQuery = telegramData.callback_query || telegramData.body?.callback_query;\n\nif (callbackQuery && callbackQuery.data) {\n  // فصل النص المكون من (action|case_id) عند علامة |\n  const parts = callbackQuery.data.split('|');\n  const action = parts[0]; // سينتج: approve\n  const caseId = parts[1] || null; // سينتج: 19f9099df4191b5f\n\n  // جلب message_id من الرسالة\n  const messageId = callbackQuery.message ? callbackQuery.message.message_id : null;\n\n  return [{\n    json: {\n      action: action,\n      case_id: caseId,\n      message_id: messageId,\n      is_callback: true\n    }\n  }];\n}\n\n// في حال عدم وجود callback_query\nreturn [{\n  json: {\n    action: 'ignore',\n    case_id: null,\n    message_id: null,\n    is_callback: false\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        2208
+      ],
+      "id": "565eefa0-87ed-4765-8d25-ca8e1cdfeeaa",
+      "name": "Parse Callback Action"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "199d0f2f-1d8b-4852-83d8-349b9b3c7f76"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "approve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "reject",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "314b6abe-71c2-45cf-beb5-3756f91c078f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reject"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "confirm_edit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c1c1794f-74c1-4927-bef0-5f4337b1ae5c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirm_edit"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2715dc93-07b5-4071-ac52-18a931158090",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "edit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "edit"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2016,
+        2176
+      ],
+      "id": "666ed595-a44f-4ffc-95ae-1f0f334b6cf0",
+      "name": "Switch - Action Type"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Reviewer Response').item.json.message.chat.id }}",
+        "text": "=تم تسجيل طلب التعديل ✏️\n\nمن فضلك عدّل البيانات المطلوبة مباشرة في صف الطلب برقم: {{ $json.message_id }} داخل جوجل شيت PreAuth Sheet.\nبعد الانتهاء من التعديل اضغط الزر تحت لإرسال القرار النهائي للمريض.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ تم التعديل - إرسال القرار النهائي",
+                    "additionalFields": {
+                      "callback_data": "=confirm_edit|{{ $json.message_id }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2512,
+        2416
+      ],
+      "id": "bb937739-ae0b-4bfe-a5d0-af4ea6d485e4",
+      "name": "Ask Reviewer To Edit In Sheet",
+      "webhookId": "7034ab21-fdfd-4a0a-a8f1-63ffba96a209",
+      "credentials": {
+        "telegramApi": {
+          "id": "Eb4iV2vTPVQbnm2g",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $json;\nconst action = $('Parse Callback Action').item.json.action;\nconst reviewer = $('Parse Callback Action').item.json.reviewer_name;\n\nlet finalStatus = row.preauth_status;\nlet reason = row.decision_reason;\n\nif (action === 'approve') {\n  finalStatus = 'موافق عليه';\n  reason = `تمت الموافقة يدويًا من قبل المراجع الطبي: ${reviewer}`;\n} else if (action === 'reject') {\n  finalStatus = 'مرفوض نهائيًا';\n  reason = `تم الرفض النهائي يدويًا من قبل المراجع الطبي: ${reviewer}`;\n}\n\nreturn {\n  json: {\n    ...row,\n    preauth_status: finalStatus,\n    decision_reason: reason,\n    reviewed_by: reviewer,\n    reviewed_at: new Date().toISOString()\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2848,
+        2208
+      ],
+      "id": "bb7ec87a-5613-42c7-a804-43baa89a7c9f",
+      "name": "Prepare Human Decision Update"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0",
+          "mode": "list",
+          "cachedResultName": "PreAuth Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message_id": "={{ $json.message_id }}",
+            "preauth_status": "={{ $json.preauth_status }}",
+            "decision_reason": "={{ $json.decision_reason }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "sender_email": "={{ $json.sender_email }}",
+            "patient_name": "={{ $json.patient_name }}",
+            "national_id": "={{ $json.national_id }}",
+            "insurance_no": "={{ $json.insurance_no }}",
+            "diagnosis": "={{ $json.diagnosis }}",
+            "requested_medication": "={{ $json.requested_medication }}",
+            "missing_requirements": "={{ $json.missing_requirements }}"
+          },
+          "matchingColumns": [
+            "message_id"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sender_email",
+              "displayName": "sender_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "patient_name",
+              "displayName": "patient_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "insurance_no",
+              "displayName": "insurance_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "diagnosis",
+              "displayName": "diagnosis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "requested_medication",
+              "displayName": "requested_medication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "preauth_status",
+              "displayName": "preauth_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "decision_reason",
+              "displayName": "decision_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "missing_requirements",
+              "displayName": "missing_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3104,
+        2208
+      ],
+      "id": "5ad32451-d78d-4ffb-818c-c965a40e5064",
+      "name": "Update Sheet - Human Decision",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91e743e8-baf1-4293-b3ee-ccea57095789",
+              "name": "message_id",
+              "value": "={{ $json.message_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7c2f55f4-5b3c-4fcf-b254-7d005a2f0300",
+              "name": "patient_name",
+              "value": "={{ $json.patient_name }}",
+              "type": "string"
+            },
+            {
+              "id": "4d9f5d0d-6316-4180-a3d2-f2d58485a5d4",
+              "name": "national_id",
+              "value": "={{ $json.national_id }}",
+              "type": "string"
+            },
+            {
+              "id": "981f9583-e202-415e-aadd-f821e3fc7774",
+              "name": "insurance_no",
+              "value": "={{ $json.insurance_no }}",
+              "type": "string"
+            },
+            {
+              "id": "b6905f6d-5a6b-4c07-b8ce-4a99b0c1d246",
+              "name": "age",
+              "value": "={{ $json.age }}",
+              "type": "string"
+            },
+            {
+              "id": "aaa39aa7-226d-4d41-8a30-5b2329df731f",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "40639730-7492-4f67-9856-c06bda8fce33",
+              "name": "diagnosis",
+              "value": "={{ $json.diagnosis }}",
+              "type": "string"
+            },
+            {
+              "id": "e5b3ff76-92a4-494b-9be5-68234d513a7b",
+              "name": "requested_medication",
+              "value": "={{ $json.requested_medication }}",
+              "type": "string"
+            },
+            {
+              "id": "06e9f8ea-8407-4c34-8230-f9a2f6f0df99",
+              "name": "preauth_status",
+              "value": "={{ $json.preauth_status }}",
+              "type": "string"
+            },
+            {
+              "id": "c42348bf-0a37-4660-b199-b7c72e418f23",
+              "name": "decision_reason",
+              "value": "={{ $json.decision_reason }}",
+              "type": "string"
+            },
+            {
+              "id": "d38d7d89-843f-474b-a465-d8c1adb69ebe",
+              "name": "sender_email",
+              "value": "={{ $json.sender_email }}",
+              "type": "string"
+            },
+            {
+              "id": "bc4d35c1-cccc-4927-a3bf-61892a96a308",
+              "name": "thread_id",
+              "value": "={{ $json.thread_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3472,
+        1440
+      ],
+      "id": "53e7805a-0a87-4f53-a1c7-cb72f7c1c2e0",
+      "name": "Set - Normalize Case Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// استخراج البيانات أو استخدام القيم الافتراضية المضمنة لتسهيل المعاينة\nconst item = $input.first().json;\n\nconst requestId = item.request_id || '4-228119';\nconst createdDate = item.created_date || '2026-07-23';\nconst patientPhone = item.patient_phone || '01225644560';\nconst patientAge = item.patient_age || '72';\nconst patientName = item.patient_name || 'أمال محمود أحمد عبد المنعم';\nconst fileNumber = item.file_number || '3664';\nconst nationalId = item.national_id || '25406280400107';\nconst diagnosis = item.diagnosis || 'Type II Diabetes Mellitus';\n\nconst item1Duration = item.item1_duration || '180 يوم';\nconst item1Dose = item.item1_dose || '60 وحدة يومياً';\nconst item1Conc = item.item1_conc || '70/30 IU/ml';\nconst item1Name = item.item1_name || 'Neutral insulin injection + Isophane insulin';\n\nconst item2Duration = item.item2_duration || '180 يوم';\nconst item2Dose = item.item2_dose || 'قرص واحد يومياً';\nconst item2Conc = item.item2_conc || '10 mg';\nconst item2Name = item.item2_name || 'Dapagliflozin';\n\nconst doctorName = item.doctor_name || 'د/ أيمن عطا يوسف';\nconst decision = item.decision || 'قبول';\nconst specialtyCategory = item.specialty_category || 'اخصائي';\nconst specialty = item.specialty || 'باطنة';\nconst facilityName = item.facility_name || 'مركز طبي صحة مصر';\nconst notes = item.notes || 'بناءً على التقرير الطبي المرفق وتحليل HbA1c بنسبة 8.20% وعدم الاستجابة للعلاجات الفموية السابقة، تقرر قبول صرف العلاج بالاسم العلمي (Dapagliflozin + Insulin) لمدة 6 أشهر وفقاً لبروتوكول التأمين الصحي الشامل.';\nconst medicalReviewer = item.medical_reviewer || 'Neven George Sameer Thabet';\n\n// بناء كود الـ HTML بتنسيق مدمج ليناسب صفحة واحدة\nconst htmlContent = `<!DOCTYPE html>\n<html dir=\"rtl\" lang=\"ar\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  @page {\n    size: A4 portrait;\n    margin: 5mm; /* تقليل هوامش الطباعة */\n  }\n  \n  * {\n    box-sizing: border-box;\n    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n  }\n\n  body {\n    margin: 0;\n    padding: 0;\n    background-color: #f9fafb;\n    color: #1f2937;\n  }\n\n  /* الحاوية الرئيسية */\n  .container {\n    width: 100%;\n    max-width: 210mm;\n    margin: 0 auto;\n    background-color: #ffffff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 15px; /* تقليل الحشو الداخلي */\n    min-height: 260mm; /* تقليل الطول الأدنى ليناسب الورقة */\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);\n  }\n\n  /* الهيدر */\n  .header-table {\n    width: 100%;\n    border-collapse: collapse;\n    margin-bottom: 10px; /* تقليل المسافة */\n  }\n  \n  .header-table td {\n    vertical-align: middle;\n    font-size: 12px; /* تصغير الخط درجة */\n    font-weight: 600;\n    color: #374151;\n  }\n\n  .header-line {\n    border-bottom: 2px solid #2563eb;\n    margin: 8px 0 12px 0;\n  }\n\n  .title-box {\n    text-align: center;\n    background-color: #2563eb;\n    color: #ffffff;\n    padding: 6px; /* تقليل الحشو */\n    font-size: 18px; /* تصغير الخط */\n    font-weight: bold;\n    width: 45%;\n    margin: 0 auto 12px auto;\n    border-radius: 6px;\n    letter-spacing: 0.5px;\n  }\n\n  /* الجداول الأساسية */\n  .main-table, .meds-table {\n    width: 100%;\n    border-collapse: collapse;\n    margin-bottom: 10px; /* تقليل المسافة بين الجداول */\n    border-radius: 6px;\n    overflow: hidden;\n  }\n\n  .main-table td, .meds-table th, .meds-table td {\n    border: 1px solid #d1d5db;\n    padding: 6px 8px; /* تقليل الحشو داخل الخلايا */\n    font-size: 13px; /* تصغير الخط درجة */\n  }\n\n  .main-table td {\n    text-align: right;\n  }\n\n  .label-cell {\n    background-color: #f3f4f6;\n    font-weight: bold;\n    color: #4b5563;\n    width: 15%;\n    text-align: center !important;\n  }\n\n  .data-cell {\n    width: 35%;\n    color: #111827;\n    font-weight: 600;\n  }\n\n  /* جدول الأدوية */\n  .meds-table th {\n    background-color: #eff6ff;\n    color: #1e3a8a;\n    font-weight: bold;\n    text-align: center;\n  }\n\n  .meds-table td {\n    text-align: center;\n    font-weight: 500;\n  }\n\n  /* الملاحظات والتوقيعات */\n  .section-title {\n    font-weight: bold;\n    color: #1f2937;\n    margin-bottom: 5px;\n    font-size: 14px;\n    border-right: 4px solid #2563eb;\n    padding-right: 8px;\n  }\n\n  .notes-box {\n    border: 1px solid #d1d5db;\n    background-color: #f9fafb;\n    border-radius: 6px;\n    padding: 10px;\n    min-height: 50px; /* تقليل الارتفاع */\n    margin-bottom: 15px; /* تقليل المسافة */\n    font-size: 13px;\n    line-height: 1.5;\n    color: #374151;\n  }\n\n  .footer-signatures {\n    width: 100%;\n    border-collapse: collapse;\n    margin-top: 10px;\n  }\n\n  .footer-signatures td {\n    text-align: center;\n    font-size: 13px;\n    font-weight: bold;\n    color: #4b5563;\n    padding: 5px;\n  }\n\n  .signature-line {\n    border-bottom: 1px dashed #9ca3af;\n    width: 70%;\n    margin: 25px auto 0 auto; /* تقليل المسافة العلوية لخط التوقيع */\n  }\n\n  /* تحسينات الطباعة */\n  @media print {\n    body { background-color: #fff; }\n    .container { border: none; box-shadow: none; max-width: 100%; padding: 0; min-height: auto; }\n  }\n</style>\n</head>\n<body>\n\n<div class=\"container\">\n  <div>\n    <table class=\"header-table\">\n      <tr>\n        <td style=\"width: 35%; text-align: right; line-height: 1.4;\">\n          Universal Health Insurance Authority<br>\n          Branch Suez<br>\n          Administration of Beneficiary Department<br>\n          Patient Affairs Department\n        </td>\n        <td style=\"width: 30%; text-align: center;\">\n            <div style=\"font-size: 28px; color: #2563eb;\">🛡️</div>\n            <div style=\"font-size: 10px; margin-top: 5px;\">الهيئة العامة للتأمين الصحي الشامل</div>\n        </td>\n        <td style=\"width: 35%; text-align: left; line-height: 1.4;\">\n          الهيئة العامة للتأمين الصحي الشامل<br>\n          فرع السويس<br>\n          إدارة شؤون المستفيدين<br>\n          إدارة شؤون المرضى\n        </td>\n      </tr>\n    </table>\n\n    <div class=\"header-line\"></div>\n\n    <div class=\"title-box\">نموذج موافقة مسبقة</div>\n\n    <!-- معلومات المريض -->\n    <table class=\"main-table\">\n      <tr>\n        <td class=\"label-cell\">رقم الطلب</td>\n        <td class=\"data-cell\">${requestId}</td>\n        <td class=\"label-cell\">تاريخ الطلب</td>\n        <td class=\"data-cell\">${createdDate}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">الأسم</td>\n        <td class=\"data-cell\" colspan=\"3\">${patientName}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">الرقم القومي</td>\n        <td class=\"data-cell\">${nationalId}</td>\n        <td class=\"label-cell\">رقم الملف</td>\n        <td class=\"data-cell\">${fileNumber}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">العمر</td>\n        <td class=\"data-cell\">${patientAge}</td>\n        <td class=\"label-cell\">الهاتف</td>\n        <td class=\"data-cell\">${patientPhone}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">التشخيص</td>\n        <td class=\"data-cell\" colspan=\"3\" style=\"color: #b91c1c;\">${diagnosis}</td>\n      </tr>\n    </table>\n\n    <!-- الأدوية والخدمات -->\n    <table class=\"meds-table\">\n      <thead>\n        <tr>\n          <th style=\"width: 40%;\">أسم الدواء / الخدمة</th>\n          <th style=\"width: 20%;\">التركيز</th>\n          <th style=\"width: 20%;\">الجرعة</th>\n          <th style=\"width: 20%;\">المدة</th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr>\n          <td><b>${item1Name}</b></td>\n          <td>${item1Conc}</td>\n          <td>${item1Dose}</td>\n          <td>${item1Duration}</td>\n        </tr>\n        <tr>\n          <td><b>${item2Name}</b></td>\n          <td>${item2Conc}</td>\n          <td>${item2Dose}</td>\n          <td>${item2Duration}</td>\n        </tr>\n        <tr>\n          <td style=\"color: #9ca3af;\">لا يوجد</td>\n          <td style=\"color: #9ca3af;\">-</td>\n          <td style=\"color: #9ca3af;\">-</td>\n          <td style=\"color: #9ca3af;\">-</td>\n        </tr>\n      </tbody>\n    </table>\n\n    <!-- معلومات الطبيب والقرار -->\n    <table class=\"main-table\">\n      <tr>\n        <td class=\"label-cell\">القرار</td>\n        <td class=\"data-cell\" style=\"color: #059669; font-size: 15px;\">${decision}</td>\n        <td class=\"label-cell\">أسم الطبيب</td>\n        <td class=\"data-cell\">${doctorName}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">التخصص</td>\n        <td class=\"data-cell\">${specialty}</td>\n        <td class=\"label-cell\">الفئة</td>\n        <td class=\"data-cell\">${specialtyCategory}</td>\n      </tr>\n      <tr>\n        <td class=\"label-cell\">أسم المنشأة</td>\n        <td class=\"data-cell\" colspan=\"3\">${facilityName}</td>\n      </tr>\n    </table>\n\n    <div class=\"section-title\">ملاحظات / سبب القرار:</div>\n    <div class=\"notes-box\">\n      ${notes}\n    </div>\n  </div>\n\n  <!-- التوقيعات -->\n  <div>\n    <div style=\"text-align: center; margin-bottom: 10px; font-size: 13px;\">\n      <span style=\"color: #6b7280;\">المراجع الطبي:</span> <b style=\"color: #111827;\">${medicalReviewer}</b>\n    </div>\n    \n    <table class=\"footer-signatures\">\n      <tr>\n        <td style=\"width: 33%;\">\n          مدير شؤون المرضى\n          <div class=\"signature-line\"></div>\n        </td>\n        <td style=\"width: 33%;\">\n          مدير إدارة شؤون المستفيدين\n          <div class=\"signature-line\"></div>\n        </td>\n        <td style=\"width: 33%;\">\n          مدير الفرع\n          <div class=\"signature-line\"></div>\n        </td>\n      </tr>\n    </table>\n  </div>\n</div>\n\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    html: htmlContent\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3648,
+        1216
+      ],
+      "id": "2f9a99d2-4cd2-42dd-bc87-81dd4955b283",
+      "name": "Generate HTML Template"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Set - Normalize Case Data').item.json.message_id }}",
+        "emailType": "text",
+        "message": "=مرفق لسيادتكم تفاصيل قرار الموافقة المسبقة الخاص بالمريض: {{ $('Set - Normalize Case Data').item.json.patient_name }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=approval_pdf"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4160,
+        1440
+      ],
+      "id": "c7c51fa1-278f-4cea-96d8-de7228f4a842",
+      "name": "Reply to a message",
+      "webhookId": "c33bc844-96aa-45ef-9164-693db796a042",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SVB1Kd3FGGuiUTJr",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.html2pdf.app/v1/generate",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "html",
+              "value": "={{ $json.html_template }}{{ $json.htmlReport }}{{ $json.html }}"
+            },
+            {
+              "name": "apiKey",
+              "value": "YqbHBRKdOufsBrUPUJreGPeVD4sMA3kvbXaW86kngA1iHIGeVZSTKJrwKvAJPrcL"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "approval_pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3808,
+        1440
+      ],
+      "id": "aa250b2f-b18d-4045-b3e1-a6f377ee43b3",
+      "name": "Convert HTML to PDF"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        1280
+      ],
+      "id": "a645466e-db13-42ff-bd41-6ff4be165cd7",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4656,
+        1600
+      ],
+      "id": "afa73b27-3a29-4a59-929b-0e38bcb46f8f",
+      "name": "Wait",
+      "webhookId": "5b8b1944-f45a-42f2-a91d-54b7e9c3a9db"
+    },
+    {
+      "parameters": {
+        "content": "## Vector \nDatabase ",
+        "height": 736,
+        "width": 2496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        48
+      ],
+      "id": "8d8b4a41-9483-43a3-8281-a9ab544cabef",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## The Extractor ",
+        "height": 944,
+        "width": 2080,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        896
+      ],
+      "id": "da64eca8-5807-479e-86a9-d5cd79aef0f8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## The Auditor\n",
+        "height": 944,
+        "width": 1232,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        896
+      ],
+      "id": "275132fe-8ea9-4f45-bc77-58e008e3b787",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Generate \nApproval\n\n\n",
+        "height": 944,
+        "width": 1920,
+        "color": "#BDFFBE"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        896
+      ],
+      "id": "a7cc3fd8-05b5-4cc0-ae77-f430605dc6ce",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram\n   inline keyword\n",
+        "height": 800,
+        "width": 2176,
+        "color": "#89CFFB"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1888
+      ],
+      "id": "ca8dc2d3-cbda-4d9b-a425-acd17550eded",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0",
+          "mode": "list",
+          "cachedResultName": "PreAuth Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "message_id",
+              "lookupValue": "={{ $json.case_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2512,
+        1968
+      ],
+      "id": "b81848d4-c580-4bb5-8dea-dacba7825abd",
+      "name": "Get Case Row By Message Id",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=⚠️ حالة موافقة مسبقة تحتاج مراجعة بشرية\n\nرقم الطلب: {{ $json.message_id }}\nالمريض: {{ $json.patient_name }}\nالرقم القومي: {{ $json.national_id }}\nالرقم التأميني: {{ $json.insurance_no }}\nالتشخيص: {{ $json.diagnosis }}\nالدواء/الإجراء: {{ $json.requested_medication }}\n\nقرار النظام الآلي: {{ $json.preauth_status }}\nالسبب: {{ $json.decision_reason }}\n\nمن فضلك اتخذ القرار النهائي:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ قبول",
+                    "additionalFields": {
+                      "callback_data": "=approve|{{ $json.message_id }}"
+                    }
+                  },
+                  {
+                    "text": "❌ رفض نهائي",
+                    "additionalFields": {
+                      "callback_data": "=reject|{{ $json.message_id }}"
+                    }
+                  },
+                  {
+                    "text": "✏️ طلب تعديل",
+                    "additionalFields": {
+                      "callback_data": "=edit|{{ $json.message_id }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3488,
+        960
+      ],
+      "id": "c6525912-b8b6-4d38-9bf3-65ebcb0bd8b5",
+      "name": "Notify Medical Reviewer (Telegram)",
+      "webhookId": "d47d47f6-b577-442b-8177-63135d5e5322",
+      "credentials": {
+        "telegramApi": {
+          "id": "Eb4iV2vTPVQbnm2g",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c39c1b42-b639-48e2-ae3c-c64a96acabb9",
+              "leftValue": "={{ $json.has_active_approval }}",
+              "rightValue": "Is True",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        768,
+        1280
+      ],
+      "id": "2eb5f193-d0a4-4b79-a843-877bd9462ee6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0",
+          "mode": "list",
+          "cachedResultName": "Medical Approvals",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "national_id",
+              "lookupValue": "={{ $json.content.parts[0].text.parseJson().national_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        1280
+      ],
+      "id": "ad63f849-1dbb-4b91-9b53-c85477bd0f92",
+      "name": "Google Sheet Search",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. قراءة بيانات الطلب من عقدة Analyze document\nconst rawAnalyzeData = $node[\"Extract National Id \"].json.content.parts[0].text;\n\nlet newRequest = {};\ntry {\n  newRequest = typeof rawAnalyzeData === 'string' ? JSON.parse(rawAnalyzeData) : rawAnalyzeData;\n} catch (e) {\n  newRequest = {};\n}\n\n// 2. قراءة الصفوف المرجعة من Google Sheets Search\nconst existingRows = $input.all();\nconst currentDate = new Date();\n\nlet duplicateApprovalsFound = [];\n\n// 3. فحص الصفوف المرجعة مباشرة\nfor (const item of existingRows) {\n  const row = item.json;\n\n  // تجنب الصفوف الفارغة\n  if (!row || Object.keys(row).length === 0) continue;\n\n  // تنظيف حالة الموافقة\n  const status = String(row.preauth_status || row.status || '').trim().toLowerCase();\n  \n  // معالجة تاريخ الانتهاء (لو مش مكتوب يفترض ساري)\n  const expiryDate = row.expiry_date ? new Date(row.expiry_date) : null;\n  const isNotExpired = expiryDate ? expiryDate >= currentDate : true;\n\n  // فحص مرن وقوي لحالة الموافقة\n  const isApprovedStatus = status.includes('موافق') || \n                           status.includes('مقبول') || \n                           status.includes('approved') ||\n                           status.includes('مقبوله');\n\n  // البحث عن الـ Drive File ID بأكثر من صيغة مسميات محتملة من الشيت\n  const driveFileId = row.drive_file_id || \n                      row[\"drive_file_id\"] || \n                      row[\"Drive File ID\"] || \n                      row.file_id || \n                      '';\n\n  // طالما النود بتاعة السيرش جابت الصف ده، والحالة مقبولة وسارية\n  if (isApprovedStatus && isNotExpired) {\n    duplicateApprovalsFound.push({\n      approval_id: row.message_id || row.row_number || 'موافقة سارية',\n      medication: row.requested_medication || newRequest.requested_medication || '',\n      patient_name: row.patient_name || '',\n      preauth_status: row.preauth_status || row.status,\n      timestamp: row.timestamp || '',\n      drive_file_id: driveFileId // الـ ID الصحيح للـ Drive File\n    });\n  }\n}\n\n// 4. تحديد سحب الـ binary المباشر من النود الرئيسية\nconst originalBinary = $node[\"Loop Over Items1\"]?.binary || $node[\"Gmail Trigger\"]?.binary || $input.item.binary;\n\n// 5. إخراج النتيجة النهائية\nconst hasDuplicates = duplicateApprovalsFound.length > 0;\n\nreturn [{\n  json: {\n    has_active_approval: hasDuplicates,\n    approval_info: duplicateApprovalsFound,\n    extracted_data: newRequest\n  },\n  binary: originalBinary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        1520
+      ],
+      "id": "6651f4c0-d548-40a5-8a8c-66b273be854c",
+      "name": "Match Filter"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "emailType": "text",
+        "message": "=السلام عليكم ورحمة الله وبركاته،\n\nيرجى العلم بأنه يوجد موافقة سارية بالفعل لنفس العلاج المذكور في الطلب، وتفاصيلها كالتالي:\n\n• رقم الموافقة: {{ $json.approval_info[0].approval_id }}\n• العلاج المعتمد: {{ $json.approval_info[0].medication }}\n• تاريخ إصدار الموافقة: {{ $json.approval_info[0].timestamp }}\n• حالة الموافقة: {{ $json.approval_info[0].preauth_status }}\n\nبناءً عليه، لا حاجة لإصدار موافقة جديدة في الوقت الحالي.\n\nتحياتنا،\nقسم الموافقات الطبية",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        1008
+      ],
+      "id": "53d04350-a18a-4a0c-b120-9e1ad8b26e95",
+      "name": "Send previous approval ",
+      "webhookId": "bcef32ba-b386-4ec8-b90f-6ee86c65bf9c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SVB1Kd3FGGuiUTJr",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "approval_pdf",
+        "name": "=Approval_{{ $('Prepare Data').item.json.national_id }}_{{ $('Prepare Data').item.json.patient_name }}.pdf",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1hpGYWQJJ4qjjE52cN7P2AcBnQOmtKdGZ",
+          "mode": "list",
+          "cachedResultName": "Medical Approvals ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1hpGYWQJJ4qjjE52cN7P2AcBnQOmtKdGZ"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3968,
+        1216
+      ],
+      "id": "815b4fea-b22c-4760-b14c-72e464353e54",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e5idwyqM1wMV9nTZ",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4480,
+        1344
+      ],
+      "id": "d290f3c4-69e7-45bd-9240-c7541211a4f7",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.approval_info[0].drive_file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        976,
+        1008
+      ],
+      "id": "df4647a5-fc96-40ee-a379-8a9dc1eccd81",
+      "name": "Download Previous Approval",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e5idwyqM1wMV9nTZ",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "text": "=You are an expert OCR medical document extractor for multi-page medical PDFs.\nYou MUST process and scan EVERY SINGLE PAGE of the document from Page 1 to the final page.\nOutput ONLY a raw, valid JSON object with NO markdown, NO ```json backticks, and NO conversational text.\n\nIDENTITY ANCHOR RULE (CRITICAL - READ FIRST):\n- Step 1: Find the page titled \"طلب الحصول على موافقة\" (Pre-Authorization Request). This is the ANCHOR page.\n- Step 2: Extract the patient_name and national_id ONLY from this anchor page.\n- Step 3: When extracting diagnosis/medications from \"التقرير الطبي\" (Medical Report), FIRST verify that the name/ID on that report page MATCHES the anchor page's name/ID.\n- If the medical report page does NOT contain a matching name/ID, or you cannot confirm the match, DO NOT use data from that page — treat it as belonging to a different case and ignore it.\n- If the document contains MULTIPLE different anchor pages (multiple distinct patients/requests bundled in one PDF), extract ONLY the data tied to the FIRST anchor page found, and ignore all other patients' data entirely.\n\nCRITICAL EXTRACTION RULES:\n1. TARGET PAGES FOR PATIENT & MEDICATION DATA:\n   - Extract all primary data (National ID, Insurance No, Patient Name, Age, Diagnosis, Requested Medications) strictly from \"طلب الحصول على موافقة\" (Pre-Authorization Request) and \"التقرير الطبي\" (Medical Report) — subject to the IDENTITY ANCHOR RULE above.\n   - IGNORE and DO NOT extract ANY data (patient info, medications, diagnosis) from any attached old approval pages, previous authorizations, or past decision letters included in the document — even if they mention a similar-looking name.\n2. FACILITY NAME (`facility_name`):\n   - Extract the exact name of the Healthcare Center, Hospital, or Facility making the request from the document header/letterhead of the ANCHOR page specifically.\n3. NUMERAL CONVERSION:\n   - Convert all Arabic/Hindi numbers (٠-٩) into standard numbers (0-9). Ensure National ID is strictly 14 digits.\n\nEXPECTED JSON OUTPUT STRUCTURE:\n{\n  \"case_details\": {\n    \"patient_name\": \"Full name\",\n    \"national_id\": \"14-digit number\",\n    \"insurance_no\": \"Insurance number or null\",\n    \"age\": \"Age or null\",\n    \"diagnosis\": \"Medical diagnosis\",\n    \"facility_name\": \"Medical center or hospital name\",\n    \"source_confidence\": \"high | low - set to 'low' if any field required inference across pages\"\n  },\n  \"requested_medications\": [\n    {\n      \"medication_name\": \"Exact medication name from request form/medical report\",\n      \"quantity\": \"Quantity requested\",\n      \"dosage_instructions\": \"Dosage/frequency if listed\"\n    }\n  ]\n}\n\nSTRICT RULES:\n- DO NOT hallucinate, guess, or pull data from memory of previous documents. Every value must be traceable to visible text on THIS document's anchor page (or verified-matching medical report page).\n- If a field is not explicitly visible and verified, you MUST set its value to null.\n- ONLY extract exact text that is readable from the attached PDF currently provided in this request.",
+        "inputType": "binary",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1216,
+        1296
+      ],
+      "id": "369cc920-b582-4dc8-85e1-f33560e5ae6c",
+      "name": "Extract All Data",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0",
+          "mode": "list",
+          "cachedResultName": "Medical Approvals",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "national_id": "={{ $('Record Details').item.json.national_id }}",
+            "drive_file_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "national_id"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "sender_email",
+              "displayName": "sender_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "patient_name",
+              "displayName": "patient_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "insurance_no",
+              "displayName": "insurance_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "diagnosis",
+              "displayName": "diagnosis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "requested_medication",
+              "displayName": "requested_medication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "preauth_status",
+              "displayName": "preauth_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "decision_reason",
+              "displayName": "decision_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "missing_requirements",
+              "displayName": "missing_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "drive_file_id",
+              "displayName": "drive_file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4160,
+        1216
+      ],
+      "id": "50df311a-5b8f-4698-9640-8a7dd9270274",
+      "name": "Update Drive Id",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0",
+          "mode": "list",
+          "cachedResultName": "Medical Approvals",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12unRRSS7GTOiEgd9rzjveHTrZ1J7__YV9kqnuyasph0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "message_id": "={{ $json.message_id }}",
+            "sender_email": "={{ $json.sender_email }}",
+            "patient_name": "={{ $json.patient_name }}",
+            "national_id": "={{ $json.national_id }}",
+            "insurance_no": "={{ $json.insurance_no }}",
+            "diagnosis": "={{ $json.diagnosis }}",
+            "requested_medication": "={{ $json.requested_medication }}",
+            "preauth_status": "={{ $json.preauth_status }}",
+            "decision_reason": "={{ $json.decision_reason }}",
+            "missing_requirements": "={{ $json.missing_requirements }}"
+          },
+          "matchingColumns": [
+            "message_id"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sender_email",
+              "displayName": "sender_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "patient_name",
+              "displayName": "patient_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "insurance_no",
+              "displayName": "insurance_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "diagnosis",
+              "displayName": "diagnosis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "requested_medication",
+              "displayName": "requested_medication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "preauth_status",
+              "displayName": "preauth_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "decision_reason",
+              "displayName": "decision_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "missing_requirements",
+              "displayName": "missing_requirements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "drive_file_id",
+              "displayName": "drive_file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2992,
+        1232
+      ],
+      "id": "dca92416-70be-4a0f-b0d2-3cac42b1b46b",
+      "name": "Record Details",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WkOu5nKZjaaXaPrV",
+          "name": "PreAuth Mind"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "text": "=Extract the patient's information from the document and return ONLY a valid JSON object without any backticks, code blocks, or extra text.\n\nUse this exact structure:\n{\n  \"national_id\": \"14-digit national ID without spaces\",\n  \"requested_medication\": \"Name of the requested drug or service\"\n}",
+        "inputType": "binary",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        1504
+      ],
+      "id": "de8b4687-a997-4acf-bc3a-63847ca7c9a2",
+      "name": "Extract National Id ",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Binary File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "The Auditor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "medical_authorization_rules",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "medical_authorization_rules",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "medical_authorization_rules": {
+      "ai_tool": [
+        [
+          {
+            "node": "The Auditor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Auditor": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data": {
+      "main": [
+        [
+          {
+            "node": "Record Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binary File": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Needs Human Review": {
+      "main": [
+        [
+          {
+            "node": "Notify Medical Reviewer (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set - Normalize Case Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Reviewer Response": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge Button",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acknowledge Button": {
+      "main": [
+        [
+          {
+            "node": "Parse Callback Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Callback Action": {
+      "main": [
+        [
+          {
+            "node": "Switch - Action Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch - Action Type": {
+      "main": [
+        [
+          {
+            "node": "Get Case Row By Message Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Case Row By Message Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Case Row By Message Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ask Reviewer To Edit In Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Human Decision Update": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet - Human Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet - Human Decision": {
+      "main": [
+        [
+          {
+            "node": "Set - Normalize Case Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set - Normalize Case Data": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HTML Template": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to a message": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Extract National Id ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Case Row By Message Id": {
+      "main": [
+        [
+          {
+            "node": "Prepare Human Decision Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download Previous Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract All Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheet Search": {
+      "main": [
+        [
+          {
+            "node": "Match Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Filter": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Update Drive Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Previous Approval": {
+      "main": [
+        [
+          {
+            "node": "Send previous approval ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract All Data": {
+      "main": [
+        [
+          {
+            "node": "The Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Drive Id": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Details": {
+      "main": [
+        [
+          {
+            "node": "IF - Needs Human Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract National Id ": {
+      "main": [
+        [
+          {
+            "node": "Google Sheet Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "XAHJkK9NYG3Rkrxh",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveManualExecutions": true
+  },
+  "versionId": "d01c2b4d-1f1b-44c0-bf32-30b8716c7387",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "id": "OrqkwM0fTLjlysg3",
+  "tags": [
+    {
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z",
+      "id": "vjrjNSmhby2Ujgrx",
+      "name": "Portfolio"
+    }
+  ]
+}

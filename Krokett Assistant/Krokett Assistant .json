@@ -1,0 +1,2098 @@
+{
+  "name": "Krokett Assistant",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        112
+      ],
+      "id": "ab583628-d57f-4955-8a61-8034f9d7dda7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1PeiQAD_4AetDSZ-zukTzqeEVNPRPPNa6",
+            "mode": "list",
+            "cachedResultName": "krokett",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1PeiQAD_4AetDSZ-zukTzqeEVNPRPPNa6"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        112
+      ],
+      "id": "3595ab20-faeb-4b8c-a991-35f12ad3952a",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dVB5qqsyHrx597aV",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bf1f872-3ad1-40ca-a315-684b7e24dcdc",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d660f31c-b224-404d-b536-72e79993a4dd",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        112
+      ],
+      "id": "4329633e-f969-4ef0-93d0-93743729087c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        112
+      ],
+      "id": "aab56294-29fd-40a6-8720-7983fb32b065",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dVB5qqsyHrx597aV",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "krokettrestaurantdatabase",
+          "mode": "list",
+          "cachedResultName": "krokettrestaurantdatabase"
+        },
+        "options": {
+          "pineconeNamespace": "={{ $('Edit Fields').item.json.name }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "e3f7fd08-ab4a-4890-b7c2-c39ee9e700fb",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        288
+      ],
+      "id": "8ae6aa57-21a0-4a72-8a60-0251e77d9172",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "b251d218-de11-4149-b3c1-2bdb537b3ea5",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        112
+      ],
+      "id": "40cffc0d-0575-47e0-a070-bece7198edc2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "## Vector DB",
+        "height": 608,
+        "width": 1616,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -112
+      ],
+      "id": "6de47b55-6b52-4469-8488-dc7c00de2af9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -1328,
+        1152
+      ],
+      "id": "7f2e6483-480b-46fc-b82c-bbad8bee08f7",
+      "name": "Telegram Trigger",
+      "webhookId": "ef96aee6-32a4-4ba3-a804-152e731364bf",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "=You are \"ربيع\" (Rabie), the AI customer service and order assistant for:\n\nمطعم كوركيت للمشويات الفاخرة\nKrokett Charcoal Grill Restaurant\n\nYour responsibilities are:\n1. Welcoming customers warmly and introducing yourself.\n2. Answering customer questions about the restaurant using the Knowledge Base.\n3. Helping customers choose menu items and displaying prices clearly.\n4. Collecting food orders accurately.\n5. Verifying delivery location before taking personal details.\n6. Confirming complete orders and formatting total costs correctly.\n\n==================================================\n1. PERSONALITY, GREETING & TONE\n==================================================\n\n- Your name is \"ربيع\" (Rabie). Refer to yourself by this name naturally when relevant (e.g. \"أنا ربيع\").\n- Use polite, warm, and professional Egyptian Arabic dialect.\n- FIRST MESSAGE GREETING:\n  At the start of the interaction, upon receiving /start, or when a customer greets you, introduce yourself warmly with an inviting tone:\n  \"أهلاً بك مع ربيع 👋 المساعد الذكي لمطعم كوركيت للمشويات الفاخرة! 🥩✨ سعيد جداً بخدمتك اليوم. اتفضل قول لي حابب تطلب إيه النهاردة أو تحب أستعرض معاك أشهر أطباقنا والمينيو؟\"\n- Keep responses concise, well-formatted, and easy to read on mobile screens (use bullet points and emojis appropriately).\n\n==================================================\n2. KNOWLEDGE BASE — SEARCH & RETRIEVAL RULES\n==================================================\n\nThe connected Vector Store / Knowledge Base contains the official restaurant information.\n\nThe Knowledge Base is the ONLY source of truth for:\n- Menu items and prices (Main courses, Appetizers, Cold drinks, Hot drinks)\n- Restaurant address (Fifth Settlement branch) and Hotline (19999)\n- Delivery fees and policies\n\nSEARCH DIRECTIVES & CRITICAL PREFIX RULE:\n1. CRITICAL QUERY FORMATTING (E5 MODEL REQUIREMENT):\n   - You MUST prefix EVERY search query sent to the Pinecone Vector Store tool with \"query: \".\n   - Keep queries short and focused (1 to 3 words after the prefix).\n   - EXAMPLES:\n     - For menu/all items: send query \"query: قائمة الطعام\" or \"query: منيو\"\n     - For grills: send query \"query: مشويات\"\n     - For drinks: send query \"query: مشروبات\"\n     - For address/hotline: send query \"query: العنوان والخط الساخن\"\n\n2. FLEXIBLE SEARCH HANDLING:\n   - When users click buttons like \"عرض المنيو\", \"القائمة\", \"المشويات\", or ask generic questions, query the tool using the prefix format above.\n   - NEVER concatenate long sentences into the search tool.\n\n3. STRICT FALLBACK CONDITIONS:\n   - ONLY trigger the fallback response if you have executed the Pinecone Vector Store tool with the \"query: \" prefix AND it literally returned zero results/empty array.\n   - Fallback response text (ONLY when search truly yields NO data):\n     \"عذراً يا فندم، هذه المعلومة غير متوفرة لدينا حالياً. يمكنك التواصل مباشرة مع إدارة المطعم على الخط الساخن 19999 للمساعدة.\"\n\n==================================================\n3. FINANCIAL & PRICING RULES (CRITICAL)\n==================================================\n\n1. `total_price` IN JSON MUST ONLY REPRESENT THE SUB-TOTAL OF FOOD & DRINK ITEMS.\n2. NEVER ADD THE 35 EGP DELIVERY FEE INSIDE THE `total_price` VALUE IN YOUR JSON OUTPUT.\n3. Delivery fee is fixed at 35 EGP and will be added automatically by the backend/code system.\n4. Example: If the ordered dishes sum up to 280 EGP, set `\"total_price\": 280`. DO NOT set it to 315 EGP.\n\n==================================================\n4. CONVERSATION CONTEXT & DISH SELECTION\n==================================================\n\n- Always maintain awareness of recent chat history.\n- If you previously listed dishes (e.g., \"1. طبق كوركيت فراخ المميز\", \"2. كباب وكفتة ضأني\") and the customer says \"عايز رقم 1\" or \"جهزيلي أول أوردر\":\n  -> Instantly identify the intended item, record it, and proceed with the order flow. NEVER ask \"ماذا تريد أن تطلب؟\" again.\n\n==================================================\n5. MENU DISPLAY & GUIDED SALES\n==================================================\n\nWhen the customer asks for the menu or recommendations:\n1. Search the Vector Store using the prefixed query format (e.g., \"query: قائمة الطعام\").\n2. Display top relevant dishes/drinks retrieved from the search with exact prices in a clear bulleted list.\n3. Ask a proactive follow-up question to guide the order.\n\nExample:\n\"أكيد يا فندم ❤️\nدي بعض أشهى الأطباق والمشروبات المتاحة عندنا:\n\n- طبق كوركيت فراخ المميز — 280 جنيه\n- كباب وكفتة ضأني على الفحم — 420 جنيه\n- عصير ليمون بالنعناع فريش — 55 جنيه\n\nتحب أجهزلك أوردر من الأطباق دي دلوقتي؟ 🥩\"\n\n==================================================\n6. ORDER COLLECTION PROTOCOL (LOCATION-FIRST)\n==================================================\n\nWhen the user indicates they want to place an order, follow this STRICT sequence:\n\nSTEP 1 — LOCATION VERIFICATION (FIRST STEP ALWAYS, NO EXCEPTIONS):\nBefore asking for Name, Phone, or Payment Method, send the location verification link:\n\"منورنا يا فندم! 🥩\nعشان نضمن وصول الأوردر سخن وطازة وتأكيد تغطية منطقتك، ياريت تحدد موقع التوصيل الأول من خلال الرابط:\n\nhttps://krokett.vercel.app\"\n\n(Note: https://krokett.vercel.app is the ONLY URL allowed in the conversation).\n\nDo NOT ask for or accept Name, Phone, or Payment Method before the customer has provided the location link. If the customer tries to give these details first, politely redirect them to send the location link first.\n\nSTEP 2 — COLLECT REMAINING DETAILS:\nOnce the customer provides/confirms their location link/coordinates:\nSave it as `delivery_address`, then ask:\n\"تمام يا فندم! 🚀 موقعك داخل نطاق التوصيل.\nممكن الاسم، رقم التواصل، وطريقة الدفع (كاش ولا كارت)؟\"\n\nSTEP 3 — FINAL CONFIRMATION SUMMARY:\nOnce all details are collected (Items, Location, Name, Phone, Payment), present the summary:\n\n\"ملخص طلبك الأونلاين من كوركيت:\n\n- الطلبات: [Items & Quantities]\n- مجموع الأصناف: [Subtotal Price] جنيه\n- التوصيل: 35 جنيه\n- الاسم: [Customer Name]\n- رقم التواصل: [Phone]\n- طريقة الدفع: [Payment Method]\n\nهل كل البيانات مظبوطة ونعتمد الأوردر للمطبخ؟ 🚀\"\n\nDO NOT output `is_order: true` until the customer explicitly confirms this final summary.\n\n==================================================\n7. OUTPUT FORMAT RULES (STRICT VALID JSON ONLY)\n==================================================\n\nYou MUST ALWAYS respond with a raw valid JSON object. Do not include markdown headers, code fences, or text outside the JSON.\n\n1. Normal Conversations / Menu Display / Incomplete Orders:\n{\n  \"is_order\": false,\n  \"reply_message\": \"نص الرد العربي الموجه للعميل هنا مع الترحيب والتنسيق...\"\n}\n\n2. Confirmed Final Order (Only after customer explicitly confirms summary):\n{\n  \"is_order\": true,\n  \"customer_name\": \"اسم العميل\",\n  \"phone_number\": \"رقم التليفون\",\n  \"delivery_address\": \"رابط اللوكيشن أو العنوان\",\n  \"ordered_items\": \"الأطباق والكميات\",\n  \"total_price\": 280,\n  \"payment_method\": \"كاش\",\n  \"reply_message\": \"تم تسجيل طلبك بنجاح! جاري تحضيره في المطبخ الآن 🥩\"\n}\n\n==================================================\n8. ADVANCED CONVERSATION QUALITY RULES\n==================================================\n\n1. QUANTITY HANDLING: If the customer names an item without a quantity, ask \"كام طبق/قطعة؟\" before adding it to the order, instead of assuming quantity = 1.\n2. ORDER MODIFICATION: Before the final confirmation summary (Step 3), if the customer wants to add, remove, or change an item, update the order silently and re-show the updated item list — do not restart the whole flow.\n3. ORDER CANCELLATION: If the customer says \"الغي الطلب\" / \"مش عايز اكمل\" at any point before final confirmation, acknowledge politely, clear the current order in progress, and ask if they'd like to start a new one.\n4. UNAVAILABLE ITEMS: If a customer asks for a dish/drink not found in the Knowledge Base search, do NOT immediately use the hard fallback. Instead, politely say it's not available and suggest 1-2 similar available items from the same category if the search returned any.\n5. NEVER INVENT ITEMS OR PRICES: Only mention dishes, drinks, or prices that came back from a Knowledge Base search. Never guess or estimate a price.\n6. LANGUAGE MATCHING: If the customer writes in English or another language, reply in that same language while keeping the same JSON structure and rules.\n7. SMALL TALK: Respond briefly and warmly to greetings, thanks, or casual chat (e.g. \"تسلم\" / \"شكراً\") without breaking character or the JSON output format.\n8. TYPO TOLERANCE: If a customer's spelling of a dish name is slightly off or informal, interpret their intent reasonably before searching the Knowledge Base (e.g. try the closest likely menu term)."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1920,
+        704
+      ],
+      "id": "cc9bfe06-f6c7-4f34-b478-4e6d14308de3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        1008
+      ],
+      "id": "c05cbb53-efd1-40dd-ae1e-a891ba7507ab",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to search for Krokett restaurant menu, prices, meal details, working hours, and branch locations.",
+        "topK": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        2208,
+        1136
+      ],
+      "id": "22039b75-a0f7-436b-88d9-4fd88061a983",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "krokettrestaurantdatabase",
+          "mode": "list",
+          "cachedResultName": "krokettrestaurantdatabase"
+        },
+        "options": {
+          "pineconeNamespace": "krokett_restaurant_database.md"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1968,
+        1280
+      ],
+      "id": "85fd0186-7e83-4133-8923-c9c335bc8bad",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        1456
+      ],
+      "id": "b020a23c-ad12-4a1b-a253-c391388db43d",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2432,
+        1360
+      ],
+      "id": "f1fc8b17-c98c-4eda-9b16-eaf9c543f597",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 4
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        2016,
+        992
+      ],
+      "id": "9257a75c-a37c-4259-a44f-9543cbc08c38",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $json.message || {};\nconst chatId = msg.chat ? msg.chat.id : null;\nconst rawText = (msg.text || \"\").trim();\nconst lowerText = rawText.toLowerCase();\n\n// بيانات العميل والتاريخ\nconst firstName = msg.chat ? (msg.chat.first_name || \"\") : \"\";\nconst lastName = msg.chat ? (msg.chat.last_name || \"\") : \"\";\nconst customerName = `${firstName} ${lastName}`.trim() || \"غير محدد\";\nconst username = msg.chat ? (msg.chat.username || \"لا يوجد\") : \"لا يوجد\";\nconst dateTime = new Date().toLocaleString(\"ar-EG\", { timeZone: \"Africa/Cairo\" });\n\nlet isStart = false;\nlet isTrackOrder = false;\nlet isRepeatOrder = false;\nlet isRating = false;\nlet needsTranscription = false;\nlet voiceFileId = null;\nlet finalText = rawText;\nlet ratingScore = \"غير محدد\";\n\n// 1. التعامل مع الرسائل الصوتية\nif (msg.voice && msg.voice.file_id) {\n  needsTranscription = true;\n  voiceFileId = msg.voice.file_id;\n}\n\n// 2. الموقع المباشر من تليجرام\nif (msg.location && typeof msg.location.latitude !== 'undefined') {\n  finalText = `📍 موقع التوصيل المحدد: https://maps.google.com/?q=${msg.location.latitude},${msg.location.longitude}`;\n}\n\n// 3. تحديد المسارات (Routes)\n\n// أ) مسار بداية البوت (Start)\nif (rawText === \"/start\") {\n  isStart = true;\n}\n\n// ب) مسار تكرار آخر أوردر (Repeat Order)\nelse if (\n  lowerText === \"/repeat\" ||\n  lowerText.includes(\"كرر\") ||\n  lowerText.includes(\"تكرار\") ||\n  lowerText.includes(\"إعادة\") ||\n  lowerText.includes(\"نفس الأوردر\") ||\n  lowerText.includes(\"نفس الطلب\") ||\n  lowerText.includes(\"اعادة الطلب\")\n) {\n  isRepeatOrder = true;\n}\n\n// ج) مسار تتبع الأوردر (Track Order)\nelse if (\n  lowerText === \"/track\" ||\n  lowerText.includes(\"تتبع\") ||\n  lowerText.includes(\"متابعة الأوردر\") ||\n  lowerText.includes(\"وين الأوردر\") ||\n  lowerText.includes(\"فين الأوردر\") ||\n  lowerText.includes(\"الطلب وصل فين\")\n) {\n  isTrackOrder = true;\n}\n\n// د) مسار التقييم (Rating)\nelse {\n  const containsStars = /[\\u2b50⭐]/.test(rawText);\n  const ratingKeywords = [\"تقييم\", \"نجوم\", \"نجمة\", \"من 5\", \"من5\", \"1/5\", \"2/5\", \"3/5\", \"4/5\", \"5/5\", \"من 10\", \"10/10\"];\n  const containsRatingKeyword = ratingKeywords.some(keyword => lowerText.includes(keyword));\n  const isSingleRatingNumber = /^[1-5]$/.test(rawText);\n\n  if (containsStars || containsRatingKeyword || isSingleRatingNumber) {\n    isRating = true;\n\n    // استخراج قيمة التقييم الرقمية\n    const scoreMatch = rawText.match(/([1-5])\\s*(من|\\/|\\s*نجوم|\\s*نجمة)?/);\n    if (scoreMatch) {\n      ratingScore = scoreMatch[1];\n    } else if (containsStars) {\n      const starCount = (rawText.match(/[\\u2b50⭐]/g) || []).length;\n      if (starCount > 0) ratingScore = Math.min(starCount, 5).toString();\n    }\n  }\n}\n\nreturn [{\n  json: {\n    message: { ...msg, text: finalText },\n    chat_id: chatId,\n    customer_name: customerName,\n    username: username,\n    date_time: dateTime,\n    rating_score: ratingScore,\n    isStart,\n    isTrackOrder,\n    isRepeatOrder,\n    isRating,\n    needsTranscription,\n    voiceFileId\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        1152
+      ],
+      "id": "ff1cbc86-60b7-41c2-b258-21401914b86b",
+      "name": "Prepare Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9ec60aaf-80aa-4685-a4f4-9615e7ae79ba",
+              "leftValue": "={{ $json.needsTranscription }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -912,
+        1152
+      ],
+      "id": "a8fc9159-97b7-4945-90fe-f64034a292bf",
+      "name": "Route: Voice Message?"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.voiceFileId }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -720,
+        896
+      ],
+      "id": "4fae39e7-5d2f-474d-a38c-f9ff6d33fed4",
+      "name": "Download Voice File",
+      "webhookId": "f44a2350-732e-466f-ae8f-819fe2a12e5b",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const transcript = $json.text || ($json.data && $json.data.text) || \"\";\nconst original = $('Prepare Input').item.json;\nreturn [{\n  json: {\n    ...original,\n    message: { ...original.message, text: transcript },\n    needsTranscription: false\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        896
+      ],
+      "id": "7f7769aa-f056-44f4-a719-09decf490804",
+      "name": "Merge Transcribed Text"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be8433a3-78b2-42c1-9c8d-9bf7c98da1ea",
+              "leftValue": "={{ $json.isStart }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -256,
+        1168
+      ],
+      "id": "3893f331-5331-4d58-bad1-8577d4b6acc8",
+      "name": "Route: Start Command?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}",
+        "text": "أهلاً بيك في مطعم كوركيت للمشويات الفاخرة 🥩✨\n\nإزاي أقدر أساعدك؟\n📋 تقدر تشوف القائمة\n🥩 تطلب أونلاين على طول\n📦 تتبع أوردر سابق\n\nاستخدم الأزرار تحت أو اكتبلي اللي عايزه براحتك 🙌",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "عرض المنيو ",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "احدث العروض ",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "تكرار اخر طلب ",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "عناوين الفروع ",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "resize_keyboard": true,
+          "selective": false
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        896
+      ],
+      "id": "aad370d8-9864-43b7-a87a-659aa44f568b",
+      "name": "Send Welcome Message",
+      "webhookId": "db167b49-503f-475a-8976-633e22565748",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e7b033fe-15f1-4704-b2b0-572ffb692f0e",
+              "leftValue": "={{ $json.isTrackOrder }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        1488
+      ],
+      "id": "2dd07d7e-612a-4d08-9b51-794f6c17bea0",
+      "name": "Route: Track Order?"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M",
+          "mode": "list",
+          "cachedResultName": "krokett restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "orders ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Chat_ID",
+              "lookupValue": "={{ $json.message.from.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        816
+      ],
+      "id": "7edccd3e-cda1-4c10-a3c0-2d1cc712c44b",
+      "name": "Get Orders (Track)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xLoX96m4vf9HKrVB",
+          "name": "krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4f7d866c-5f4f-4fbc-98d4-01707a0139e4",
+              "leftValue": "={{ $json.isRepeatOrder }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        1680
+      ],
+      "id": "0f9f7391-b63e-49cd-964a-b2b34f9596a5",
+      "name": "Route: Repeat Order?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e6fcc70-52e7-4ba7-9491-81b7b6bf3042",
+              "leftValue": "={{ $json.isRating }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        1904
+      ],
+      "id": "2034b304-c2fb-4714-aaf1-68e40c782641",
+      "name": "Route: Rating?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M",
+          "mode": "list",
+          "cachedResultName": "krokett restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1652931078,
+          "mode": "list",
+          "cachedResultName": "rating ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit#gid=1652931078"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date_Time": "={{ $('Prepare Input').item.json.date_time }}",
+            "Chat_ID": "={{ $('Prepare Input').item.json.chat_id }}",
+            "Customer_Name": "={{ $('Prepare Input').item.json.customer_name }}",
+            "Username": "={{ $('Prepare Input').item.json.username }}",
+            "Rating_Score": "={{ $('Prepare Input').item.json.rating_score }}",
+            "Feedback_Text": "={{ $('Prepare Input').item.json.message.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date_Time",
+              "displayName": "Date_Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chat_ID",
+              "displayName": "Chat_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer_Name",
+              "displayName": "Customer_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback_Text",
+              "displayName": "Feedback_Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating_Score",
+              "displayName": "Rating_Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        1648
+      ],
+      "id": "2cfc56ca-8a81-4f3f-b016-f3718fcad3c4",
+      "name": "Append Rating",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xLoX96m4vf9HKrVB",
+          "name": "krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}",
+        "text": "تسلملي التقييم يا فندم 🙏❤️ نورتنا وربنا يكرمك، وهنستنى نخدمك تاني قريب!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        1648
+      ],
+      "id": "fb37c425-59ab-4a56-8a15-1689150c14ee",
+      "name": "Thank You Rating",
+      "webhookId": "896ccbc7-a4fb-47e4-880f-7cef89176e6b",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1392,
+        1920
+      ],
+      "id": "2852a42b-caf6-4bc0-9426-be6d8c6d975a",
+      "name": "Send Typing Action",
+      "webhookId": "73a74960-8e1b-4b9b-ad8f-928a9ab23970",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}",
+        "text": "إزاي كانت تجربتك مع كوركيت النهاردة؟ قيّمنا من 1 لـ 5 نجوم ⭐ يهمنا رأيك جداً 🙏",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {},
+            {},
+            {},
+            {},
+            {}
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3936,
+        704
+      ],
+      "id": "78ec3d1c-a0b4-48ff-a396-e0cde4453fd4",
+      "name": "Ask For Rating",
+      "webhookId": "bfe65af2-4894-426c-9633-0ef1ac323978",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3744,
+        704
+      ],
+      "id": "ad783d46-6e8e-4edf-8968-9891aaef8c7f",
+      "name": "Wait",
+      "webhookId": "90e5971d-8bde-4cd6-935e-9208d4bf24be"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M",
+          "mode": "list",
+          "cachedResultName": "krokett restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "orders ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Chat_ID",
+              "lookupValue": "={{ $('Prepare Input').item.json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2448,
+        928
+      ],
+      "id": "1f94db1f-4b4b-43bd-bb94-f4a1ecbb5f9a",
+      "name": "Get Last Order",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xLoX96m4vf9HKrVB",
+          "name": "krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "56fae24c-2b79-4f8c-bd90-dbeb6c22e7af",
+              "leftValue": "={{ $json.can_track }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        976,
+        816
+      ],
+      "id": "a1c9ac5e-d3ac-45c6-8b3e-7fddf739ded4",
+      "name": "can track ?"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1104,
+        1616
+      ],
+      "id": "41d11333-0f6a-4993-8f40-dec969d57c68",
+      "name": "Answer Query a callback",
+      "webhookId": "d9d54614-91ff-4a3a-8953-fa273d41c3e1",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.reply_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        704
+      ],
+      "id": "77194920-8b6d-4fd5-bf98-3fa1776ed0fa",
+      "name": "Track message to customer",
+      "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "279688324",
+        "text": "=⚠️ استفسار تتبع أوردر!\n\n📦 رقم الأوردر: {{ $('Track Code').item.json.order_id }}\n👤 العميل: {{ $('Track Code').item.json.customer_name }}\n📞 الهاتف: {{ $('Track Code').item.json.phone_number }}\n📍 العنوان: {{ $('Track Code').item.json.delivery_address }}\n⏱️ الوقت المنقضي: {{ $('can track ?').item.json.diff_minutes }} دقيقة\n\nيرجى تحديد حالة الطلب الحالية لإبلاغ العميل:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "👨‍🍳 قيد التحضير",
+                    "additionalFields": {
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|قيد التحضير"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🛵 خرج للتوصيل",
+                    "additionalFields": {
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|في الطريق إليك"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ تم التسليم",
+                    "additionalFields": {
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|تم التسليم"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        704
+      ],
+      "id": "ed66cfbf-0145-4bfb-8325-6448f78d8972",
+      "name": "Track message to krokett",
+      "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) جلب جميع الأوردرات الخاصة بهذا العميل القادمة من نود Get Orders\nconst allCustomerOrders = $input.all();\n\nif (!allCustomerOrders || allCustomerOrders.length === 0) {\n  return [{\n    json: {\n      can_track: false,\n      reply_message: \"عذراً، لم نجد أي أوردرات سابقة مسجلة برقمك حالياً.\"\n    }\n  }];\n}\n\n// 2) اختيار أحدث أوردر (آخر عنصر في القائمة التي رجعت من الجوجل شيت)\nconst latestOrderRow = allCustomerOrders[allCustomerOrders.length - 1].json;\n\n// 3) قراءة الحقول بأمان مع مراعاة كافة مسميات الأعمدة المتوقعة في Google Sheets\nconst orderId = latestOrderRow.order_id || latestOrderRow[\"Order_ID\"] || latestOrderRow[\"Order ID\"] || \"غير محدد\";\nconst orderTimeRaw = latestOrderRow.date_time || latestOrderRow[\"Date Time\"] || latestOrderRow[\"Date_Time\"] || latestOrderRow[\"date\"] || latestOrderRow.created_at;\nconst orderStatus = latestOrderRow.order_status || latestOrderRow[\"Order_Status\"] || latestOrderRow[\"Order Status\"] || \"قيد التحضير\";\nconst orderedItems = latestOrderRow.ordered_items || latestOrderRow[\"Ordered_Items\"] || latestOrderRow[\"Ordered Items\"] || \"الطلب الخاص بك\";\n\nconst chatId = latestOrderRow.chat_id || latestOrderRow[\"Chat_ID\"] || latestOrderRow[\"Chat ID\"] || $('Prepare Input').item.json.chat_id || \"\";\nconst customerName = latestOrderRow.customer_name || latestOrderRow[\"Customer_Name\"] || latestOrderRow[\"Customer Name\"] || latestOrderRow[\"Name\"] || \"عميلنا العزيز\";\nconst phoneNumber = latestOrderRow.phone_number || latestOrderRow[\"Phone_Number\"] || latestOrderRow[\"Phone Number\"] || latestOrderRow[\"Phone\"] || \"غير محدد\";\nconst deliveryAddress = latestOrderRow.delivery_address || latestOrderRow[\"Delivery_Address\"] || latestOrderRow[\"Delivery Address\"] || latestOrderRow[\"Address\"] || \"غير محدد\";\n\n// 4) حساب فرق الوقت بالدقائق\nconst now = new Date();\nlet orderDate = new Date(orderTimeRaw);\n\n// في حالة عدم إمكانية تفكيك التاريخ، نفترض مرور 20 دقيقة للسماح بالتتبع\nif (isNaN(orderDate.getTime())) {\n  orderDate = new Date(now.getTime() - 20 * 60 * 1000);\n}\n\nconst diffInMinutes = Math.floor((now - orderDate) / (1000 * 60));\nconst minWaitTime = 15; // الحد الأدنى لطلب التتبع (15 دقيقة)\n\n// 5) التوجيه بناءً على الوقت المنقضي\nif (diffInMinutes < minWaitTime) {\n  const remainingTime = minWaitTime - diffInMinutes;\n  \n  const falseMessage = \n`👨‍🍳 **أوردرك جاري تحضيره بكل حب في المطبخ!**\n\n📌 **رقم الأوردر:** ${orderId}\n📊 **الحالة الحالية:** ${orderStatus}\n⏱️ **الوقت المنقضي:** ${diffInMinutes} دقيقة فقط\n\n💡 **ملاحظة:** يتم تجهيز وتغليف الوجبات طازجة فور طلبها. يستغرق التحضير المبدئي حوالي **15 دقيقة** قبل خروج الطيار.\n\nيمكنك إعادة التتبع والتواصل مع المطبخ بعد **${remainingTime} دقائق** للتأكد من خط السير! 🛵\n\nنشكر صبرك ونعدك بأكلة تشرفك! ❤️`;\n\n  return [{\n    json: {\n      can_track: false,\n      diff_minutes: diffInMinutes,\n      order_id: orderId,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      reply_message: falseMessage\n    }\n  }];\n\n} else {\n  const trueCustomerMessage = \n`🔍 **جاري تتبع طلبك الآن...**\n\n📌 **رقم الأوردر:** ${orderId}\n📋 **تفاصيل الطلب:** ${orderedItems}\n⏱️ **الوقت المنقضي:** ${diffInMinutes} دقيقة\n\nتم إرسال تنبيه عاجل لفرع المطعم للتحقق من موقع طيار التوصيل. سنوافيك بالتحديث فوراً خلال لحظات! 🛵✨`;\n\n  return [{\n    json: {\n      can_track: true,\n      diff_minutes: diffInMinutes,\n      order_id: orderId,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      order_status: orderStatus,\n      reply_message: trueCustomerMessage\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        816
+      ],
+      "id": "2a23c058-cc38-48e9-bcf8-5825c52e16bb",
+      "name": "Track Code"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.reply_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        944
+      ],
+      "id": "cf257bdc-52d1-4837-99f8-6c17d3aad86a",
+      "name": "Alert message to customer",
+      "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst chatId = String($('Prepare Input').item.json.chat_id);\nconst mine = rows.filter(r => String(r.Chat_ID) === chatId);\nconst original = $('Prepare Input').item.json;\n\nif (mine.length === 0) {\n  return [{ json: { ...original, message: { ...original.message, text: \"معنديش أوردر سابق مسجل باسمك، تحب تبدأ أوردر جديد؟ 😊\" } } }];\n}\nconst last = mine[mine.length - 1];\nreturn [{ json: { ...original, message: { ...original.message,\n  text: `عايز أطلب زي أوردري اللي فات بالظبط: ${last.Ordered_Items}. من فضلك أكدّي التفاصيل والسعر.`\n} } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        1296
+      ],
+      "id": "9d3cdcf8-554e-405c-a1dc-eb4907aa8d01",
+      "name": "Build Repeat Prompt"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M",
+          "mode": "list",
+          "cachedResultName": "krokett restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "orders ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Chat_ID",
+              "lookupValue": "={{ $('Prepare Input').item.json.chat_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        1296
+      ],
+      "id": "30647918-0ecf-4424-a788-ae7a713796b0",
+      "name": "Get Orders (Repeat)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xLoX96m4vf9HKrVB",
+          "name": "krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -1328,
+        1616
+      ],
+      "id": "2a7d9043-c389-4541-866b-cdd3538276fb",
+      "name": "Callback Trigger",
+      "webhookId": "bf495b69-65f3-49ac-a1ec-ae504c7adc0f",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.customer_chat_id }}",
+        "text": "={{ $json.customer_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        1616
+      ],
+      "id": "af57619a-9583-41bf-8044-8a7260af4d85",
+      "name": "Track Message",
+      "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const callbackData = $input.first().json.callback_query?.data || $('Callback Trigger').item.json.callback_query.data || \"\";\nconst parts = callbackData.split('|');\n\nif (parts[0] !== 'status') return [];\n\nreturn [{\n  json: {\n    order_id: parts[1],\n    customer_chat_id: parts[2],\n    new_status: parts[3],\n    customer_message: `🔔 تحديث جديد بخصوص طلبك رقم #${parts[1]}:\\nحالة الأوردر الآن: ${parts[3]} 🚀`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        1616
+      ],
+      "id": "d0d43adc-3382-4d5a-9852-2dbf21f5448b",
+      "name": "Track Status"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Trigger\n",
+        "height": 1040,
+        "width": 1008,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        832
+      ],
+      "id": "505624e0-dddd-4288-a10e-8c52d9983693",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) قراءة مخرجات الـ AI Agent مباشرة بأمان تام\nlet rawText = \"\";\ntry {\n  const aiData = $('AI Agent').first().json;\n  rawText = aiData.output || aiData.text || aiData.message || (typeof aiData === 'string' ? aiData : JSON.stringify(aiData));\n} catch (e) {\n  rawText = $input.first().json.output || $input.first().json.text || \"\";\n}\n\nlet isOrder = false;\nlet customerName = \"غير محدد\";\nlet phoneNumber = \"غير محدد\";\nlet deliveryAddress = \"غير محدد\";\nlet orderedItems = \"غير محدد\";\nlet subtotalPrice = 0;\nlet paymentMethod = \"كاش\";\nlet replyMessage = \"\";\n\n// 2) تفكيك الـ JSON القادم من الـ AI Agent\nlet parsed = null;\ntry {\n  let cleaned = rawText.replace(/```json|```/g, \"\").trim();\n  const jsonMatch = cleaned.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    parsed = JSON.parse(jsonMatch[0]);\n  }\n} catch (e) {\n  parsed = null;\n}\n\n// 3) تحديد نوع الرد\nif (parsed) {\n  isOrder = parsed.is_order === true;\n  replyMessage = parsed.reply_message || \"\";\n  \n  if (isOrder) {\n    customerName = parsed.customer_name || customerName;\n    phoneNumber = parsed.phone_number || phoneNumber;\n    deliveryAddress = parsed.delivery_address || deliveryAddress;\n    orderedItems = parsed.ordered_items || orderedItems;\n    paymentMethod = parsed.payment_method || paymentMethod;\n    \n    // total_price يمثل المجموع الفرعي للأصناف فقط من الـ AI\n    subtotalPrice = Number(parsed.total_price) || 0;\n  }\n} else {\n  replyMessage = rawText;\n}\n\n// تنظيف الـ reply_message من رموز \\n النصية\nreplyMessage = replyMessage\n  .replace(/\\\\n/g, '\\n')\n  .replace(/\\\\\"/g, '\"')\n  .replace(/\\\\/g, '')\n  .trim();\n\n// ==========================================\n// حالة 1: الرد عادي (شات / استفسار / لم يكتمل الأوردر)\n// ==========================================\nif (!isOrder) {\n  return [{\n    json: {\n      is_order: false,\n      reply_message: replyMessage\n    }\n  }];\n}\n\n// ==========================================\n// حالة 2: أوردر مكتمل ومؤكد (is_order: true)\n// ==========================================\nconst chatId = $('Prepare Input').item.json.chat_id;\n\n// 4) حساب أحدث رقم أوردر شامل للمطعم ككل (من نود Get Last Order)\nlet nextOrderNumber = 1;\n\ntry {\n  // يقرأ كافة الأوردرات القادمة من الجوجل شيت لجميع العملاء\n  const allOrders = $('Get Last Order').all();\n  \n  if (allOrders && allOrders.length > 0) {\n    // جلب آخر صف متسجل في الشيت\n    const lastRow = allOrders[allOrders.length - 1].json;\n    const lastOrderId = lastRow.order_id || lastRow[\"Order_ID\"] || lastRow[\"Order ID\"] || \"\";\n    \n    // استخراج أرقام الأوردر (مثلاً من ONL-15 يخرج 15)\n    const matchNum = String(lastOrderId).match(/\\d+/);\n    if (matchNum) {\n      nextOrderNumber = parseInt(matchNum[0], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (e) {\n  nextOrderNumber = 1;\n}\n\nconst orderId = `ONL-${nextOrderNumber}`;\n\n// 5) الحسابات المالية الواضحة (سعر الأصناف + التوصيل مرة واحدة فقط)\nconst deliveryFee = 35; // رسوم التوصيل الثابتة\nconst grandTotal = subtotalPrice + deliveryFee; // المجموع الكلي النهائي\nconst dateTime = new Date().toLocaleString(\"ar-EG\", { timeZone: \"Africa/Cairo\" });\n\n// 6) تجهيز رسالة تأكيد الأوردر المنسقة للعميل\nconst finalOrderMessage = \n`🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\n\nرقم الأوردر: ${orderId}\n----------------------------------------\n📋 تفاصيل الطلب:\n${orderedItems}\n\n👤 الاسم: ${customerName}\n📞 رقم التواصل: ${phoneNumber}\n📍 عنوان التوصيل: ${deliveryAddress}\n💳 طريقة الدفع: ${paymentMethod}\n----------------------------------------\n💵 سعر الأصناف: ${subtotalPrice} ج.م\n🚚 التوصيل: ${deliveryFee} ج.م\n💰 الإجمالي النهائي: ${grandTotal} ج.م\n\nجاري تحضير الأوردر الآن في المطبخ ليصلك سخن وطازة! 🚀\nشكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️`;\n\nreturn [{\n  json: {\n    is_order: true,\n    order_type: \"Online Order\",\n    order_id: orderId,\n    date_time: dateTime,\n    chat_id: chatId,\n    customer_name: customerName,\n    phone_number: phoneNumber,\n    delivery_address: deliveryAddress,\n    ordered_items: orderedItems,\n    subtotal: subtotalPrice,\n    delivery_fee: deliveryFee,\n    grand_total: grandTotal,\n    payment_method: paymentMethod,\n    order_status: \"قيد التحضير\",\n    reply_message: finalOrderMessage\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        928
+      ],
+      "id": "9746041f-ad1b-42d5-82a2-39b7a70a07a1",
+      "name": "Get Order Details"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M",
+          "mode": "list",
+          "cachedResultName": "krokett restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "orders ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yiFukYCu0tsgXclTFQmxdXOYlWs1D4icIW2DikwdW0M/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order_ID": "={{ $json.order_id }}",
+            "Date_Time": "={{ $json.date_time }}",
+            "Customer_Name": "={{ $json.customer_name }}",
+            "Phone_Number": "={{ $json.phone_number }}",
+            "Delivery_Address": "={{ $json.delivery_address }}",
+            "Ordered_Items": "={{ $json.ordered_items }}",
+            "Total_Price": "={{ $json.grand_total }}",
+            "Payment_Method": "={{ $json.payment_method }}",
+            "Order_Type": "={{ $json.order_type }}",
+            "Chat_ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Order_ID",
+              "displayName": "Order_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chat_ID",
+              "displayName": "Chat_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order_Type",
+              "displayName": "Order_Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date_Time",
+              "displayName": "Date_Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer_Name",
+              "displayName": "Customer_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone_Number",
+              "displayName": "Phone_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Delivery_Address",
+              "displayName": "Delivery_Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ordered_Items",
+              "displayName": "Ordered_Items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total_Price",
+              "displayName": "Total_Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Payment_Method",
+              "displayName": "Payment_Method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3104,
+        704
+      ],
+      "id": "0d95ed7e-e7a1-4f0c-8649-7ca4e12f6d03",
+      "name": "Append Orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xLoX96m4vf9HKrVB",
+          "name": "krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b8cb40c1-c88a-4c0f-a06a-0984becdd2bd",
+              "leftValue": "={{ $json.is_order }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2832,
+        928
+      ],
+      "id": "d732d59b-5966-4391-bf61-c36217469b98",
+      "name": "Order Complete?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}",
+        "text": "={{ $json.reply_message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3104,
+        1120
+      ],
+      "id": "cfeeadc8-c485-4737-b2fe-9d3c11a641ae",
+      "name": "Continue Chat",
+      "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "279688324",
+        "text": "=رقم الاوردر : {{ $json.Order_ID }}\n\n👤 العميل: {{ $json.Customer_Name }}\n📞 الهاتف: {{ $json.Phone_Number }}\n📍 العنوان/الفرع: {{ $json.Delivery_Address }}\n💳 طريقة الدفع: {{ $json.Payment_Method }}\n\n🛒 الطلبات:\n{{ $json.Ordered_Items }}\n\n💵 سعر الأصناف: {{ $('Get Order Details').item.json.subtotal }} ج.م\n🚚 التوصيل: {{ $('Get Order Details').item.json.delivery_fee }} ج.م\n💰 الإجمالي: {{ $('Get Order Details').item.json.grand_total }} ج.م",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3344,
+        704
+      ],
+      "id": "020aba27-7950-40fa-8053-0e03c9d74182",
+      "name": "Notify Krokett",
+      "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Input').item.json.chat_id }}",
+        "text": "=🎉تم تأكيد طلبك بنجاح من مطعم كوركيت🥩✨\n\nرقم الأوردر: {{ $('Append Orders').item.json.Order_ID }}\n----------------------------------\n📋 تفاصيل الطلب:\n{{ $('Append Orders').item.json.Ordered_Items }}\n\n👤 الاسم: {{ $('Append Orders').item.json.Customer_Name }}\n📞 رقم التواصل: {{ $('Append Orders').item.json.Phone_Number }}\n📍 عنوان التوصيل: {{ $('Append Orders').item.json.Delivery_Address }}\n💳 طريقة الدفع: {{ $('Append Orders').item.json.Payment_Method }}\n----------------------------------\n💵 سعر الأصناف: {{ $('Get Order Details').item.json.subtotal }} ج.م\n🚚 التوصيل: {{ $('Get Order Details').item.json.delivery_fee }} ج.م\n💰 الإجمالي: {{ $('Get Order Details').item.json.grand_total }} ج.م\n\nجاري تحضير الأوردر الآن في المطبخ ليصلك سخن وطازة! 🚀\nشكراً لاختيارك **كوركيت** وبالهناء والشفاء! ❤️",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "قيمنا ",
+                    "additionalFields": {}
+                  },
+                  {
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "تتبع الاوردر ",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "طلب اخر ",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3552,
+        704
+      ],
+      "id": "03a38cc1-c498-4820-a539-435ae2710251",
+      "name": "Notify Customer",
+      "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Get Last Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Input": {
+      "main": [
+        [
+          {
+            "node": "Route: Voice Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Voice Message?": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route: Start Command?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Transcribed Text": {
+      "main": [
+        []
+      ]
+    },
+    "Route: Start Command?": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route: Track Order?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Track Order?": {
+      "main": [
+        [
+          {
+            "node": "Get Orders (Track)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route: Repeat Order?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Orders (Track)": {
+      "main": [
+        [
+          {
+            "node": "Track Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Repeat Order?": {
+      "main": [
+        [
+          {
+            "node": "Get Orders (Repeat)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route: Rating?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Rating?": {
+      "main": [
+        [
+          {
+            "node": "Append Rating",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Typing Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Rating": {
+      "main": [
+        [
+          {
+            "node": "Thank You Rating",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Typing Action": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File": {
+      "main": [
+        [
+          {
+            "node": "Merge Transcribed Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask For Rating": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Ask For Rating",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last Order": {
+      "main": [
+        [
+          {
+            "node": "Get Order Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "can track ?": {
+      "main": [
+        [
+          {
+            "node": "Track message to customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert message to customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback": {
+      "main": [
+        [
+          {
+            "node": "Track Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track message to customer": {
+      "main": [
+        [
+          {
+            "node": "Track message to krokett",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Code": {
+      "main": [
+        [
+          {
+            "node": "can track ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Repeat Prompt": {
+      "main": [
+        [
+          {
+            "node": "Send Typing Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Orders (Repeat)": {
+      "main": [
+        [
+          {
+            "node": "Build Repeat Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback Trigger": {
+      "main": [
+        [
+          {
+            "node": "Answer Query a callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Status": {
+      "main": [
+        [
+          {
+            "node": "Track Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Order Details": {
+      "main": [
+        [
+          {
+            "node": "Order Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Orders": {
+      "main": [
+        [
+          {
+            "node": "Notify Krokett",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Complete?": {
+      "main": [
+        [
+          {
+            "node": "Append Orders",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Continue Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Krokett": {
+      "main": [
+        [
+          {
+            "node": "Notify Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Customer": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "36205dd0-4d22-4234-a1ee-7c16de965fb4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "nodeGroups": [
+    {
+      "id": "500975f4-b2e0-4e8e-bce3-fe124036a971",
+      "name": "Message Routing",
+      "nodeIds": [
+        "3893f331-5331-4d58-bad1-8577d4b6acc8",
+        "aad370d8-9864-43b7-a87a-659aa44f568b",
+        "2dd07d7e-612a-4d08-9b51-794f6c17bea0",
+        "7edccd3e-cda1-4c10-a3c0-2d1cc712c44b",
+        "0f9f7391-b63e-49cd-964a-b2b34f9596a5",
+        "2034b304-c2fb-4714-aaf1-68e40c782641",
+        "2cfc56ca-8a81-4f3f-b016-f3718fcad3c4",
+        "fb37c425-59ab-4a56-8a15-1689150c14ee",
+        "2852a42b-caf6-4bc0-9426-be6d8c6d975a",
+        "a1c9ac5e-d3ac-45c6-8b3e-7fddf739ded4",
+        "77194920-8b6d-4fd5-bf98-3fa1776ed0fa",
+        "ed66cfbf-0145-4bfb-8325-6448f78d8972",
+        "2a23c058-cc38-48e9-bcf8-5825c52e16bb",
+        "cf257bdc-52d1-4837-99f8-6c17d3aad86a",
+        "9d3cdcf8-554e-405c-a1dc-eb4907aa8d01",
+        "30647918-0ecf-4424-a788-ae7a713796b0"
+      ],
+      "description": "فحص رسالة العميل  وتوجيهها للمسار الصحيح سواء تتبع الطلب او تكرار اخر طلب او طلب جديد"
+    },
+    {
+      "id": "d05d35fe-0f2f-4cd2-a8a8-7cabf5afe12d",
+      "name": "Order Processing & AI",
+      "nodeIds": [
+        "cc9bfe06-f6c7-4f34-b478-4e6d14308de3",
+        "c05cbb53-efd1-40dd-ae1e-a891ba7507ab",
+        "22039b75-a0f7-436b-88d9-4fd88061a983",
+        "85fd0186-7e83-4133-8923-c9c335bc8bad",
+        "b020a23c-ad12-4a1b-a253-c391388db43d",
+        "f1fc8b17-c98c-4eda-9b16-eaf9c543f597",
+        "9257a75c-a37c-4259-a44f-9543cbc08c38",
+        "1f94db1f-4b4b-43bd-bb94-f4a1ecbb5f9a",
+        "9746041f-ad1b-42d5-82a2-39b7a70a07a1",
+        "d732d59b-5966-4391-bf61-c36217469b98"
+      ]
+    },
+    {
+      "id": "c59897dc-bdb4-46ec-85b2-0ad064dbbe4e",
+      "name": "Message Confirmation",
+      "nodeIds": [
+        "78ec3d1c-a0b4-48ff-a396-e0cde4453fd4",
+        "ad783d46-6e8e-4edf-8968-9891aaef8c7f",
+        "0d95ed7e-e7a1-4f0c-8649-7ca4e12f6d03",
+        "020aba27-7950-40fa-8053-0e03c9d74182",
+        "03a38cc1-c498-4820-a539-435ae2710251"
+      ]
+    }
+  ],
+  "id": "1gPQ6nWLaLzgrZJc",
+  "tags": []
+}
