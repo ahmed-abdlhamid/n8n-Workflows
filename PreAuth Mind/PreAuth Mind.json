@@ -22,8 +22,8 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.4,
       "position": [
-        -480,
-        1280
+        -800,
+        1264
       ],
       "id": "751e1312-a8ed-4915-963b-9dd3a4a053c5",
       "name": "Gmail Trigger",
@@ -41,8 +41,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1952,
-        272
+        752,
+        224
       ],
       "id": "554cc04f-9c2d-49fb-8860-182299b33c7e",
       "name": "Code in JavaScript",
@@ -53,8 +53,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        1184,
-        400
+        -16,
+        352
       ],
       "id": "b55cea82-b3ed-43f5-b4d5-9406bf316366",
       "name": "When clicking ‘Execute workflow’"
@@ -70,8 +70,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        1184,
-        144
+        -16,
+        96
       ],
       "id": "ea74f346-a957-49fd-b197-0a6e7dab8a10",
       "name": "Schedule Trigger"
@@ -93,8 +93,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1472,
-        144
+        272,
+        96
       ],
       "id": "d626c1d1-e53a-4436-86ce-e98ad291961b",
       "name": "Search files and folders",
@@ -129,8 +129,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1488,
-        400
+        288,
+        352
       ],
       "id": "1852d253-dbc6-4ce9-8268-9f082bb09514",
       "name": "Get row(s) in sheet",
@@ -160,8 +160,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1760,
-        272
+        560,
+        224
       ],
       "id": "ac53b862-6aff-4333-94cd-b66276f7d0cb",
       "name": "Merge",
@@ -180,8 +180,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        2512,
-        272
+        1360,
+        224
       ],
       "id": "17255899-92da-45b8-98b7-23f9a4f3251c",
       "name": "Download file",
@@ -210,8 +210,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        3232,
-        576
+        2032,
+        528
       ],
       "id": "7ce8e194-14e2-4ec9-89e2-21515a28a3f7",
       "name": "Default Data Loader"
@@ -224,8 +224,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        3072,
-        576
+        1872,
+        528
       ],
       "id": "1738fe9c-9494-475e-b0dc-ae602ccef8c6",
       "name": "Embeddings HuggingFace Inference",
@@ -243,8 +243,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2816,
-        272
+        1616,
+        224
       ],
       "id": "781c8c3e-774c-4c41-84dc-0fc9c6a310b5",
       "name": "Loop Over Items"
@@ -266,8 +266,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        3104,
-        288
+        1904,
+        240
       ],
       "id": "a2a2ea00-7d40-42e3-9c97-ac4a8bea5819",
       "name": "Pinecone Vector Store1",
@@ -301,8 +301,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2336,
-        272
+        1168,
+        224
       ],
       "id": "ccfc0cbd-6cc4-468a-beaf-bfd879ad0fc6",
       "name": "Set",
@@ -364,8 +364,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2144,
-        272
+        960,
+        224
       ],
       "id": "b644013d-26e6-4edc-842a-29ea2c23e6cd",
       "name": "Append or update row in sheet",
@@ -385,8 +385,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        1792,
-        1248
+        1168,
+        1232
       ],
       "id": "0756b735-49a0-4ad6-8d9c-b243179f81e5",
       "name": "Google Gemini Chat Model",
@@ -405,8 +405,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        2336,
-        1488
+        1680,
+        1392
       ],
       "id": "9662afd5-97b7-4b04-b25a-003fbb64cbfe",
       "name": "Google Gemini Chat Model1",
@@ -430,8 +430,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        1904,
-        1456
+        1296,
+        1392
       ],
       "id": "84b68136-be92-4aa5-8032-a29428a5206c",
       "name": "Pinecone Vector Store",
@@ -450,8 +450,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        1728,
-        1584
+        1296,
+        1536
       ],
       "id": "376c1c3c-9d55-46bf-b350-d5963c2d86af",
       "name": "Embeddings HuggingFace Inference1",
@@ -469,8 +469,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
       "typeVersion": 1.1,
       "position": [
-        2128,
-        1248
+        1504,
+        1232
       ],
       "id": "98d373f1-7b8a-46ba-b609-eec1ba87983f",
       "name": "medical_authorization_rules"
@@ -486,8 +486,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        2064,
-        1008
+        1440,
+        992
       ],
       "id": "9b45b269-d7af-4e7e-83f4-4a8a9a87f162",
       "name": "The Auditor"
@@ -499,8 +499,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2624,
-        1232
+        2000,
+        1216
       ],
       "id": "3e19c97c-2ecb-4718-9d39-de912bd39c23",
       "name": "Prepare Data"
@@ -512,8 +512,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -272,
-        1280
+        -640,
+        1264
       ],
       "id": "cdc7a92f-0109-4fde-bc9e-988c0a4500f9",
       "name": "Binary File"
@@ -545,8 +545,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        3184,
-        1232
+        2464,
+        1120
       ],
       "id": "450ec17e-4443-439d-990d-111c5e818137",
       "name": "IF - Needs Human Review"
@@ -562,8 +562,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.1,
       "position": [
-        1248,
-        2208
+        -784,
+        1680
       ],
       "id": "659e7693-86ec-49cc-b25f-ab094a61096a",
       "name": "Telegram Reviewer Response",
@@ -584,8 +584,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1504,
-        2208
+        -128,
+        2000
       ],
       "id": "cc91f14d-9507-4bcd-800d-5aaf83af1cfc",
       "name": "Acknowledge Button",
@@ -604,8 +604,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1776,
-        2208
+        80,
+        2000
       ],
       "id": "565eefa0-87ed-4765-8d25-ca8e1cdfeeaa",
       "name": "Parse Callback Action"
@@ -720,8 +720,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        2016,
-        2176
+        288,
+        1968
       ],
       "id": "666ed595-a44f-4ffc-95ae-1f0f334b6cf0",
       "name": "Switch - Action Type"
@@ -752,8 +752,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2512,
-        2416
+        496,
+        2160
       ],
       "id": "bb937739-ae0b-4bfe-a5d0-af4ea6d485e4",
       "name": "Ask Reviewer To Edit In Sheet",
@@ -772,8 +772,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2848,
-        2208
+        752,
+        1856
       ],
       "id": "bb7ec87a-5613-42c7-a804-43baa89a7c9f",
       "name": "Prepare Human Decision Update"
@@ -930,8 +930,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3104,
-        2208
+        992,
+        1856
       ],
       "id": "5ad32451-d78d-4ffb-818c-c965a40e5064",
       "name": "Update Sheet - Human Decision",
@@ -1025,8 +1025,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3472,
-        1440
+        2704,
+        1344
       ],
       "id": "53e7805a-0a87-4f53-a1c7-cb72f7c1c2e0",
       "name": "Set - Normalize Case Data"
@@ -1038,8 +1038,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3648,
-        1216
+        2880,
+        1344
       ],
       "id": "2f9a99d2-4cd2-42dd-bc87-81dd4955b283",
       "name": "Generate HTML Template"
@@ -1064,8 +1064,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        4160,
-        1440
+        3296,
+        1520
       ],
       "id": "c7c51fa1-278f-4cea-96d8-de7228f4a842",
       "name": "Reply to a message",
@@ -1106,8 +1106,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3808,
-        1440
+        3056,
+        1344
       ],
       "id": "aa250b2f-b18d-4045-b3e1-a6f377ee43b3",
       "name": "Convert HTML to PDF"
@@ -1119,8 +1119,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -32,
-        1280
+        -448,
+        1264
       ],
       "id": "a645466e-db13-42ff-bd41-6ff4be165cd7",
       "name": "Loop Over Items1"
@@ -1133,8 +1133,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        4656,
-        1600
+        3664,
+        1504
       ],
       "id": "afa73b27-3a29-4a59-929b-0e38bcb46f8f",
       "name": "Wait",
@@ -1142,82 +1142,35 @@
     },
     {
       "parameters": {
-        "content": "## Vector \nDatabase ",
-        "height": 736,
-        "width": 2496
+        "content": "## Knowledge Base\n (RAG Ingestion)",
+        "height": 704,
+        "width": 2496,
+        "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1024,
-        48
+        -176,
+        0
       ],
       "id": "8d8b4a41-9483-43a3-8281-a9ab544cabef",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "content": "## The Extractor ",
-        "height": 944,
-        "width": 2080,
+        "content": "## Trigger\n",
+        "height": 720,
+        "width": 656,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -576,
-        896
+        -880,
+        1168
       ],
       "id": "da64eca8-5807-479e-86a9-d5cd79aef0f8",
       "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
-        "content": "## The Auditor\n",
-        "height": 944,
-        "width": 1232,
-        "color": 3
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1584,
-        896
-      ],
-      "id": "275132fe-8ea9-4f45-bc77-58e008e3b787",
-      "name": "Sticky Note2"
-    },
-    {
-      "parameters": {
-        "content": "## Generate \nApproval\n\n\n",
-        "height": 944,
-        "width": 1920,
-        "color": "#BDFFBE"
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        2896,
-        896
-      ],
-      "id": "a7cc3fd8-05b5-4cc0-ae77-f430605dc6ce",
-      "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
-        "content": "## Telegram\n   inline keyword\n",
-        "height": 800,
-        "width": 2176,
-        "color": "#89CFFB"
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        1888
-      ],
-      "id": "ca8dc2d3-cbda-4d9b-a425-acd17550eded",
-      "name": "Sticky Note5"
     },
     {
       "parameters": {
@@ -1248,8 +1201,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2512,
-        1968
+        496,
+        1856
       ],
       "id": "b81848d4-c580-4bb5-8dea-dacba7825abd",
       "name": "Get Case Row By Message Id",
@@ -1300,8 +1253,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3488,
-        960
+        2704,
+        928
       ],
       "id": "c6525912-b8b6-4d38-9bf3-65ebcb0bd8b5",
       "name": "Notify Medical Reviewer (Telegram)",
@@ -1342,7 +1295,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        768,
+        464,
         1280
       ],
       "id": "2eb5f193-d0a4-4b79-a843-877bd9462ee6",
@@ -1377,7 +1330,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        368,
+        64,
         1280
       ],
       "id": "ad63f849-1dbb-4b91-9b53-c85477bd0f92",
@@ -1397,8 +1350,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        560,
-        1520
+        256,
+        1280
       ],
       "id": "6651f4c0-d548-40a5-8a8c-66b273be854c",
       "name": "Match Filter"
@@ -1421,8 +1374,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1216,
-        1008
+        880,
+        1120
       ],
       "id": "53d04350-a18a-4a0c-b120-9e1ad8b26e95",
       "name": "Send previous approval ",
@@ -1455,8 +1408,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        3968,
-        1216
+        3280,
+        1168
       ],
       "id": "815b4fea-b22c-4760-b14c-72e464353e54",
       "name": "Upload file",
@@ -1476,8 +1429,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        4480,
-        1344
+        3504,
+        1504
       ],
       "id": "d290f3c4-69e7-45bd-9240-c7541211a4f7",
       "name": "Merge1"
@@ -1495,8 +1448,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        976,
-        1008
+        672,
+        1120
       ],
       "id": "df4647a5-fc96-40ee-a379-8a9dc1eccd81",
       "name": "Download Previous Approval",
@@ -1524,8 +1477,8 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        1216,
-        1296
+        688,
+        1408
       ],
       "id": "369cc920-b582-4dc8-85e1-f33560e5ae6c",
       "name": "Extract All Data",
@@ -1703,8 +1656,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        4160,
-        1216
+        3488,
+        1168
       ],
       "id": "50df311a-5b8f-4698-9640-8a7dd9270274",
       "name": "Update Drive Id",
@@ -1869,8 +1822,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2992,
-        1232
+        2272,
+        1120
       ],
       "id": "dca92416-70be-4a0f-b0d2-3cac42b1b46b",
       "name": "Record Details",
@@ -1898,8 +1851,8 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        176,
-        1504
+        -128,
+        1280
       ],
       "id": "de8b4687-a997-4acf-bc3a-63847ca7c9a2",
       "name": "Extract National Id ",
@@ -1909,6 +1862,22 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "## Generate Approval \n\n",
+        "height": 848,
+        "width": 1584,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        864
+      ],
+      "id": "e54df720-0cb5-4c45-a844-c4d58cd7dda3",
+      "name": "Sticky Note2"
     }
   ],
   "pinData": {},
@@ -2482,11 +2451,52 @@
     "availableInMCP": false,
     "saveManualExecutions": true
   },
-  "versionId": "d01c2b4d-1f1b-44c0-bf32-30b8716c7387",
+  "versionId": "2fb77653-976d-43af-a5f9-8e10524368ee",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
   },
+  "nodeGroups": [
+    {
+      "id": "c8fcd745-7c51-4a47-ab55-6d3365422b99",
+      "name": "Human Review",
+      "nodeIds": [
+        "cc91f14d-9507-4bcd-800d-5aaf83af1cfc",
+        "565eefa0-87ed-4765-8d25-ca8e1cdfeeaa",
+        "666ed595-a44f-4ffc-95ae-1f0f334b6cf0",
+        "bb937739-ae0b-4bfe-a5d0-af4ea6d485e4",
+        "bb7ec87a-5613-42c7-a804-43baa89a7c9f",
+        "5ad32451-d78d-4ffb-818c-c965a40e5064",
+        "b81848d4-c580-4bb5-8dea-dacba7825abd"
+      ]
+    },
+    {
+      "id": "4be42885-34af-400b-881d-a79c19a4d32b",
+      "name": "Extract Data",
+      "nodeIds": [
+        "2eb5f193-d0a4-4b79-a843-877bd9462ee6",
+        "ad63f849-1dbb-4b91-9b53-c85477bd0f92",
+        "6651f4c0-d548-40a5-8a8c-66b273be854c",
+        "53d04350-a18a-4a0c-b120-9e1ad8b26e95",
+        "df4647a5-fc96-40ee-a379-8a9dc1eccd81",
+        "369cc920-b582-4dc8-85e1-f33560e5ae6c",
+        "de8b4687-a997-4acf-bc3a-63847ca7c9a2"
+      ]
+    },
+    {
+      "id": "b2dbbb0c-ab27-4578-8006-94cba05ee44c",
+      "name": "AI Auditor",
+      "nodeIds": [
+        "0756b735-49a0-4ad6-8d9c-b243179f81e5",
+        "9662afd5-97b7-4b04-b25a-003fbb64cbfe",
+        "84b68136-be92-4aa5-8032-a29428a5206c",
+        "376c1c3c-9d55-46bf-b350-d5963c2d86af",
+        "98d373f1-7b8a-46ba-b609-eec1ba87983f",
+        "9b45b269-d7af-4e7e-83f4-4a8a9a87f162",
+        "3e19c97c-2ecb-4718-9d39-de912bd39c23"
+      ]
+    }
+  ],
   "id": "OrqkwM0fTLjlysg3",
   "tags": [
     {
