@@ -1,0 +1,829 @@
+{
+  "name": "Elite Dental Clinic",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        448
+      ],
+      "id": "1422e674-1e0c-4f07-b93f-a9d5be8991c5",
+      "name": "Telegram Trigger",
+      "webhookId": "cdd08627-7299-4b9a-811d-4562bc648b27",
+      "credentials": {
+        "telegramApi": {
+          "id": "ahemrqaCGZw5PTln",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -656,
+        -368
+      ],
+      "id": "55c3df17-83b4-4696-a730-ac3fd2daf3eb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1ROeDTh6t07MSNJdH74zfYemQEvz7a1hP",
+            "mode": "list",
+            "cachedResultName": "elite dental clinic",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1ROeDTh6t07MSNJdH74zfYemQEvz7a1hP"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -464,
+        -368
+      ],
+      "id": "62e0d199-e04c-497b-839c-4ec87fa7cfcc",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "nmlf5Q7JKoHqRUVq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -128
+      ],
+      "id": "c1362ebe-0f21-40a7-9212-738fe4d6e69c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg",
+          "mode": "list",
+          "cachedResultName": "Elite Dental Clinic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        -128
+      ],
+      "id": "06daaf97-df4c-45b0-9c6d-8fc8852796d3",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBit23hgmAhkOARS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78c83b34-160b-4314-9f22-01266b36b145",
+              "name": "name",
+              "value": "={{ $('Code in JavaScript').item.json.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "cc23dd75-da2f-4829-b728-f8f5d5728a89",
+              "name": "id",
+              "value": "={{ $('Code in JavaScript').item.json.fileId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        -240
+      ],
+      "id": "bd85c523-b066-49e7-bb66-498c51972a5e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ✅ Get ALL incoming data as one flat array\nconst allInputs = $input.all(); \n\n// Separate Drive files vs Sheet rows by their structure\nconst driveInput = [];\nconst sheetInput = [];\n\n// Loop through all incoming items and detect source\nfor (const item of allInputs) {\n  const data = item.json;\n  \n  // Drive files have `id` + `name`\n  if (data.id && data.name) {\n    driveInput.push(data);\n  }\n  \n  // Sheet rows have `ID` + `Name`\n  if (data.ID || data.Name) {\n    sheetInput.push(data);\n  }\n}\n\n// ✅ Extract already processed IDs from sheet\nconst processedIds = sheetInput\n  .filter(row => row.ID && row.ID !== \"\")\n  .map(row => row.ID);\n\n// ✅ Filter only NEW files not in sheet\nconst newFiles = driveInput.filter(f => !processedIds.includes(f.id));\n\n// ✅ Debug info\nconsole.log(`Drive files found: ${driveInput.length}`);\nconsole.log(`Sheet rows found: ${sheetInput.length}`);\nconsole.log(`Already processed IDs: ${processedIds.length}`);\nconsole.log(`New files to download: ${newFiles.length}`);\n\n// ✅ Output only the new ones\nreturn newFiles.map(f => ({\n  json: {\n    fileId: f.id,\n    fileName: f.name\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -240
+      ],
+      "id": "0e08f12e-2842-4a1d-ba87-13ae13818876",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "id",
+              "field2": "Id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -224,
+        -240
+      ],
+      "id": "2cc13706-f627-4445-b282-ce78ca0d8e74",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg",
+          "mode": "list",
+          "cachedResultName": "Elite Dental Clinic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16F2jsI-OrC9W5yLK30BWqcmNESE8UgxHJD__x0ajCfg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.fileName }}",
+            "Id": "={{ $json.fileId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        -240
+      ],
+      "id": "67248951-f091-48db-8569-8ae98e70953a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBit23hgmAhkOARS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "elite-dental-clinic",
+          "mode": "list",
+          "cachedResultName": "elite-dental-clinic"
+        },
+        "embeddingBatchSize": 1,
+        "options": {
+          "pineconeNamespace": "={{ $json.name }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1360,
+        -480
+      ],
+      "id": "107aa8ca-0d35-4253-bc87-29e92fb6007f",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "={{ $('Loop Over Items').item.json.name }}",
+                "value": "={{ $('Loop Over Items').item.json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        -160
+      ],
+      "id": "7c2323a9-7f25-48e7-bb0a-1156beb673d0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -144
+      ],
+      "id": "2a14c39d-ee6e-4f99-b81f-00f9a4013131",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        -240
+      ],
+      "id": "2d7c86ca-ad29-4ed6-a000-31a3153db4b5",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        32
+      ],
+      "id": "d0163630-e94b-41b8-9f4d-8014f4e68197",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search files and folders').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "fileName": "={{ $json.name }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        528,
+        -240
+      ],
+      "id": "e669f3e6-a83d-4095-93d4-a9e47221c860",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "nmlf5Q7JKoHqRUVq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        736
+      ],
+      "id": "0b13606e-97e7-409c-bf88-599aede71b11",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1056
+      ],
+      "id": "a25a588d-e957-44c6-88dc-36195e511b40",
+      "name": "Embeddings HuggingFace Inference2",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        896
+      ],
+      "id": "af87eacc-589e-4264-ba1b-d6a3baada5ea",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# ROLE\nYou are a strict Medical AI Assistant for \"Elite Dental Clinic\" (عيادة إيليت لطب الأسنان). Your primary job is to answer user questions using ONLY the facts retrieved from the vector store tools.\n\n# MULTI-LANGUAGE NAMESPACE ROUTING\n- You have access to two namespaces: 'elite_dental_clinic_ar.md' (for Arabic) and 'elite_dental_clinic.md' (for English).\n- Based on the user's input language, you MUST call the vector store tool using the appropriate namespace.\n- DO NOT answer from your general knowledge. Always perform a lookup first.\n\n# STRICT CONSTRAINTS\n1. If the tool returns empty results, or the answer is NOT explicitly mentioned in the retrieved context, you MUST reply exactly with this fallback phrase:\n\"بعتذر لحضرتك جداً، المعلومة دي مش متوفرة عندي حالياً. تقدر تتواصل مع الفريق الطبي للعيادة مباشرة على الواتساب على رقم +201009998877 أو تشرفنا بالزيارة عشان نجاوبك بدقة.\"\n\n2. NEVER invent prices, doctor names, or services that are not in the context. If the data isn't there, trigger the fallback phrase above immediately.\n\n3. Whenever you discuss prices or treatments from the context, ALWAYS include this mandatory disclaimer:\n\"برجاء العلم إن الأسعار دي استرشادية وتقريبية، والتكلفة النهائية والخطة العلاجية الدقيقة بتتحدد بس بعد الكشف الإكلينيكي المباشر في العيادة مع الدكتور المعالج.\"\n\n4. Always conclude your response by inviting the user to book or chat via WhatsApp: +201009998877.\n\n# TONE & LANGUAGE\n- Reply in the same language as the user (Warm Egyptian Arabic for Arabic queries, polite professional English for English queries).\n- Be empathetic if the patient mentions pain (e.g., \"ألف سلامة عليك، إن شاء الله بسيطة\").\n\n# RESPONSE FORMAT\n[Greeting & Empathy] -> [Direct Answer derived ONLY from the retrieved tool context] -> [Mandatory Price/Medical Disclaimer] -> [Call to Action with WhatsApp +201009998877]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -240,
+        448
+      ],
+      "id": "f13b43f2-fae2-43cb-9e97-6c0dd2752c6f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "description": "This tool searches the Elite Dental Clinic knowledge base. It contains two distinct namespaces that MUST be selected dynamically based on the user's input language:\n- 'elite_dental_clinic_ar.md': Use this namespace ONLY when the user asks questions in Arabic regarding dental treatments, pricing, working hours, clinic location, or booking appointments.\n- 'elite_dental_clinic.md': Use this namespace ONLY when the user asks questions in English or requires general medical documentation in English."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        704
+      ],
+      "id": "a2cf2e6e-2cea-4749-9ea8-b3694769bba4",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "elite-dental-clinic",
+          "mode": "list",
+          "cachedResultName": "elite-dental-clinic"
+        },
+        "options": {
+          "pineconeNamespace": "={{ $node[\"Answer questions with a vector store\"].parameter[\"namespace\"] || \"elite_dental_clinic_ar.md\" }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        912
+      ],
+      "id": "4d1ab617-2c9f-43ba-94a6-37b48a9233c0",
+      "name": "Pinecone Vector Retrive",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        448
+      ],
+      "id": "4a586de2-4789-4f6d-8f21-9cd1d7414b30",
+      "name": "Send a text message",
+      "webhookId": "db2c7495-11b3-45e1-b5bd-390d6af9d57d",
+      "credentials": {
+        "telegramApi": {
+          "id": "ahemrqaCGZw5PTln",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "##  database\n",
+        "height": 768,
+        "width": 1504
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -496
+      ],
+      "id": "7196c4f5-c141-4067-9ebd-55537d689f02",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Upload To VD\n",
+        "height": 768,
+        "width": 1040,
+        "color": "#E4FBE6"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        816,
+        -496
+      ],
+      "id": "1d697942-75f8-40e9-980d-1e9c6c4e17b1",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Ai Agent\n\n",
+        "height": 848,
+        "width": 1280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        352
+      ],
+      "id": "f0c11c2b-85a1-4099-ab2c-e2570dd816c9",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Retrive",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Retrive": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f955cc3b-1bbb-4da0-954d-79d41700620e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "id": "xcfLkn0N0jaWTzm3",
+  "tags": [
+    {
+      "name": "Portfolio",
+      "id": "vjrjNSmhby2Ujgrx",
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z"
+    }
+  ]
+}

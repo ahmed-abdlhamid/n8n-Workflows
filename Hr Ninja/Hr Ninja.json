@@ -1,0 +1,2232 @@
+{
+  "name": "Hr Ninja (WhatsApp + Telegram)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -2240,
+        -624
+      ],
+      "id": "4b49928a-0cc5-4a59-a64e-bcd59a6e5835",
+      "name": "Telegram Trigger",
+      "webhookId": "b4bc8267-8009-413f-b1cb-17a1f87e881a",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Message }}",
+        "options": {
+          "systemMessage": "=You are a highly precise Human Resources Assistant (HR Assistant) for the Medical Center. Your primary duty is to check leave balances and handle leave/permission requests with 100% data accuracy.\n\nPRIMARY DATA SOURCE & TOOLS:\n- You MUST use the \"Search In Database\" tool to search for employee records using their National ID (الرقم القومي). Never invent or guess any numbers.\n\nCRITICAL RULES:\n- ZERO HALLUCINATIONS: Read exact values from the retrieved Google Sheets row only.\n- NAME FORMAT: When addressing the employee, extract and use ONLY their FIRST TWO NAMES from column \"الاسم\" (example: \"أسماء إبراهيم\").\n- MEMORY STRICT RULE: Once the National ID is validated, LOCK IT in memory for the rest of the conversation. NEVER ask for the National ID again during an active conversation under any circumstances!\n- COLUMN MAPPING:\n  * Full Name: \"الاسم\"\n  * National ID: \"الرقم القومي\"\n  * Remaining Regular Leave: read \"رصيد الاجازات المتبقي\"\n  * Used Emergency Leave: \"مستنفذ عارضة\" (Calculate remaining emergency as: 7 - \"مستنفذ عارضة\")\n  * Used Permissions: \"الاذونات\"\n\nWORKFLOW STEPS (FOLLOW IN EXACT ORDER):\n\nStep 1: Greeting & Identity Validation\n- If the employee sends a greeting or asks for a leave, politely ask for their National ID (الرقم القومي).\n- Use \"Search In Database\" to find the employee. If not found, inform them politely and stop.\n- Once found, greet them warmly by their FIRST TWO NAMES and state their remaining balances.\n\nStep 2: Leave Details Check\n- Ask for Leave Type (اعتيادي / عارضة / إذن) and requested amount if not already provided.\n- Compare requested amount with their remaining balance:\n  * For \"اعتيادي\": check \"رصيد الاجازات المتبقي\"\n  * For \"عارضة\": check (7 - \"مستنفذ عارضة\")\n  * For \"إذن\": check permission rules\n- If requested > remaining balance → decline politely and show remaining balance.\n- If balance is sufficient → IMMEDIATELY proceed to Step 3 without asking for any ID again.\n\nStep 3: Substitute Employee Request\n- Say warmly:\n  \"رصيدك يسمح بالطلب 🌸\n\nيرجى تزويدي باسم الموظف البديل لتأكيد الطلب.\"\n\nStep 4: Final Confirmation & Output Tag\n- As soon as the user replies with the substitute name (or any name), confirm the request warmly:\n\nأهلاً بك يا [الاسم الأول والثاني] 🌸\n\nتم رفع طلب إجازتك بنجاح، وإليك تفاصيل الطلب:\n\n• نوع الإجازة: [نوع الإجازة]\n\n• عدد الأيام: [الأيام] يوم\n\n• الموظف البديل: [اسم البديل]\n\nتم تحويل الطلب لمدير الموارد البشرية للمراجعة والاعتماد.\n\n- CRITICAL: At the VERY END of your response (after two line breaks), append this exact tag filled with ALL collected data:\n[LEAVE_REQUEST: {\"national_id\": \"EXACT_VALIDATED_NATIONAL_ID\", \"employee_name\": \"EXACT_EMPLOYEE_NAME\", \"leave_type\": \"EXACT_LEAVE_TYPE\", \"days\": EXACT_NUMBER, \"substitute\": \"EXACT_SUBSTITUTE_NAME\"}]\n\nFORMATTING & STYLING RULES:\n- Highly professional, warm, and friendly Arabic tone.\n- ALWAYS leave a full blank space/line between paragraphs and bullet points so the text is spacious and easy to read.\n- Do NOT use double asterisks (**). Use \"•\" for bullet points.\n- Use simple, friendly emojis (🌸, ✨, 🌿).\n\nIMPORTANT: Always use the 'Search In Database' tool to query the current live leave balance for the employee. Never rely on previous balance calculations or numbers mentioned in the conversation history."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -576,
+        -32
+      ],
+      "id": "52923473-2445-4db1-9c79-ddb4cb0767ea",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -656,
+        272
+      ],
+      "id": "cba856a6-3a61-45e3-a221-2eeb76a73415",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867094088,
+          "mode": "list",
+          "cachedResultName": "Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=1867094088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $json.request_id }}",
+            "national_id": "={{ $json.national_id }}",
+            "employee_name": "={{ $json.employee_name }}",
+            "leave_type": "={{ $json.leave_type }}",
+            "days": "={{ $json.days }}",
+            "substitute": "={{ $json.substitute }}",
+            "employee_chat_id": "={{ $json.employee_chat_id }}",
+            "status": "={{ $json.status }}",
+            "created_at": "={{ $json.created_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "employee_name",
+              "displayName": "employee_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "leave_type",
+              "displayName": "leave_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "days",
+              "displayName": "days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "substitute",
+              "displayName": "substitute",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "employee_chat_id",
+              "displayName": "employee_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        -336
+      ],
+      "id": "5c364c48-cbb6-4d3a-a76e-cd515c607382",
+      "name": "Pending Request",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "DATABSE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        272
+      ],
+      "id": "c821b4a2-e347-4b45-9c52-f28a54c56687",
+      "name": "Search In Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d33127d1-f62b-4a21-a78b-5674a1ef2ede",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -256,
+        -1408
+      ],
+      "id": "0d5f54ef-aa9d-466b-96d6-3c5af1fcd24f",
+      "name": "Is Pending ?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8df1691d-473a-49bd-aaed-db4dd7c69b77",
+              "leftValue": "={{ $('Get Hr Order').item.json.action }}",
+              "rightValue": "Approved",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        -1728
+      ],
+      "id": "07c74359-1380-48d6-bdd7-ddd7971816ee",
+      "name": "Is Approved ?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. قراءة البيانات المباشرة القادمة من Search Employee Balance\nconst dbRow = $input.first().json;\n\n// 2. قراءة بيانات طلب الإجازة المعلق\nconst pending = $('Get Pending Request').item.json;\n\nconst leaveType = String(pending.leave_type || \"\").trim();\nconst requestedDays = parseInt(pending.days || 0);\n\n// دالة جلب القيمة بغض النظر عن المسافات المخفية في أول وآخر النص\nfunction getValue(row, possibleNames) {\n  for (const name of possibleNames) {\n    for (const key in row) {\n      if (key.trim() === name.trim() || key.includes(name)) {\n        const val = parseInt(row[key]);\n        if (!isNaN(val)) return val;\n      }\n    }\n  }\n  return 0;\n}\n\n// 3. قراءة القيم القديمة من الشيت بدقة\nlet regularUsed = getValue(dbRow, [\"رصيد الاعتيادي المستهلك\", \"اعتيادي المستهلك\"]);\nlet regularRemaining = getValue(dbRow, [\"رصيد الاعتيادي المتبقي\", \"الاعتيادي المتبقي\"]);\n\nlet emergencyUsed = getValue(dbRow, [\"رصيد العارضة المستهلك\", \"عارضة المستهلك\"]);\nlet emergencyRemaining = getValue(dbRow, [\"رصيد العارضة المتبقي\", \"العارضة المتبقي\"]);\n\nlet permissionsDaysUsed = getValue(dbRow, [\"أيام مخصومة اعتيادي (من الأذونات)\", \"من الأذونات\"]);\n\n// 4. تنفيذ الجمع والخصم\nif (leaveType === \"اعتيادي\") {\n  regularUsed += requestedDays;          // 17 + 2 = 19\n  regularRemaining -= requestedDays;     // 4 - 2 = 2\n} else if (leaveType === \"عارضة\") {\n  emergencyUsed += requestedDays;\n  emergencyRemaining -= requestedDays;\n} else if (leaveType === \"إذن\") {\n  permissionsDaysUsed += requestedDays;\n}\n\nif (regularRemaining < 0) regularRemaining = 0;\nif (emergencyRemaining < 0) emergencyRemaining = 0;\n\n// 5. حساب الإجمالي الكلي (الاعتيادي المستهلك الجديد 19 + أذونات 2 = 21)\nconst totalRegularWithPermissions = regularUsed + permissionsDaysUsed;\n\nreturn [{\n  json: {\n    national_id: pending.national_id,\n    new_regular_used: regularUsed,                               // هينتج 19\n    new_regular_remaining: regularRemaining,                     // هينتج 2\n    new_emergency_used: emergencyUsed,                           // هينتج 4\n    new_emergency_remaining: emergencyRemaining,                 // هينتج 3\n    new_permissions_days_used: permissionsDaysUsed,              // هينتج 2\n    total_regular_with_permissions: totalRegularWithPermissions   // هينتج 21\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        -2016
+      ],
+      "id": "13f8573d-4e77-4a73-a56c-069a79489f21",
+      "name": "Calculate New Balances"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "DATABSE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "الرقم القومي ": "={{ $json.national_id }}",
+            "رصيد الاعتيادي المستهلك ": "={{ $json.new_regular_used }}",
+            "رصيد الاعتيادي الكلي المستهلك (اعتيادي + اذن)": "={{ $json.total_regular_with_permissions }}",
+            "رصيد العارضة المستهلك ": "={{ $json.new_emergency_used }}",
+            "رصيد الاعتيادي المتبقي": "={{ $json.new_regular_remaining }}",
+            "رصيد العارضة المتبقي": "={{ $json.new_emergency_remaining }}"
+          },
+          "matchingColumns": [
+            "الرقم القومي "
+          ],
+          "schema": [
+            {
+              "id": "الاسم ",
+              "displayName": "الاسم ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "الرقم القومي ",
+              "displayName": "الرقم القومي ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "رقم الهاتف",
+              "displayName": "رقم الهاتف",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "رصيد الاجازات الكلي",
+              "displayName": "رصيد الاجازات الكلي",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "رصيد الاعتيادي المستهلك ",
+              "displayName": "رصيد الاعتيادي المستهلك ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "رصيد الاعتيادي الكلي المستهلك (اعتيادي + اذن)",
+              "displayName": "رصيد الاعتيادي الكلي المستهلك (اعتيادي + اذن)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "رصيد العارضة المستهلك ",
+              "displayName": "رصيد العارضة المستهلك ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "رصيد الاعتيادي المتبقي",
+              "displayName": "رصيد الاعتيادي المتبقي",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "رصيد العارضة المتبقي",
+              "displayName": "رصيد العارضة المتبقي",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "الاذونات ",
+              "displayName": "الاذونات ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        -2016
+      ],
+      "id": "92bb7a58-2982-4517-8ec0-8370abab723e",
+      "name": "Update Employee Balance ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "DATABSE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "الرقم القومي ",
+              "lookupValue": "={{ $('Get Pending Request').item.json.national_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        -2016
+      ],
+      "id": "5622482f-fa89-4bd5-8dbf-7398fa8cbe62",
+      "name": "Search Employee Balance ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867094088,
+          "mode": "list",
+          "cachedResultName": "Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=1867094088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Get Pending Request').item.json.request_id }}",
+            "status": "Approved"
+          },
+          "matchingColumns": [
+            "request_id"
+          ],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "employee_name",
+              "displayName": "employee_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "leave_type",
+              "displayName": "leave_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "days",
+              "displayName": "days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "substitute",
+              "displayName": "substitute",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "employee_chat_id",
+              "displayName": "employee_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -2016
+      ],
+      "id": "3f977d11-5f7c-4beb-80af-186456fb3dd9",
+      "name": "Update Request Status To Approved",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867094088,
+          "mode": "list",
+          "cachedResultName": "Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=1867094088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Get Pending Request').item.json.request_id }}",
+            "status": "Rejected"
+          },
+          "matchingColumns": [
+            "request_id"
+          ],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "national_id",
+              "displayName": "national_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "employee_name",
+              "displayName": "employee_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "leave_type",
+              "displayName": "leave_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "days",
+              "displayName": "days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "substitute",
+              "displayName": "substitute",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "employee_chat_id",
+              "displayName": "employee_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        -1440
+      ],
+      "id": "ac62d42d-bb80-45e3-8a1e-9e52daea6351",
+      "name": "Update Request Status To Rejected",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get Pending Request').item.json.employee_chat_id }}",
+        "text": "=تمت الموافقة على طلب الإجازة الخاص بك بنجاح 🎉 نتمنى لك وقتاً سعيداً وممتعاً! تم تحديث رصيد إجازاتك في النظام.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1504,
+        -1840
+      ],
+      "id": "50ac2b16-cddc-4162-95a9-a8612152b5a9",
+      "name": "Send Approval To Employee",
+      "webhookId": "15c2dc59-c21e-4cac-a67f-04da743f40b5",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=تنبيه: تم اعتماد طلب الإجازة الخاص بكود ({{ $('Get Pending Request').item.json.request_id }}) بنجاح ✅ وتم تحديث سجل الموظف ورصيد إجازاته في قاعدة البيانات تلقائياً",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        -1840
+      ],
+      "id": "3a55c295-3e59-4f25-8e09-bb160cd61ea1",
+      "name": "Send Approval To Hr",
+      "webhookId": "15c2dc59-c21e-4cac-a67f-04da743f40b5",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=إشعار: تم رفض طلب الإجازة كود ({{ $('Get Pending Request').item.json.request_id }}) ⚠️ وتم تسجيل حالة الطلب كـ (مرفوض) في النظام دون التعديل على رصيد إجازات الموظف.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        -1264
+      ],
+      "id": "fe809c24-55dc-4d1c-87af-c45872f3677f",
+      "name": "Send Rejection To Hr",
+      "webhookId": "15c2dc59-c21e-4cac-a67f-04da743f40b5",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get Pending Request').item.json.employee_chat_id }}",
+        "text": "=نود إفادتك بأنه تعذر قبول طلب الإجازة المقدم حالياً ❌ للمزيد من التفاصيل أو للاستفسار، يمكنك التواصل مباشرة مع إدارة الموارد البشرية.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        -1264
+      ],
+      "id": "5dd25d10-dde2-46a2-9a25-d770c353812b",
+      "name": "Send Rejection To Employee",
+      "webhookId": "15c2dc59-c21e-4cac-a67f-04da743f40b5",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "279688324",
+        "text": "=⚠️ تنبيه: الطلب ={{ $json.request_id }} تم معالجته سابقاً (الحالة الحالية: ={{ $json.status }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        -896
+      ],
+      "id": "1953d400-943e-40d9-b8e3-ea94a28cd39d",
+      "name": "Remined Request Status To Hr",
+      "webhookId": "d727b07e-7eb6-4a3f-91eb-fc6b65ca5c76",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Pending Request Details').item.json.employee_chat_id }}",
+        "text": "={{ $('Pending Request Details').item.json.user_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -176
+      ],
+      "id": "bb7807a7-b179-45aa-b2ea-56dd21bd91f9",
+      "name": "Confirm Request Details To Employee",
+      "webhookId": "19dec2c7-38c7-4f9e-9a86-7d46c24eaf8a",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=🚨 طلب إجازة جديد \n\n• الكود : {{ $('Pending Request').item.json.request_id }}\n\n• الموظف : {{ $('Pending Request').item.json.employee_name }}\n\n• الاجازة : {{ $('Pending Request').item.json.leave_type }}\n\n• عدد الايام / الساعات : {{ $('Pending Request').item.json.days }}\n\n• البديل :  {{ $('Pending Request').item.json.substitute }}\n\n✍️ للرد على الطلب، أرسل\n\nموافقة {{ $('Pending Request').item.json.request_id }}\nأو\nرفض {{ $('Pending Request').item.json.request_id }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        -176
+      ],
+      "id": "9a552230-5eba-44ac-8508-dee93aa7c691",
+      "name": "Send Request Details To Hr",
+      "webhookId": "17d27159-0330-4f9b-9326-b960f50099a2",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.user_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        448
+      ],
+      "id": "4bff82ed-cc8b-4c71-993c-b8369ed714c8",
+      "name": "Get Detalis From Employee",
+      "webhookId": "19dec2c7-38c7-4f9e-9a86-7d46c24eaf8a",
+      "credentials": {
+        "telegramApi": {
+          "id": "hK6HpBlJjEE3vaqa",
+          "name": "Hr Ninga"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867094088,
+          "mode": "list",
+          "cachedResultName": "Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=1867094088"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "request_id",
+              "lookupValue": "={{ $json.request_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -528,
+        -1408
+      ],
+      "id": "da4957ec-82da-4ffe-97cb-ec9a377cf02b",
+      "name": "Get Pending Request",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. قراءة الرد مباشرة من نود الـ AI Agent بالاسم\nconst agentNode = $('AI Agent').first()?.json || {};\nconst rawText = agentNode.output || agentNode.text || agentNode.response || \"\";\n\n// 2. البحث عن التاج المخفي LEAVE_REQUEST\nconst regex = /\\[LEAVE_REQUEST:\\s*(\\{[\\s\\S]*?\\})\\]/;\nconst match = rawText.match(regex);\n\n// تنظيف النص من التاج المخفي\nconst cleanUserMessage = rawText.replace(regex, \"\").trim();\n\n// 3. تحديد المنصة بشكل آمن\nlet platformName = \"telegram\";\ntry {\n  const whatsappData = $('Edit WhatsApp Data').item?.json;\n  if (whatsappData && (whatsappData.Message || whatsappData.Id)) {\n    platformName = \"whatsapp\";\n  }\n} catch (e) {\n  platformName = \"telegram\";\n}\n\n// استخراج Chat ID للموظف\nlet employeeChatId = \"\";\ntry {\n  employeeChatId = String($('Edit WhatsApp Data').item?.json?.Id || $('Telegram Trigger').item?.json?.message?.from?.id || \"\");\n} catch (e) {\n  employeeChatId = \"\";\n}\n\n// أ) في حالة الطلب المكتمل (يوجد تاج LEAVE_REQUEST)\nif (match) {\n  try {\n    const leaveData = JSON.parse(match[1]);\n\n    if (leaveData.substitute) {      \n      let nextNumber = 1;\n      \n      try {\n        const existingRequests = $('Get All Pending Requests').all();\n        if (existingRequests && existingRequests.length > 0) {\n          let maxNumber = 0;\n          for (const item of existingRequests) {\n            const rId = item.json.request_id || item.json[\"رمز الطلب\"] || item.json[\"request_id \"] || \"\";\n            const num = parseInt(String(rId).replace(/[^0-9]/g, '')) || 0;\n            if (num > maxNumber) maxNumber = num;\n          }\n          nextNumber = maxNumber > 0 ? maxNumber + 1 : existingRequests.length + 1;\n        }\n      } catch (err) {\n        nextNumber = 1;\n      }\n      \n      const requestId = `HR${nextNumber}`;\n\n      return [{\n        json: {\n          has_complete_request: true,\n          platform: platformName,\n          user_message: cleanUserMessage || rawText,\n          request_id: requestId,\n          national_id: String(leaveData.national_id || \"29702151301472\").trim(),\n          employee_name: String(leaveData.employee_name || \"\").trim(),\n          leave_type: String(leaveData.leave_type || \"اعتيادي\").trim(),\n          days: parseInt(leaveData.days || 1),\n          substitute: String(leaveData.substitute || \"\").trim(),\n          employee_chat_id: employeeChatId,\n          status: \"pending\",\n          created_at: new Date().toISOString().replace('T', ' ').substring(0, 19)\n        }\n      }];\n    }\n  } catch (e) {\n    // خطأ في Parse\n  }\n}\n\n// ب) في حالة الشات العادي (الطلب غير مكتمل)\nreturn [{\n  json: {\n    has_complete_request: false,\n    platform: platformName,\n    user_message: cleanUserMessage || rawText, // يضمن سحب النص من AI Agent بالاسم\n    employee_chat_id: employeeChatId\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "3b716fc8-35dd-48aa-a411-7fdc379519a2",
+      "name": "Pending Request Details"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg",
+          "mode": "list",
+          "cachedResultName": "Hr Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867094088,
+          "mode": "list",
+          "cachedResultName": "Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSMw8nMMm9fF3OdaG8JhL2jnJTb_rXYDdAgmaC0F0Jg/edit#gid=1867094088"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -128,
+        -32
+      ],
+      "id": "75e3ec49-2d0b-4d78-94b0-1917ebd60aad",
+      "name": "Get All Pending Requests",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3apCmZMnA5AA3Jff",
+          "name": "Hr bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "HR-NINJA",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2240,
+        -928
+      ],
+      "id": "30441075-f9fe-4ea2-933e-50d5ee55e5ff",
+      "name": "WhatsApp Trigger",
+      "webhookId": "7aee8db5-bc2a-4418-831d-64fc8e8996a2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d1f4a11b-3240-4baf-abdc-debdcc49b155",
+              "leftValue": "={{ $json.is_hr_command }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1472,
+        -784
+      ],
+      "id": "b4dfccc8-aebe-4a7d-b5d5-cf307b51eca4",
+      "name": "Check Is Hr Message?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64ea99f5-3fb4-4127-9a67-32d25020bb21",
+              "name": "Message",
+              "value": "={{ $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3cd61d02-8e68-49d7-9bd5-90f940fc4c5c",
+              "name": "Id",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "478901ed-3685-4cba-bdae-9d9b43a641bd",
+              "name": "Platform",
+              "value": "Whatsapp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -2016,
+        -928
+      ],
+      "id": "a6b0d1c5-9faa-4ab0-87a7-89a35a7293f6",
+      "name": "Edit WhatsApp Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64ea99f5-3fb4-4127-9a67-32d25020bb21",
+              "name": "Message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3cd61d02-8e68-49d7-9bd5-90f940fc4c5c",
+              "name": "Id",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "478901ed-3685-4cba-bdae-9d9b43a641bd",
+              "name": "Platform",
+              "value": "Telegram",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -2000,
+        -624
+      ],
+      "id": "a646538c-2e84-4bd5-a965-fcd492729b74",
+      "name": "Edit Telegram Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// 1. تحديد المنصة بشكل مرن بغض النظر عن حالة الأحرف\nconst rawPlatform = item.Platform || item.platform || \"\";\nconst platform = rawPlatform.toLowerCase().includes(\"whatsapp\") ? \"whatsapp\" : \"telegram\";\n\n// 2. استخراج النص ورقم/معرف الراسل\nconst text = item.message?.text || item.Message || item.text || \"\";\nconst senderId = String(item.Id || item.message?.from?.id || item.Number || \"\");\n\n// 3. التحقق من أوامر الـ HR\nconst regex = /^(موافقة|رفض)\\s*:?\\s*(HR\\d+)$/;\nconst isTelegramHR = regex.test(text) && senderId === \"279688324\";\nconst isWhatsappHR = regex.test(text) && (senderId === \"01021804181\" || senderId.includes(\"201021804181\"));\n\nreturn [{\n  json: {\n    ...item,\n    platform: platform,         // توحيد المنصة بحرف صغير\n    is_hr_command: (isTelegramHR || isWhatsappHR),\n    clean_text: text,\n    sender_id: senderId        // استخراج الـ ID الصحيح للذاكرة ولـ HR\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1728,
+        -784
+      ],
+      "id": "ca94b53e-b288-4ee3-9174-2bc9037022b5",
+      "name": "Get Message Details"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21da2a32-0136-4d6f-914d-890af3bc996e",
+              "leftValue": "={{ $json.platform }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        288
+      ],
+      "id": "8197fd29-eb77-4a9a-b460-9e619bf76736",
+      "name": "Check Platform - Employee"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21da2a32-0136-4d6f-914d-890af3bc996e",
+              "leftValue": "={{ $('Check If Request Complete ?').item.json.platform }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -336
+      ],
+      "id": "9706efde-0a68-4735-ae86-23efc5a729fa",
+      "name": "Check Platform - Confirmation"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "201021804181",
+        "messageText": "=🚨 طلب إجازة جديد \n\n• الكود : {{ $('Pending Request').item.json.request_id }}\n\n• الموظف : {{ $('Pending Request').item.json.employee_name }}\n\n• الاجازة : {{ $('Pending Request').item.json.leave_type }}\n\n• عدد الايام / الساعات : {{ $('Pending Request').item.json.days }}\n\n• البديل :  {{ $('Pending Request').item.json.substitute }}\n\n✍️ للرد على الطلب، أرسل\n\nموافقة {{ $('Pending Request').item.json.request_id }}\nأو\nرفض {{ $('Pending Request').item.json.request_id }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -512
+      ],
+      "id": "33fdcab1-2655-4e2d-8dc7-eb0cfe8311ed",
+      "name": "Confirm Request Details To Hr - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $('Pending Request Details').item.json.user_message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -512
+      ],
+      "id": "c29dd317-de6b-45e7-bae3-47bfbe578bb0",
+      "name": "Confirm Request Details To Employee - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJidAlt }}",
+        "messageText": "={{ $('Pending Request Details').item.json.user_message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        176
+      ],
+      "id": "d9ed7af5-c63c-4579-9ec0-3a9971e28742",
+      "name": "Get Detalis From Employee - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5977b061-881f-46d9-b218-efcb5c2e9236",
+              "leftValue": "={{ $json.has_complete_request }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "abeb37c9-b406-4587-be14-e60b17f66c8f",
+      "name": "Check If Request Complete ?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0aa87cc8-3596-4760-8c04-51e888747343",
+              "name": "Message",
+              "value": "={{ $json.clean_text }}",
+              "type": "string"
+            },
+            {
+              "id": "e5c60137-7184-4c36-bcec-2d914ed9014c",
+              "name": "Id",
+              "value": "={{ $json.sender_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c23a8621-2d89-41e0-b123-4026c778d829",
+              "name": "Platform",
+              "value": "={{ $json.platform }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -784,
+        -32
+      ],
+      "id": "4399669c-b26d-4446-8e8e-4d23f2c0b6dc",
+      "name": "Normalize Agent Data"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sender_id || $json.Id || $('Get Message Details').first().json.sender_id }}",
+        "contextWindowLength": 6
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -480,
+        272
+      ],
+      "id": "72fc4659-008e-461b-9288-95606ad17006",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItem = $input.first().json;\n\n// استخراج المنصة بحذر من النودز السابقة\nlet hrPlatform = inputItem.platform || \"telegram\";\ntry {\n  if ($('Edit WhatsApp Data').first()?.json?.Id || $('Get Message Details').first()?.json?.platform === 'whatsapp') {\n    hrPlatform = \"whatsapp\";\n  }\n} catch (e) {\n  hrPlatform = \"telegram\";\n}\n\nconst text = inputItem.raw_message || inputItem.clean_text || inputItem.Message || \"\";\nconst match = text.match(/^(موافقة|رفض)\\s+(HR\\d+)$/i);\n\nif (match) {\n  const action = match[1] === \"موافقة\" ? \"Approved\" : \"Rejected\";\n  const requestId = match[2].toUpperCase();\n  \n  return [{ \n    json: { \n      is_hr_command: true,\n      action: action, \n      request_id: requestId,\n      hr_platform: hrPlatform, // تم حفظ المنصة هنا\n      hr_chat_id: inputItem.hr_chat_id || inputItem.sender_id || \"\"\n    } \n  }];\n}\n\nreturn [{ json: { is_hr_command: false } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -784,
+        -1408
+      ],
+      "id": "ad9f8931-412c-49df-a396-70a07e73959c",
+      "name": "Get Hr Order"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21da2a32-0136-4d6f-914d-890af3bc996e",
+              "leftValue": "={{ $('Get Hr Order').item.json.hr_platform }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        -1024
+      ],
+      "id": "fb658369-5bba-4c5a-81e2-83cb4261abcf",
+      "name": "Check Platform - Hr Remind"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "201021804181",
+        "messageText": "=⚠️ تنبيه: الطلب ={{ $json.request_id }} تم معالجته سابقاً (الحالة الحالية: ={{ $json.status }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -1152
+      ],
+      "id": "4b8ad9f2-8082-46ce-8960-2f683b35dce4",
+      "name": "Remined Request Status To Hr - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21da2a32-0136-4d6f-914d-890af3bc996e",
+              "leftValue": "={{ $('Get Hr Order').item.json.hr_platform }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1280,
+        -2016
+      ],
+      "id": "578e20f5-5471-4bfd-b4ea-58096430b62b",
+      "name": "Check Platform - Approval"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('Get Pending Request').item.json.employee_chat_id }}",
+        "messageText": "=تمت الموافقة على طلب الإجازة الخاص بك بنجاح 🎉 نتمنى لك وقتاً سعيداً وممتعاً! تم تحديث رصيد إجازاتك في النظام.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -2192
+      ],
+      "id": "8f542280-7fd4-45c6-a2d8-60bf12d7ec5b",
+      "name": "Send Approval To Employee - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "201021804181",
+        "messageText": "=تنبيه: تم اعتماد طلب الإجازة الخاص بكود ({{ $('Get Pending Request').item.json.request_id }}) بنجاح ✅ وتم تحديث سجل الموظف ورصيد إجازاته في قاعدة البيانات تلقائياً",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        -2192
+      ],
+      "id": "13c48f5b-2a1b-4ee0-946b-6a6d178a2167",
+      "name": "Send Approval To Hr - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21da2a32-0136-4d6f-914d-890af3bc996e",
+              "leftValue": "={{ $('Get Hr Order').item.json.hr_platform }}",
+              "rightValue": "whatsapp",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        -1440
+      ],
+      "id": "e5659ce1-eb24-4cd7-bda9-16077173953d",
+      "name": "Check Platform - Rejection"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('Get Pending Request').item.json.employee_chat_id }}",
+        "messageText": "=نود إفادتك بأنه تعذر قبول طلب الإجازة المقدم حالياً ❌ للمزيد من التفاصيل أو للاستفسار، يمكنك التواصل مباشرة مع إدارة الموارد البشرية.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -1568
+      ],
+      "id": "0c994425-31e0-492a-bde1-e151a2a47634",
+      "name": "Send Rejection To Employee - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "201021804181",
+        "messageText": "=إشعار: تم رفض طلب الإجازة كود ({{ $('Get Pending Request').item.json.request_id }}) ⚠️ وتم تسجيل حالة الطلب كـ (مرفوض) في النظام دون التعديل على رصيد إجازات الموظف.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -1568
+      ],
+      "id": "04efe3aa-2165-4bbc-b7b7-08de4dda3999",
+      "name": "Send Rejection To Hr - WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ingestion & Routing\n",
+        "height": 656,
+        "width": 1184,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2384,
+        -1024
+      ],
+      "id": "e33c3edd-6229-46e8-99cc-1e10cb4c9e66",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Telegram Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Get All Pending Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search In Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending Request": {
+      "main": [
+        [
+          {
+            "node": "Check Platform - Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Pending ?": {
+      "main": [
+        [
+          {
+            "node": "Is Approved ?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Platform - Hr Remind",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Approved ?": {
+      "main": [
+        [
+          {
+            "node": "Search Employee Balance ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Request Status To Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate New Balances": {
+      "main": [
+        [
+          {
+            "node": "Update Employee Balance ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Employee Balance ": {
+      "main": [
+        [
+          {
+            "node": "Update Request Status To Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Employee Balance ": {
+      "main": [
+        [
+          {
+            "node": "Calculate New Balances",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Request Status To Approved": {
+      "main": [
+        [
+          {
+            "node": "Check Platform - Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Request Status To Rejected": {
+      "main": [
+        [
+          {
+            "node": "Check Platform - Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Request Details To Employee": {
+      "main": [
+        [
+          {
+            "node": "Send Request Details To Hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Request Details To Hr": {
+      "main": [
+        []
+      ]
+    },
+    "Get Detalis From Employee": {
+      "main": [
+        []
+      ]
+    },
+    "Get Pending Request": {
+      "main": [
+        [
+          {
+            "node": "Is Pending ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending Request Details": {
+      "main": [
+        [
+          {
+            "node": "Check If Request Complete ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Pending Requests": {
+      "main": [
+        [
+          {
+            "node": "Pending Request Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit WhatsApp Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Is Hr Message?": {
+      "main": [
+        [
+          {
+            "node": "Get Hr Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalize Agent Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit WhatsApp Data": {
+      "main": [
+        [
+          {
+            "node": "Get Message Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Telegram Data": {
+      "main": [
+        [
+          {
+            "node": "Get Message Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Message Details": {
+      "main": [
+        [
+          {
+            "node": "Check Is Hr Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Platform - Employee": {
+      "main": [
+        [
+          {
+            "node": "Get Detalis From Employee - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Detalis From Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Platform - Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Confirm Request Details To Employee - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Confirm Request Details To Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Request Details To Employee - WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Confirm Request Details To Hr - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Request Complete ?": {
+      "main": [
+        [
+          {
+            "node": "Pending Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Platform - Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Agent Data": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Hr Order": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Platform - Hr Remind": {
+      "main": [
+        [
+          {
+            "node": "Remined Request Status To Hr - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Remined Request Status To Hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Platform - Approval": {
+      "main": [
+        [
+          {
+            "node": "Send Approval To Employee - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Approval To Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Approval To Employee - WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Send Approval To Hr - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Approval To Employee": {
+      "main": [
+        [
+          {
+            "node": "Send Approval To Hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rejection To Employee": {
+      "main": [
+        [
+          {
+            "node": "Send Rejection To Hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Platform - Rejection": {
+      "main": [
+        [
+          {
+            "node": "Send Rejection To Employee - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Rejection To Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rejection To Employee - WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Send Rejection To Hr - WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5771513a-fee8-4bf0-9257-4dfd4566a652",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "nodeGroups": [
+    {
+      "id": "5857b8f3-7b4e-4548-9d0f-df254289d66a",
+      "nodeIds": [
+        "0d5f54ef-aa9d-466b-96d6-3c5af1fcd24f",
+        "07c74359-1380-48d6-bdd7-ddd7971816ee",
+        "13f8573d-4e77-4a73-a56c-069a79489f21",
+        "92bb7a58-2982-4517-8ec0-8370abab723e",
+        "5622482f-fa89-4bd5-8dbf-7398fa8cbe62",
+        "3f977d11-5f7c-4beb-80af-186456fb3dd9",
+        "ac62d42d-bb80-45e3-8a1e-9e52daea6351",
+        "50ac2b16-cddc-4162-95a9-a8612152b5a9",
+        "3a55c295-3e59-4f25-8e09-bb160cd61ea1",
+        "fe809c24-55dc-4d1c-87af-c45872f3677f",
+        "5dd25d10-dde2-46a2-9a25-d770c353812b",
+        "1953d400-943e-40d9-b8e3-ea94a28cd39d",
+        "da4957ec-82da-4ffe-97cb-ec9a377cf02b",
+        "ad9f8931-412c-49df-a396-70a07e73959c",
+        "fb658369-5bba-4c5a-81e2-83cb4261abcf",
+        "4b8ad9f2-8082-46ce-8960-2f683b35dce4",
+        "578e20f5-5471-4bfd-b4ea-58096430b62b",
+        "8f542280-7fd4-45c6-a2d8-60bf12d7ec5b",
+        "13c48f5b-2a1b-4ee0-946b-6a6d178a2167",
+        "e5659ce1-eb24-4cd7-bda9-16077173953d",
+        "0c994425-31e0-492a-bde1-e151a2a47634",
+        "04efe3aa-2165-4bbc-b7b7-08de4dda3999"
+      ],
+      "name": "HR Route",
+      "description": "مسار الموارد البشرية حيث يتم البحث في قاعدة البيانات عن بيانات الموظف من حيث الاجازات السابقة والطلبات المعلقة ويتم ابلاغه بالرد النهائي"
+    },
+    {
+      "id": "7fa6f103-081c-4cdf-8b9d-7cf288f74d31",
+      "nodeIds": [
+        "52923473-2445-4db1-9c79-ddb4cb0767ea",
+        "cba856a6-3a61-45e3-a221-2eeb76a73415",
+        "5c364c48-cbb6-4d3a-a76e-cd515c607382",
+        "c821b4a2-e347-4b45-9c52-f28a54c56687",
+        "bb7807a7-b179-45aa-b2ea-56dd21bd91f9",
+        "9a552230-5eba-44ac-8508-dee93aa7c691",
+        "4bff82ed-cc8b-4c71-993c-b8369ed714c8",
+        "3b716fc8-35dd-48aa-a411-7fdc379519a2",
+        "75e3ec49-2d0b-4d78-94b0-1917ebd60aad",
+        "8197fd29-eb77-4a9a-b460-9e619bf76736",
+        "9706efde-0a68-4735-ae86-23efc5a729fa",
+        "33fdcab1-2655-4e2d-8dc7-eb0cfe8311ed",
+        "c29dd317-de6b-45e7-bae3-47bfbe578bb0",
+        "d9ed7af5-c63c-4579-9ec0-3a9971e28742",
+        "abeb37c9-b406-4587-be14-e60b17f66c8f",
+        "4399669c-b26d-4446-8e8e-4d23f2c0b6dc",
+        "72fc4659-008e-461b-9288-95606ad17006"
+      ],
+      "name": "Employee Route",
+      "description": "مسار التحدث مع الموظف حتي اكتمال المعلومات المطلوبة وارسالها الى يمسار الموارد البشرية"
+    }
+  ],
+  "id": "Zs98Ge4CaKSEiVvA",
+  "tags": [
+    {
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z",
+      "id": "vjrjNSmhby2Ujgrx",
+      "name": "Portfolio"
+    }
+  ]
+}

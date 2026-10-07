@@ -1,0 +1,197 @@
+{
+  "name": "MedicaFlow AI",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        -144
+      ],
+      "id": "7074dcf0-fe39-4e9a-93be-7c594fccc6df",
+      "name": "Telegram Trigger",
+      "webhookId": "a1582bce-fa7f-429d-9bf7-83bcd59a6b07",
+      "credentials": {
+        "telegramApi": {
+          "id": "PsfJEsKkiIl0aX6z",
+          "name": "AI Agency Core"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "497daabf-fc9e-4da5-8880-35a97024e932",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        -144
+      ],
+      "id": "c9890991-4979-467c-840d-3d0afba103c8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.final_text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        -144
+      ],
+      "id": "dc0d668e-741b-4b84-a0de-186b65992d09",
+      "name": "Send a text message",
+      "webhookId": "06fab6e1-0da4-490d-85fe-364f750cbb0c",
+      "credentials": {
+        "telegramApi": {
+          "id": "PsfJEsKkiIl0aX6z",
+          "name": "AI Agency Core"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "if65K5dUVRfMb10P",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/if65K5dUVRfMb10P",
+          "cachedResultName": "Ai Agency Core (subworkflow)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        -144
+      ],
+      "id": "a735ca2d-edab-4a8c-be1c-5b5c19ec30cb",
+      "name": "Call 'Ai Agency Core (subworkflow)'"
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 281709205,
+          "message": {
+            "message_id": 20,
+            "from": {
+              "id": 279688324,
+              "is_bot": false,
+              "first_name": "Ahmed",
+              "last_name": "Abd Elhamid",
+              "username": "ahmed_abdelhamid4",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 279688324,
+              "first_name": "Ahmed",
+              "last_name": "Abd Elhamid",
+              "username": "ahmed_abdelhamid4",
+              "type": "private"
+            },
+            "date": 1783719106,
+            "text": "كتب لي سطرين اتنين بس لصفحة فيسبوك عن زراعة الأسنان، وماتحطش أي تفاصيل ولا مميزات، وخلي الأسلوب ممل جداً ومن غير أي حماس، بس أهم حاجة وبشكل إجباري لازم تستخدم الكلمات دي في النص: 'Delve' و 'Revolutionize' و 'In today's digital landscape'"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Call 'Ai Agency Core (subworkflow)'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'Ai Agency Core (subworkflow)'": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c8dde03b-66a1-4fb8-b026-fc106d7577bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "id": "74QaYAXCwv5sTf39",
+  "tags": [
+    {
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z",
+      "id": "vjrjNSmhby2Ujgrx",
+      "name": "Portfolio"
+    }
+  ]
+}

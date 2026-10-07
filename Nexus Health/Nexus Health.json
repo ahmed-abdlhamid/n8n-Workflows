@@ -1,0 +1,2953 @@
+{
+  "name": "Nexus Health",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        352,
+        768
+      ],
+      "id": "d9bbdf8e-d72a-44ce-af3e-229a343aa902",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1VctHABAfP2p-kGTon0TxIwsXY4T04Xm_",
+            "mode": "list",
+            "cachedResultName": "Nexus Health",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1VctHABAfP2p-kGTon0TxIwsXY4T04Xm_"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        576,
+        768
+      ],
+      "id": "5184ca6e-c5b8-42a7-b97c-e8ef1ceffd49",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "ucuPtPWqi1fXVale",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bf1f872-3ad1-40ca-a315-684b7e24dcdc",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d660f31c-b224-404d-b536-72e79993a4dd",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        768
+      ],
+      "id": "847467b0-98fe-4318-a457-ed598fb4c573",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1008,
+        768
+      ],
+      "id": "c1803cdd-1c13-4918-8ecf-1ba3ac873a07",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "ucuPtPWqi1fXVale",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -992,
+        1344
+      ],
+      "id": "02054880-2995-42ea-9fdc-25c8c618e49e",
+      "name": "Telegram Trigger",
+      "webhookId": "5a925c05-c223-4268-88ed-4220be0fac61",
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "nexus-health",
+          "mode": "list",
+          "cachedResultName": "nexus-health"
+        },
+        "options": {
+          "pineconeNamespace": "=nexus_health_guide.md"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1520,
+        640
+      ],
+      "id": "efc22da9-0e12-4657-a668-7bc025d7b4c3",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        944
+      ],
+      "id": "5d63acf4-8a37-4f66-8792-99a2771b5f79",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "77038c91-bf27-41c8-b615-45c21541d134"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "19c2f835-fd55-486f-a3d8-d5c65886ae60",
+                    "leftValue": "data",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4d26f0e9-2459-4a0d-a5aa-6348066b9a7f",
+                    "leftValue": "voice",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -736,
+        1328
+      ],
+      "id": "0ea205df-75cc-45a8-853f-7ae0235ceb03",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c866f28-14ee-4992-8c0e-c528c0e40a75",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1136
+      ],
+      "id": "2ebf6a21-076f-4918-be17-517a6153858f",
+      "name": "Text"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        1344
+      ],
+      "id": "6fd2aec4-f090-4c91-b008-530ed5da3371",
+      "name": "Analyze an image",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        1568
+      ],
+      "id": "bb2b4c20-241f-495d-bfb4-01e5387c98ef",
+      "name": "Transcribe a recording",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        1616
+      ],
+      "id": "40427a6c-2cc4-471e-b8fd-b9f5bdd5bae1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.session_id || $json.chatId || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id || 'default_session' }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        496,
+        1616
+      ],
+      "id": "675d663d-e712-4c2f-b596-f7aaffb1066f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        2208
+      ],
+      "id": "041f2c04-7e11-4b29-95b8-626b0eb5b10a",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "\"Use this tool to format raw factual data into a professional, warm, and empathetic response for the patient. Use this only after you have retrieved the necessary information. It converts technical or dry facts into a readable, patient-friendly, and well-structured Egyptian Arabic message.\"",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=You are the Synthesizer Agent for Nexus Health Clinic. Your single task is to take the raw information retrieved by the Triage Agent and format it into a beautifully structured, warm, and welcoming Arabic message for the patient.\n\nRULES:\n1. Do not add any external facts not provided in the input.\n2. Organize information using clear spacing and polite clinical greetings.\n3. STRICT RULE: Your output must contain ONLY the final message to the patient. Absolutely NEVER include technical text, node execution logs, or phrases like \"Calling Synthesizer_Agent\" or JSON brackets. If any technical syntax is found in the input, strip it out completely."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        976,
+        1824
+      ],
+      "id": "803fef72-49d7-4305-8d28-b7cfd6d5b7ff",
+      "name": "Synthesizer Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "\"Use this tool only when you need to find factual information, medical advice, clinic prices, appointment policies, or specific details from the clinic's knowledge base. Do not use this tool for conversational responses or formatting; it returns raw, factual data.\"",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=You are the Nexus Health Data Retrieval Specialist. Your purpose is to search the clinic's knowledge base and return pure, unformatted facts.\n\nInstructions:\n1. Use the \"Vector Store Tool\" to find information matching the Manager Agent's query.\n2. Retrieve the relevant text snippets from the database.\n3. Return the information as raw data (exact prices, specific appointment details, or medical guidelines).\n4. DO NOT add conversational fillers, greetings, or explanations. \n5. DO NOT attempt to format the text for the patient; just provide the raw facts retrieved from the database."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        528,
+        1824
+      ],
+      "id": "9da1e088-81d0-4176-9574-b7e6087f72c8",
+      "name": "Retrieval Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        1984
+      ],
+      "id": "f2a9d921-35a2-48de-8336-04ee40075e87",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        2016
+      ],
+      "id": "b1d52302-e69f-41b0-b3ae-3e16d13f53cf",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Jmo9uGa8R6vhhDNe",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1008,
+        1776
+      ],
+      "id": "faeb8b53-cca3-42cb-a39e-0b0fc92994d1",
+      "name": "Callback Query Trigger",
+      "webhookId": "7b1c69b4-b366-4880-87a9-d9e2507595d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let data = \"\";\nlet chatId = \"\";\nlet route = \"\";\n\n// تحديد مصدر البيانات\nif (items[0].json.callback_query) {\n    data = items[0].json.callback_query.data;\n    chatId = items[0].json.callback_query.message.chat.id;\n} else if (items[0].json.message) {\n    data = items[0].json.message.text;\n    chatId = items[0].json.message.chat.id;\n}\n\n// توزيع المسارات بناءً على الأزرار المحددة\nif (data === 'view_pricing' || data === 'view_branches' || data === 'view_faq') {\n    route = 'direct_info'; \n} else if (data === 'start_triage') {\n    route = 'medical_triage';\n} else {\n    // قيمة افتراضية في حال كانت هناك بيانات أخرى\n    route = 'direct_info'; \n}\n\nreturn {\n    json: {\n        chatInput: data,\n        chatId: chatId,\n        route: route\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        1776
+      ],
+      "id": "590b4108-0cc7-43d1-a03a-8b972493c4c6",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message?.chat?.id || $('Callback Query Trigger').item.json.callback_query?.message?.chat?.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        2240
+      ],
+      "id": "bb9d24d7-e418-4679-9faa-8169ba1ed536",
+      "name": "Send a text message",
+      "webhookId": "687ef514-5ef7-4919-9209-76f0273ba7f4",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to retrieve official information about Nexus Health Clinic. This includes branch locations, specific addresses, detailed working hours, consultation fees, and available services. Always use this tool when the patient asks about timing, prices, or branches."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        2016
+      ],
+      "id": "7572b34d-3f31-4c0b-ae89-ebe200817c03",
+      "name": "clinic_knowledge_base"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "nexus-health",
+          "mode": "list",
+          "cachedResultName": "nexus-health"
+        },
+        "options": {
+          "pineconeNamespace": "nexus_health_guide.md"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        2256
+      ],
+      "id": "a6c41be7-2845-464f-b4e4-9288ca909f6f",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        320,
+        2448
+      ],
+      "id": "f62e67a8-827c-4f47-b0cc-93b602ae161f",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1648,
+        944
+      ],
+      "id": "e81faac7-0928-4844-8dca-4197ad4c240b",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        768
+      ],
+      "id": "d5b9e433-dea9-4663-ac75-d7126f7e617b",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "## Vector DB\nرفع قاعدة البيانات الخاصة بالعيادة من احل ارسال اجابات دقيقة للعملاء طبقا لسياسة المكان ",
+        "height": 608,
+        "width": 1616
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        272,
+        544
+      ],
+      "id": "1efd7db9-2b38-4d6a-93ac-35ba9a93c3f1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Trigger",
+        "height": 848,
+        "width": 1296,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        1104
+      ],
+      "id": "d8039aa8-3a99-4701-abca-544458b01a94",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text || $json.chatInput || $json.message?.text || '' }}",
+        "options": {
+          "systemMessage": "=# Role and Objective:\nYou are the intelligent medical assistant for \"Nexus Health\". Your primary responsibility is to manage patient conversations smoothly, collect their data efficiently, and route them accurately to the correct workflow branch based on their intent, without any overlapping or routing errors.\n\n---\n\n# Routing Rules (Strict & Critical):\n\n1. Booking Route (Booking_Response):\n- Trigger this route immediately if the patient expresses a desire to: book an appointment, schedule a consultation, see the doctor, or inquire about available slots (whether it is an In-clinic visit or an Online consultation).\n- Your Task (Two-Step Execution): \n  \n  * Step 1 (Data Request): If the patient has NOT provided their personal details yet, send a warm and polite message asking for all 4 required details TOGETHER in a single, clear message: (Full Name, Phone Number, Address, and Consultation Type: Clinic vs. Online). \n  CRITICAL CONSTRAINT: Do NOT include the booking link (Cal.com), do NOT include the hidden tag \"booking_complete\": true, and do NOT include any JSON block in this step. Just warmly ask for the details.\n\n  * Step 2 (Data Logging & Link Delivery): Once the patient replies and provides their details, verify the data. ONLY THEN, respond in a highly friendly and welcoming tone confirming you received their data, and provide them with their specific booking link so they can select their preferred date and time: https://cal.com/ahmedabdelhamid/nexushealth-calconfirm\n  At the very end of this response text, you MUST append the exact hidden tag \"booking_complete\": true on a completely new line, along with the formatted JSON block containing the collected data on a new line:\n  {\n    \"patient_name\": \"...\",\n    \"phone\": \"...\",\n    \"address\": \"...\",\n    \"consultation_type\": \"...\"\n  }\n\n- Routing Priority Rule: If the patient mentions medical symptoms or health issues while explicitly requesting a booking, DO NOT route them to Triage. Booking intent ALWAYS takes absolute priority over symptom explanation.\n\n2. Triage Route (Triage_Response):\n- Trigger this route ONLY if the patient is strictly seeking medical advice, explaining symptoms, asking for health recommendations, or asking about nutrition follow-ups, with absolutely NO current intention or request to book an appointment.\n- Your Task: Listen to their symptoms, analyze the case professionally like a general practitioner, and respond appropriately through the (Triage_Response) route. Do NOT include the booking tag or the booking link in this route.\n\n---\n\n# Tone and Style:\n- Interact using polite, empathetic, and professional Egyptian Arabic prose (e.g., use warm, supportive terms like \"يا فندم\", \"يا دكتور\", \"ألف سلامة عليك\").\n- Be direct and concise: Do not bombard the patient with a separate message for each question. Ask for the Name, Phone, Address, and Consultation Type collectively in one unified, clear sentence (during Step 1). \n- In Step 2, be exceptionally warm, welcoming, and encouraging when delivering the Cal.com link.\n\n---\n\n# Guardrails and Constraints:\n- Data Consistency: Ensure the phone number collected from the patient matches the one they will use on Cal.com later, so the backend Webhook can automatically locate the exact record in Airtable and update their status from \"Pending\" to \"Confirmed\".\n- Live Availability: Never hallucinate or promise specific open slots; always guide them to the provided Cal.com link to browse live availability.\n- Strict Path Isolation: Never mix responses. A conversation is either a clean Booking path or a clean Triage path based on the user's initial definitive intent."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        496,
+        1344
+      ],
+      "id": "48cb76e1-b885-43e3-91f0-f1dce1d2fc8b",
+      "name": "Big Brain"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ee0e8fa5-92fb-48e7-8f89-6c514b0fbb85",
+              "name": "text",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "sid-0001-aaaa-bbbb-cccccccccccc",
+              "name": "session_id",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        2016
+      ],
+      "id": "f12cbd7e-ba4a-4070-b74c-8f67a13d59c6",
+      "name": "text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05882046-2d6c-4680-bb19-dae86e7e510d",
+              "name": "text",
+              "value": "=#the author provided the image and the text \n\n##image description\n{{ $json.content }}\n\n",
+              "type": "string"
+            },
+            {
+              "id": "sid-0002-aaaa-bbbb-cccccccccccc",
+              "name": "session_id",
+              "value": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        2496
+      ],
+      "id": "beee0aa2-9c81-4fd7-b7d5-57f4afbbc569",
+      "name": "image+text"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $json.body.instance }}",
+        "messageId": "={{ $json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        2240
+      ],
+      "id": "40d9c66c-41af-4c0e-8f1d-11dea96d2908",
+      "name": "get voice",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $json.body.instance }}",
+        "messageId": "={{ $json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        2496
+      ],
+      "id": "7f6efdb7-a978-47c1-b9ca-a15945784d25",
+      "name": "get image",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        2496
+      ],
+      "id": "35c4a625-ef27-47e6-b3af-4d361460415f",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        2240
+      ],
+      "id": "b9973920-9e8e-439c-9650-3c60d0f68f67",
+      "name": "Transcribe a recording1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        2496
+      ],
+      "id": "fa60bd08-2019-4b0c-8b69-263a45b46797",
+      "name": "Analyze an image1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a3739d4-d12e-46cf-86eb-25cfbf0a4021",
+              "name": "text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "sid-0003-aaaa-bbbb-cccccccccccc",
+              "name": "session_id",
+              "value": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        2240
+      ],
+      "id": "39296442-7a6f-4200-8fcf-ab489fe0438c",
+      "name": "voice1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {
+          "mimeType": "audio/ogg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        2240
+      ],
+      "id": "cd39b2c5-5710-4351-b616-11e93476e4d1",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "content": "## WhatsApp Trigger\n\n",
+        "height": 704,
+        "width": 1296,
+        "color": "#A6FF94"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        1968
+      ],
+      "id": "e4edd8ec-8b92-417f-b868-8986a4fe22a8",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl9XcmJMP4LDSOp6",
+          "mode": "list",
+          "cachedResultName": "Clinic_Appointments",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tbl9XcmJMP4LDSOp6"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient_Name": "={{ $json.patient_name }}",
+            "Phone": "={{ $json.phone }}",
+            "Address": "={{ $json.address }}",
+            "Status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Patient_Name",
+              "displayName": "Patient_Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        1344
+      ],
+      "id": "9749cde6-3e42-4bb6-8151-e7e7970b1c61",
+      "name": "Clinic Database",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLLuKhbyciJK9uP",
+          "mode": "list",
+          "cachedResultName": "Online_Consultations",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tblLLuKhbyciJK9uP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient_Name": "={{ $json.patient_name }}",
+            "Phone": "={{ $json.phone }}",
+            "Address": "={{ $json.address }}",
+            "Status": "Pending",
+            "Triage_Summary": "={{ $json.triage_summary }}",
+            "File_Number": "={{ $json.file_number }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Patient_Name",
+              "displayName": "Patient_Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "File_Number",
+              "displayName": "File_Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Triage_Summary",
+              "displayName": "Triage_Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        1616
+      ],
+      "id": "ff18583c-db44-4743-80cc-7eb2c5c77f79",
+      "name": "Online Database",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.consultation_type }}",
+                    "rightValue": "Clinic",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "caseSensitive": false
+                    },
+                    "id": "864130c2-507c-4fa1-b344-78c9224b7963"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "clinic "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ec7636f6-50ce-440c-a2e4-1f49b702e95b",
+                    "leftValue": "={{ $json.consultation_type }}",
+                    "rightValue": "Online",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "caseSensitive": false
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Online"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": 0
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        1472
+      ],
+      "id": "386bf352-5b34-43a0-a3a9-d2837f1d2f22",
+      "name": "Booking Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "img-text-fix-0001",
+              "name": "text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1344
+      ],
+      "id": "55ffe94d-6218-4643-b301-732ca8ee8240",
+      "name": "Image"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "voice-text-fix-0001",
+              "name": "text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1568
+      ],
+      "id": "db9e2cde-0df6-436b-836c-c886ea46bdde",
+      "name": "Voice"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "booking_complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "864130c2-507c-4fa1-b344-78c9224b7963"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "booking"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ec7636f6-50ce-440c-a2e4-1f49b702e95b",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "booking_complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "normal "
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": 0
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        1344
+      ],
+      "id": "500020a6-3f1e-408b-aa4a-a595a761a975",
+      "name": "Route Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب النص الخارج من نود الـ Big Brain\nconst aiOutput = $('Big Brain').item.json.output || '';\n\n// 2. تحديد مصدر الرسالة (واتساب أو تليجرام) بشكل آمن تماماً\nlet source = 'whatsapp'; \ntry {\n    if (($('Telegram Trigger') && $('Telegram Trigger').isExecuted) || \n        ($('Callback Query Trigger') && $('Callback Query Trigger').isExecuted)) {\n        source = 'telegram';\n    }\n} catch (error) {\n    // لو نودز التليجرام ما اشتغلتش في الـ Run الحالي، يثبت المصدر واتساب\n    source = 'whatsapp';\n}\n\n// 3. إرجاع البيانات النظيفة للمصدر فوراً بدون تقسيم مسارات طبيب\nreturn [{\n    json: {\n        output: aiOutput,\n        source: source\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        2080
+      ],
+      "id": "d743422c-2c31-4799-a28f-eef6b3d5a6c2",
+      "name": "Triage Splitter"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. جلب نص الاستجابة من الـ AI\nconst aiResponse = $('Big Brain').item.json.output || \"\";\n\n// 2. تحديد المصدر بشكل مضمون بالرجوع للنودز السابقة\nlet source = \"\";\n\ntry {\n  // أ) البحث عن source في نود Route Switch أو الـ Input المباشر\n  if ($('Route Switch').item?.json?.source) {\n    source = $('Route Switch').item.json.source;\n  } else if ($input.first().json?.source) {\n    source = $input.first().json.source;\n  }\n\n  // ب) إذا لم نجد المتغير، نفحص بيانات نود الـ Trigger المباشرة\n  if (!source) {\n    // حاول قراءة بيانات أول نود في الورك فلو (سواء اسمها Telegram Trigger أو غير ذلك)\n    const allExecutionData = JSON.stringify($('Big Brain').input.all());\n    \n    if (allExecutionData.toLowerCase().includes('telegram') || allExecutionData.includes('update_id')) {\n      source = \"telegram\";\n    } else {\n      // إذا أردت جعل تليجرام هو الافتراضي عند الشك، غيرها إلى \"telegram\"\n      source = \"whatsapp\";\n    }\n  }\n} catch (e) {\n  // إذا حدث خطأ في الفحص\n  source = \"telegram\";\n}\n\n// 3. تعيين قيم افتراضية\nlet patientName = \"مريض غير مسجل\";\nlet phone = \"بدون هاتف\";\nlet address = \"لم يذكر\";\nlet consultationType = \"Clinic\";\nlet cleanText = aiResponse;\n\ntry {\n  // 4. استخراج الـ JSON Block\n  const jsonMatch = aiResponse.match(/\\{[\\s\\S]*?\\}/);\n  \n  if (jsonMatch) {\n    const jsonBlock = JSON.parse(jsonMatch[0]);\n    \n    if (jsonBlock.patient_name) patientName = jsonBlock.patient_name.trim();\n    if (jsonBlock.phone) phone = jsonBlock.phone.trim();\n    if (jsonBlock.address) address = jsonBlock.address.trim();\n    \n    // فحص نوع الاستشارة (دعم العربي والإنجليزي)\n    if (jsonBlock.consultation_type) {\n      const typeStr = String(jsonBlock.consultation_type).toLowerCase().trim();\n      if (\n        typeStr.includes('online') || \n        typeStr.includes('أونلاين') || \n        typeStr.includes('اونلاين') || \n        typeStr.includes('أون لاين') ||\n        typeStr.includes('اون لاين')\n      ) {\n        consultationType = \"Online\";\n      } else {\n        consultationType = \"Clinic\";\n      }\n    }\n    \n    // 5. تنظيف النص المرسل للمريض من الـ JSON والتاجات\n    cleanText = aiResponse\n      .replace(/\\{[\\s\\S]*?\\}/g, \"\")\n      .replace(/\"booking_complete\":\\s*true/g, \"\")\n      .trim();\n  }\n} catch (error) {\n  console.error(\"Error parsing AI JSON block:\", error);\n}\n\n// 6. إخراج البيانات بالمسارات الصحيحة\nreturn [{\n  json: {\n    patient_name: patientName,\n    phone: phone,\n    address: address,\n    consultation_type: consultationType,\n    source: String(source).toLowerCase().trim(),\n    clean_text: cleanText\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        1472
+      ],
+      "id": "db470d0a-eea7-4d09-96ab-45d939cb10f7",
+      "name": "Booking Splitter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "direct_info",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b3abaa62-47dc-4022-910f-098186bfc7f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "direct_info"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bb962c07-d9cf-4a2c-8de3-092bfb6674bd",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "medical_triage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "medical_triage"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1776
+      ],
+      "id": "17efe0b0-bc2f-4d48-82ed-1ae57ff3f85f",
+      "name": "Triage Switch 1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Booking Splitter').item.json.source }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c1de9d2d-7f8c-4698-a0e1-9a79ac17486e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "29472ca0-8f6e-486a-95d1-c4c6925b2359",
+                    "leftValue": "={{ $('Booking Splitter').item.json.source }}",
+                    "rightValue": "telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "telegram"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        1488
+      ],
+      "id": "54774e72-5b20-4629-9d2e-b49b08dd29b2",
+      "name": "Booking Source Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.message.conversation }}",
+                    "rightValue": "messages.upsert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "f0f2aceb-c34f-47c6-8114-a717db3fb273"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "165a3ae7-a0bb-4c61-9b32-c71a21b3408d",
+                    "leftValue": "={{ $json.body.data.message.audioMessage }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "72d00959-0040-4f7c-bc91-369db0f90bbf",
+                    "leftValue": "={{ $json.body.data.message.imageMessage }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -848,
+        2224
+      ],
+      "id": "2a68fbfe-4017-48a5-992a-8893fcacdd75",
+      "name": "Input Whatsapp Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b3abaa62-47dc-4022-910f-098186bfc7f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bb962c07-d9cf-4a2c-8de3-092bfb6674bd",
+                    "leftValue": "={{ $json.source }}",
+                    "rightValue": "telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "telegram"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1760,
+        2080
+      ],
+      "id": "cd8bdff3-35f7-4796-b489-c7c8125f9c9e",
+      "name": "Triage Source Filter"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $('Booking Splitter').item.json.clean_text }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        1360
+      ],
+      "id": "0bf1f5a6-bfa4-422a-a747-f8db95e8fd86",
+      "name": "Booking Message Whatsapp",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message?.chat?.id || $('Callback Query Trigger').item.json.callback_query?.message?.chat?.id }}",
+        "text": "={{ $('Booking Splitter').item.json.clean_text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        1648
+      ],
+      "id": "a2144984-baa2-4308-a040-b6af45994fe3",
+      "name": "Booking Message Telegram",
+      "webhookId": "687ef514-5ef7-4919-9209-76f0273ba7f4",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('WhatsApp Trigger').item.json.body.instance }}",
+        "remoteJid": "={{ $('WhatsApp Trigger').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $('Triage Splitter').item.json.output }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        2000
+      ],
+      "id": "065eaabd-801b-4c72-ab0f-8963d81b72ca",
+      "name": "Send text",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "evolutionApi": {
+          "id": "8MZlHDInN6VymGON",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "97377f13-7379-40ac-b7a6-14fe2febd07f",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2960,
+        1760
+      ],
+      "id": "602c2bb4-fc9b-4c70-aaa3-fc078cc2f576",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl9XcmJMP4LDSOp6",
+          "mode": "list",
+          "cachedResultName": "Clinic_Appointments",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tbl9XcmJMP4LDSOp6"
+        },
+        "filterByFormula": "=RIGHT({Phone}, 10) = RIGHT('{{ $json.body.payload.attendees[0].phoneNumber }}', 10)",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2768,
+        1760
+      ],
+      "id": "86b5d24b-96df-4543-8a43-c62815281c10",
+      "name": "Search clinic records",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLLuKhbyciJK9uP",
+          "mode": "list",
+          "cachedResultName": "Online_Consultations",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tblLLuKhbyciJK9uP"
+        },
+        "filterByFormula": "=RIGHT({Phone}, 10) = RIGHT('{{ $('cal trigger').item.json.body.payload.responses.phone?.value }}', 10)",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3168,
+        1904
+      ],
+      "id": "506dff18-801d-44ae-a887-2a06368a42ba",
+      "name": "Search online records",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl9XcmJMP4LDSOp6",
+          "mode": "list",
+          "cachedResultName": "Clinic_Appointments",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tbl9XcmJMP4LDSOp6"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Confirmed",
+            "Appointment Date": "={{ $('cal trigger').item.json.body.payload.startTime }}",
+            "id": "={{ $('Search clinic records').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Patient_Name",
+              "displayName": "Patient_Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "File Number",
+              "displayName": "File Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Triage Summary",
+              "displayName": "Triage Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3248,
+        1616
+      ],
+      "id": "18a77e3c-b294-4f3f-899e-1b39cf9bc1f0",
+      "name": "Update clinic record",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appUu1M3cWktRQhcv",
+          "mode": "list",
+          "cachedResultName": "Nexus Health CRM",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLLuKhbyciJK9uP",
+          "mode": "list",
+          "cachedResultName": "Online_Consultations",
+          "cachedResultUrl": "https://airtable.com/appUu1M3cWktRQhcv/tblLLuKhbyciJK9uP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Confirmed",
+            "Appointment Date": "={{ $('cal trigger').item.json.body.payload.startTime }}",
+            "id": "={{ $('Search online records').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Patient_Name",
+              "displayName": "Patient_Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "File Number",
+              "displayName": "File Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Triage Summary",
+              "displayName": "Triage Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3360,
+        1904
+      ],
+      "id": "3114a282-6e94-4b5b-bf1a-e27056472a7c",
+      "name": "Update online record",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cchQjQ2BCzkVwjDJ",
+          "name": "Nexus Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "NexusHealth-CalConfirm",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        2576,
+        1760
+      ],
+      "id": "b0a6539f-b81e-4565-931c-103363be1d4c",
+      "name": "cal trigger",
+      "webhookId": "af9f1684-4f75-4bc5-b6df-453d55219741"
+    },
+    {
+      "parameters": {
+        "content": "## Booking Confirmation\nتأكيد الحجز النهائي للمريض \n\n",
+        "height": 624,
+        "width": 1408,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        1520
+      ],
+      "id": "21ad4b4d-107b-40ee-8d09-30ba53af9e45",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "NexusHealth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1040,
+        2240
+      ],
+      "id": "b29c6ec2-4e47-4773-adda-d49c8474880c",
+      "name": "WhatsApp Trigger",
+      "webhookId": "f6ae9a16-3d8f-452d-8f10-cae0244f434b"
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=أهلاً بك 👋 \n\nتم تأكيد موعد كشفك بنجاح في Nexus Health 🏥\n\n📅 الموعد: {{ new Date($('cal trigger').item.json.body.payload.startTime).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' }) }}\n👨‍⚕️ نوع الجلسة: {{ $('Search clinic records').isExecuted && $('Search clinic records').itemMatching(0)?.json?.fields ? 'كشف في العيادة' : 'استشارة أونلاين' }}\n\nنتطلع لرؤيتك قريباً، ونتمنى لك دوام الصحة والعافية! ✨",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3552,
+        1744
+      ],
+      "id": "e1b90756-6de1-4af1-9a99-2f0d0a667882",
+      "name": "send to customer",
+      "webhookId": "2d4d1c08-6a60-4439-abbe-8925e4428954",
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=279688324",
+        "text": "=🚨 حجز جديد مؤكد\n\nالمريض: {{ $('Search clinic records').itemMatching(0)?.json?.fields?.['Patient_Name'] || $('Search online records').itemMatching(0)?.json?.fields?.['Patient_Name'] || $('cal trigger').item.json.body.payload.responses?.name?.value || $('cal trigger').item.json.body.payload.attendees?.[0]?.name || 'غير محدد' }}\nرقم الهاتف: {{ $('Search clinic records').itemMatching(0)?.json?.fields?.['Phone'] || $('Search online records').itemMatching(0)?.json?.fields?.['Phone'] || $('cal trigger').item.json.body.payload.responses?.phone?.value || 'غير محدد' }}\nالعنوان: {{ $('Search clinic records').itemMatching(0)?.json?.fields?.['Address'] || $('Search online records').itemMatching(0)?.json?.fields?.['Address'] || 'غير محدد' }}\nنوع الكشف: {{ $('Search clinic records').itemMatching(0)?.json?.fields ? 'كشف في العيادة (In-clinic)' : 'استشارة أونلاين (Online)' }}\nالميعاد: {{ new Date($('cal trigger').item.json.body.payload.startTime).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' }) }}\n\nتم تحديث حالة المريض تلقائياً في الـ Airtable إلى (مؤكد).",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3744,
+        1744
+      ],
+      "id": "5317f4f9-b8d7-484f-a4c6-7f95b2784ac4",
+      "name": "send to nexus",
+      "webhookId": "687ef514-5ef7-4919-9209-76f0273ba7f4",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "1kbwJjwznW7EsCgE",
+          "name": "Nexus Health"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "clinic_knowledge_base",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthesizer Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieval Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Synthesizer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieval Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback Query Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Triage Switch 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clinic_knowledge_base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Retrieval Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "clinic_knowledge_base",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Big Brain": {
+      "main": [
+        [
+          {
+            "node": "Route Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording1": {
+      "main": [
+        [
+          {
+            "node": "voice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image1": {
+      "main": [
+        [
+          {
+            "node": "image+text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get voice": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "voice1": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image+text": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clinic Database": {
+      "main": [
+        [
+          {
+            "node": "Booking Source Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Online Database": {
+      "main": [
+        [
+          {
+            "node": "Booking Source Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking Switch": {
+      "main": [
+        [
+          {
+            "node": "Clinic Database",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Online Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Switch": {
+      "main": [
+        [
+          {
+            "node": "Booking Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Triage Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Splitter": {
+      "main": [
+        [
+          {
+            "node": "Triage Source Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking Splitter": {
+      "main": [
+        [
+          {
+            "node": "Booking Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Switch 1": {
+      "main": [
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Big Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking Source Filter": {
+      "main": [
+        [
+          {
+            "node": "Booking Message Whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Booking Message Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Whatsapp Switch": {
+      "main": [
+        [
+          {
+            "node": "text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get voice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Source Filter": {
+      "main": [
+        [
+          {
+            "node": "Send text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update clinic record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search online records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search clinic records": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search online records": {
+      "main": [
+        [
+          {
+            "node": "Update online record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update clinic record": {
+      "main": [
+        [
+          {
+            "node": "send to customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update online record": {
+      "main": [
+        [
+          {
+            "node": "send to customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cal trigger": {
+      "main": [
+        [
+          {
+            "node": "Search clinic records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Input Whatsapp Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send to nexus": {
+      "main": [
+        []
+      ]
+    },
+    "send to customer": {
+      "main": [
+        [
+          {
+            "node": "send to nexus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "92992233-803c-4122-824e-5b1ff60c8fe2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "nodeGroups": [
+    {
+      "id": "8b928790-f73a-49c8-95d9-6761d1c2e6d5",
+      "name": "AI Core",
+      "nodeIds": [
+        "40427a6c-2cc4-471e-b8fd-b9f5bdd5bae1",
+        "675d663d-e712-4c2f-b596-f7aaffb1066f",
+        "041f2c04-7e11-4b29-95b8-626b0eb5b10a",
+        "803fef72-49d7-4305-8d28-b7cfd6d5b7ff",
+        "9da1e088-81d0-4176-9574-b7e6087f72c8",
+        "f2a9d921-35a2-48de-8336-04ee40075e87",
+        "b1d52302-e69f-41b0-b3ae-3e16d13f53cf",
+        "7572b34d-3f31-4c0b-ae89-ebe200817c03",
+        "a6c41be7-2845-464f-b4e4-9288ca909f6f",
+        "f62e67a8-827c-4f47-b0cc-93b602ae161f",
+        "48cb76e1-b885-43e3-91f0-f1dce1d2fc8b",
+        "500020a6-3f1e-408b-aa4a-a595a761a975"
+      ],
+      "description": "العقل الذكي المسؤول عن فهم رسالة المريض، استرجاع المعلومات من قاعدة المعرفة، وتحديد مسار الرد (حجز أو استشارة)"
+    },
+    {
+      "id": "016f1e8c-fdc9-4e1d-a954-f64efe7eaf6c",
+      "name": "Booking Type",
+      "nodeIds": [
+        "9749cde6-3e42-4bb6-8151-e7e7970b1c61",
+        "ff18583c-db44-4743-80cc-7eb2c5c77f79",
+        "386bf352-5b34-43a0-a3a9-d2837f1d2f22",
+        "db470d0a-eea7-4d09-96ab-45d939cb10f7",
+        "54774e72-5b20-4629-9d2e-b49b08dd29b2",
+        "0bf1f5a6-bfa4-422a-a747-f8db95e8fd86",
+        "a2144984-baa2-4308-a040-b6af45994fe3"
+      ],
+      "description": "مسار تسجيل بيانات الحجز في Airtable"
+    },
+    {
+      "id": "e87da4da-9512-40a3-b2dc-2f84f97feb25",
+      "name": "Patient Response",
+      "nodeIds": [
+        "bb9d24d7-e418-4679-9faa-8169ba1ed536",
+        "d743422c-2c31-4799-a28f-eef6b3d5a6c2",
+        "cd8bdff3-35f7-4796-b489-c7c8125f9c9e",
+        "065eaabd-801b-4c72-ab0f-8963d81b72ca"
+      ],
+      "description": "متابعة المحادثة مع المريض لحين الانتهاء من كافة البيانات المطلوبة ثم توجيه لمسار تأكيد الحجز"
+    }
+  ],
+  "id": "W5H55MS6RL3g1X5g",
+  "tags": [
+    {
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z",
+      "id": "vjrjNSmhby2Ujgrx",
+      "name": "Portfolio"
+    }
+  ]
+}

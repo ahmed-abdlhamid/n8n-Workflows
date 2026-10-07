@@ -1,0 +1,402 @@
+{
+  "name": "MedicaFlow AI (Sub)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        -240
+      ],
+      "id": "ae627f02-3e10-45d7-9942-6dad97c79e23",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message?.text || $json.text || Object.values($json)[0] }}",
+        "options": {
+          "systemMessage": "=Your role is the Agency Executive Manager & Dynamic Router. \nAnalyze the incoming client request and decide which corporate resources are required. \nOutput a JSON object with the following parameters:\n1. Core_Goal: The final deliverable requested.\n2. Needs_Web_Research: (true/false) Does this require live market data?\n3. Domain_Context: (e.g., Real Estate, Medical, Tech) To fetch the correct brand guidelines from our vector knowledge base.\n4. Tone_Style: Desired tone.\n\nOutput strictly in JSON format. No conversational filler."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -48,
+        -240
+      ],
+      "id": "44ebd417-16b8-4bf1-a5d0-baf66d3a1a49",
+      "name": "The Manager Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=Your role is the Senior Research Agent. Based on the analysis blueprint provided by the Manager, you must gather, verify, and organize relevant data, market trends, and facts.\n\nSynthesize your findings into a detailed, highly factual \"Research Dossier\". Focus on numbers, metrics, and accurate local insights (e.g., real estate trends, digital behavior). Keep it objective, concise, and structured with bullet points. Do not write marketing copy yet."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        16
+      ],
+      "id": "7331d613-a2ed-4a6a-a8cf-5440309ba9df",
+      "name": "The Research Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_message || $json.output || $input.item.json.user_message }}",
+        "options": {
+          "systemMessage": "=Your role is the Creative Copywriter. Take the Research Dossier provided by the Research Agent and craft the final content requested by the client (e.g., social media posts, email sequences, or articles).\n\nGuidelines:\n- Match the requested Tone and Target Audience specified in the initial blueprint.\n- Structure the content beautifully using emojis, compelling hooks, and a strong Call to Action (CTA).\n- Ensure the copy is engaging and natural."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        672,
+        -256
+      ],
+      "id": "847097db-7e8d-4694-b45a-95aab26206c8",
+      "name": "The Copywriter Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=Your role is the Senior Content Auditor and Optimization Agent. Your job is NOT just to find mistakes, but to actively FIX them and output a production-ready result.\n\nYou will receive the content drafted by the Copywriter. Review it, instantly remove any forbidden AI clichés (like 'Delve', 'Revolutionize', 'In today's digital landscape'), and clean up the language.\n\nOutput your final decision STRICTLY in this JSON format:\n{\n  \"quality_score\": 9,\n  \"detailed_feedback\": \"None. Content automatically optimized and approved.\",\n  \"revised_content\": \"Your fully rewritten, polished, and beautifully formatted Arabic marketing text goes here.\"\n}\n\nCRITICAL RULES:\n1. Since you have edited the text yourself, ALWAYS set the \"quality_score\" to 9 or 10.\n2. Ensure the \"revised_content\" is fully polished and directly ready to be sent to the client.\n3. Output ONLY the raw JSON object. No conversational text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "3367614c-d09a-48b1-93e8-99ea9ee2b615",
+      "name": "The Auditor Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "f872a112-d33d-40be-887a-c270da090da6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        336
+      ],
+      "id": "242c274c-0120-40d2-a676-1763d9fca413",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        16
+      ],
+      "id": "eeb3c9bc-be5a-4204-8343-18105901dc24",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        208
+      ],
+      "id": "2f700087-1eb4-4222-82d3-f3cf6af08137",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        432,
+        256
+      ],
+      "id": "02c379c7-4869-4b9d-9ad2-e161e2281a4a",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "9rzR6YTuKQI59GvS",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c331bce8-6d83-4d14-a3f3-fb2971d566d6",
+              "leftValue": "={{ JSON.parse($json.output).quality_score }}",
+              "rightValue": 8,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "8b761693-a4e2-4e84-8c30-8e287cd506e3",
+              "leftValue": "={{ $('The Copywriter Agent').runs().length }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        -240
+      ],
+      "id": "7de4744b-9501-46b0-bbf7-a97c1f0e1a8d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a19c5c4-e269-438a-8b9e-2cbb75081734",
+              "name": "final_text",
+              "value": "={{ JSON.parse($json.output).revised_content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        -256
+      ],
+      "id": "72a0e9be-cf3f-4521-b175-97bc347cddc4",
+      "name": "final text"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "The Manager Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Manager Agent": {
+      "main": [
+        [
+          {
+            "node": "The Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Research Agent": {
+      "main": [
+        [
+          {
+            "node": "The Copywriter Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Copywriter Agent": {
+      "main": [
+        [
+          {
+            "node": "The Auditor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "The Manager Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "The Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "The Copywriter Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "The Auditor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "The Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Auditor Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "final text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "The Copywriter Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "199f7360-83d3-454d-b8a6-7e0b3a631ffb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "id": "if65K5dUVRfMb10P",
+  "tags": [
+    {
+      "updatedAt": "2026-07-03T19:59:12.515Z",
+      "createdAt": "2026-07-03T19:59:12.515Z",
+      "id": "vjrjNSmhby2Ujgrx",
+      "name": "Portfolio"
+    }
+  ]
+}

@@ -1,0 +1,759 @@
+{
+  "name": "Rag chatbot V.2",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1472,
+        -256
+      ],
+      "id": "3a8ced96-edee-4146-9337-711355ee5167",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "nmlf5Q7JKoHqRUVq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-rag",
+          "mode": "list",
+          "cachedResultName": "n8n-rag"
+        },
+        "embeddingBatchSize": 1,
+        "options": {
+          "pineconeNamespace": "={{ $json.name }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        -464
+      ],
+      "id": "eceadd7f-150d-4a25-919c-789cb8ea8545",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "={{ $('Edit Fields').item.json.name }}",
+                "value": "={{ $('Edit Fields').item.json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        -176
+      ],
+      "id": "2051e666-ebdc-46cf-b6f6-58c921d36ea8",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        -160
+      ],
+      "id": "686b0b9c-89cf-4082-825d-c6dfa5bb3c06",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Rag Agent",
+        "height": 928,
+        "width": 1328,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2208,
+        288
+      ],
+      "id": "adfb4b52-28b1-4eda-a7d4-e4e37bf9bb14",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1888,
+        720
+      ],
+      "id": "56f7aff2-a8a1-4dff-be56-56b482b7b8a0",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "return data related to dental_protocols and dental_products"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        -1488,
+        576
+      ],
+      "id": "c81971f6-d4d8-4f68-b9ab-ac82d2f0a0d7",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        976
+      ],
+      "id": "cd81b652-c08e-4f03-a3cc-935c0596ff84",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "5f2gT9e9e2CrRAHI",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1264,
+        784
+      ],
+      "id": "a0bd27b9-35c6-42b1-b209-528d37a11a03",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wKlWp8aLMkfKjeyK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-rag",
+          "mode": "list",
+          "cachedResultName": "n8n-rag"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -1584,
+        784
+      ],
+      "id": "d3b7ab6d-0bed-460e-9830-85ec0478c4e7",
+      "name": "Pinecone Vector Retrive",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Z9u8b4aC41MhCOqZ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2704,
+        -112
+      ],
+      "id": "d8775006-e56e-482f-9b2d-d38707b82327",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1056,
+        -416
+      ],
+      "id": "ae978574-346d-463b-a95e-50c1c4524f2c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        16
+      ],
+      "id": "49a317cf-a82f-4f30-b554-4831d698304c",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78c83b34-160b-4314-9f22-01266b36b145",
+              "name": "name",
+              "value": "={{ $json.NAME }}",
+              "type": "string"
+            },
+            {
+              "id": "cc23dd75-da2f-4829-b728-f8f5d5728a89",
+              "name": "id",
+              "value": "={{ $json.ID }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1648,
+        -256
+      ],
+      "id": "6be72791-1bb6-4ab8-b906-a51493acc4aa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1696,
+        336
+      ],
+      "id": "e1569d56-4c97-4ec9-b750-a3946ad36ff5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1936,
+        336
+      ],
+      "id": "4dbf9f6d-935b-4919-8b5e-31bad598b4cc",
+      "name": "When chat message received",
+      "webhookId": "2a1c2071-2bfc-47dd-9fb4-2912c1eb8a75"
+    },
+    {
+      "parameters": {
+        "content": "## UPLOAD TO VD",
+        "height": 720,
+        "width": 1040,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        -544
+      ],
+      "id": "96f1e71b-8e2a-4115-ae70-6ab98358ac8d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2704,
+        -416
+      ],
+      "id": "659abda4-a4ff-4bc0-b84c-3d14f860d996",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw",
+          "mode": "list",
+          "cachedResultName": "DENTAL VD STORE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2464,
+        -112
+      ],
+      "id": "b7e777fa-14be-415e-9f33-41f19aab64d2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBit23hgmAhkOARS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ✅ Get ALL incoming data as one flat array\nconst allInputs = $input.all(); \n\n// Separate Drive files vs Sheet rows by their structure\nconst driveInput = [];\nconst sheetInput = [];\n\n// Loop through all incoming items and detect source\nfor (const item of allInputs) {\n  const data = item.json;\n  \n  // Drive files have `id` + `name`\n  if (data.id && data.name) {\n    driveInput.push(data);\n  }\n  \n  // Sheet rows have `ID` + `Name`\n  if (data.ID || data.Name) {\n    sheetInput.push(data);\n  }\n}\n\n// ✅ Extract already processed IDs from sheet\nconst processedIds = sheetInput\n  .filter(row => row.ID && row.ID !== \"\")\n  .map(row => row.ID);\n\n// ✅ Filter only NEW files not in sheet\nconst newFiles = driveInput.filter(f => !processedIds.includes(f.id));\n\n// ✅ Debug info\nconsole.log(`Drive files found: ${driveInput.length}`);\nconsole.log(`Sheet rows found: ${sheetInput.length}`);\nconsole.log(`Already processed IDs: ${processedIds.length}`);\nconsole.log(`New files to download: ${newFiles.length}`);\n\n// ✅ Output only the new ones\nreturn newFiles.map(f => ({\n  json: {\n    fileId: f.id,\n    fileName: f.name\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2016,
+        -256
+      ],
+      "id": "808b1e72-569e-4a42-b63f-951bec107b9d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2192,
+        -256
+      ],
+      "id": "100c4b69-1732-4816-8197-7cff706541df",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw",
+          "mode": "list",
+          "cachedResultName": "DENTAL VD STORE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18K8NgsBomqyBwpQqn73lUHaaY3NAcAGc7OybV1ITJgw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NAME": "={{ $json.fileName }}",
+            "ID": "={{ $json.fileId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1824,
+        -256
+      ],
+      "id": "427fea29-cbc2-489f-90b7-a372b6e04b17",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBit23hgmAhkOARS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1SCmKFor2JjjtMBfz1_IZxSCi3iqGVUVZ",
+            "mode": "list",
+            "cachedResultName": "Rag Test",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1SCmKFor2JjjtMBfz1_IZxSCi3iqGVUVZ"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2464,
+        -416
+      ],
+      "id": "5f91074a-48b2-4891-83e9-1a5784692717",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "nmlf5Q7JKoHqRUVq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## DATABASE\n",
+        "height": 720,
+        "width": 1488,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2848,
+        -544
+      ],
+      "id": "36c27119-0528-4f71-a43e-c1b87b30ae76",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Retrive",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Retrive": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "99df386b-e3c7-4d2a-b988-c07d00c82953",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
+  },
+  "id": "jg8c6eX3G2o10S8q",
+  "tags": []
+}

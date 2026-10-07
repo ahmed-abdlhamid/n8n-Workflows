@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Krokett Dashboard</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">K</div>
+        <div>
+          <h2>Krokett</h2>
+          <span>لوحة التحكم</span>
+        </div>
+      </div>
+
+      <nav>
+        <a class="active" href="#">
+          <span>▦</span>
+          الرئيسية
+        </a>
+
+        <a href="#orders">
+          <span>☷</span>
+          الطلبات
+        </a>
+
+        <a href="#analytics">
+          <span>◒</span>
+          التحليلات
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        النظام يعمل
+      </div>
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Header -->
+      <header class="topbar">
+
+        <div>
+          <p class="eyebrow">Krokett Restaurant</p>
+          <h1>لوحة التحكم</h1>
+          <p class="subtitle">
+            نظرة سريعة على الطلبات والمبيعات وحالة الدفع
+          </p>
+        </div>
+
+        <button id="refreshBtn" class="refresh-btn">
+          ↻ تحديث البيانات
+        </button>
+
+      </header>
+
+
+      <!-- Stats -->
+      <section class="stats-grid">
+
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div>
+            <span>إجمالي الطلبات</span>
+            <strong id="totalOrders">—</strong>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div>
+            <span>إجمالي المبيعات</span>
+            <strong id="totalSales">—</strong>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💵</div>
+          <div>
+            <span>طلبات كاش</span>
+            <strong id="cashOrders">—</strong>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💳</div>
+          <div>
+            <span>طلبات أونلاين مدفوعة</span>
+            <strong id="paidOnlineOrders">—</strong>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- Orders -->
+      <section class="orders-section" id="orders">
+
+        <div class="section-header">
+
+          <div>
+            <h2>آخر الطلبات</h2>
+            <p>جميع الطلبات المسجلة في النظام</p>
+          </div>
+
+          <div class="search-box">
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="ابحث برقم الطلب أو اسم العميل..."
+            />
+          </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>رقم الطلب</th>
+                <th>العميل</th>
+                <th>الطلب</th>
+                <th>الإجمالي</th>
+                <th>طريقة الدفع</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersTable">
+              <tr>
+                <td colspan="7" class="loading">
+                  جاري تحميل البيانات...
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- Footer -->
+      <footer>
+        Krokett Dashboard · نظام إدارة الطلبات
+      </footer>
+
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
