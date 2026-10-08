@@ -228,7 +228,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3.1-flash-lite",
+        "modelName": "models/gemini-3.5-flash-lite",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -839,7 +839,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4448,
+        4480,
         1712
       ],
       "id": "667e47bb-85aa-4cb5-a2fc-da158eb597c7",
@@ -860,7 +860,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        4240,
+        4336,
         1712
       ],
       "id": "2fcc50ad-7990-43c5-bf40-4c045b6ae306",
@@ -1377,7 +1377,7 @@
       "typeVersion": 4.7,
       "position": [
         3264,
-        1216
+        1184
       ],
       "id": "8daab7c7-7938-487c-83b6-14744190f667",
       "name": "Append Orders",
@@ -1434,8 +1434,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3280,
-        1472
+        3264,
+        1520
       ],
       "id": "4b34c438-3038-4295-87df-2e289dbf1c2a",
       "name": "Continue Chat",
@@ -1458,8 +1458,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3760,
-        1232
+        3872,
+        1264
       ],
       "id": "1ce71e65-d056-4dcd-bbf6-977a0bae5184",
       "name": "Notify Krokett",
@@ -1515,8 +1515,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4000,
-        1232
+        4112,
+        1264
       ],
       "id": "cc6a52b3-3a70-4d9b-9a79-45f2153f6aa6",
       "name": "Notify Customer",
@@ -1556,8 +1556,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3520,
-        1312
+        3632,
+        1344
       ],
       "id": "1cd5f9f3-a5e9-4593-aeeb-30693fa1fd8b",
       "name": "Payment Method?"
@@ -1574,8 +1574,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        3744,
-        1440
+        3856,
+        1472
       ],
       "id": "52cbb8b0-a19e-4acd-84e9-50b6c7867d4f",
       "name": "Create Payment Session"
@@ -1771,7 +1771,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3136,
+        3152,
         1712
       ],
       "id": "11b64d7f-507a-4d26-83c6-abf9d1541f21",
@@ -1808,7 +1808,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3376,
+        3600,
         1712
       ],
       "id": "d5f539e7-9721-4cde-b9a8-a187b7d2ac24",
@@ -1830,7 +1830,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3600,
+        3904,
         1712
       ],
       "id": "fb794425-376f-4ede-91b7-edafe9e23dec",
@@ -1852,8 +1852,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3136,
-        2032
+        3152,
+        2016
       ],
       "id": "f5814058-7ec0-4d40-b3c0-85edf4f849d1",
       "name": "Notify Customer Failure",
@@ -1880,6 +1880,115 @@
       ],
       "id": "344b34ef-4843-46d5-a8d4-dd0dbddcf6c7",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "tableId": "orders",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "project_id",
+              "fieldValue": "247aef2b-1994-4951-a2b2-ba9b7c549692"
+            },
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{$json.order_id}}"
+            },
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{$json.chat_id}}"
+            },
+            {
+              "fieldId": "order_type",
+              "fieldValue": "={{$json.order_type}}"
+            },
+            {
+              "fieldId": "date_time",
+              "fieldValue": "={{$json.date_time}}"
+            },
+            {
+              "fieldId": "customer_name",
+              "fieldValue": "={{$json.customer_name}}"
+            },
+            {
+              "fieldId": "phone_number",
+              "fieldValue": "={{$json.phone_number}}"
+            },
+            {
+              "fieldId": "delivery_address",
+              "fieldValue": "={{$json.delivery_address}}"
+            },
+            {
+              "fieldId": "ordered_items",
+              "fieldValue": "={{$json.ordered_items}}"
+            },
+            {
+              "fieldId": "total_price",
+              "fieldValue": "={{$json.total_price}}"
+            },
+            {
+              "fieldId": "payment_method",
+              "fieldValue": "={{$json.payment_method}}"
+            },
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "={{$json.payment_status}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        1344
+      ],
+      "id": "5020d29e-6d22-41c6-bc23-695c33b52201",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "=={{ $('Payment Success').item.json.body.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "paid"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3296,
+        1856
+      ],
+      "id": "ec5ef388-69d2-453f-bc65-3339444d7465",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -2392,6 +2501,11 @@
             "node": "Append Orders",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -2448,6 +2562,11 @@
         [
           {
             "node": "update payment status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update a row",
             "type": "main",
             "index": 0
           }
@@ -2511,7 +2630,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "c1b3e37a-57bb-431c-b648-b250d17738e4",
+  "versionId": "38695500-868e-43a8-adf0-5a4b3d29ea2e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
@@ -2542,6 +2661,7 @@
     },
     {
       "id": "7e2f4af8-9205-4475-9fb5-5edabd09cc14",
+      "name": "AI Agent",
       "nodeIds": [
         "78098114-4551-4e6b-8f1f-c64fdbd7255e",
         "91da0674-2763-4a45-bfe0-b8d92d65c3c0",
@@ -2550,8 +2670,7 @@
         "c3344360-ce4a-4e4e-bde3-3c963ad63781",
         "790d14d1-3896-45a7-9509-52ad5c7bac4d",
         "946c5959-cfbf-4dd4-ad70-c669920b4792"
-      ],
-      "name": "AI Agent"
+      ]
     }
   ],
   "id": "1gPQ6nWLaLzgrZJc",
