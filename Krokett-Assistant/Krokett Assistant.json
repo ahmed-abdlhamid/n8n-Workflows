@@ -100,9 +100,9 @@
         "mode": "insert",
         "pineconeIndex": {
           "__rl": true,
-          "value": "krokettrestaurantdatabase",
+          "value": "krokett",
           "mode": "list",
-          "cachedResultName": "krokettrestaurantdatabase"
+          "cachedResultName": "krokett"
         },
         "options": {
           "pineconeNamespace": "={{ $('Edit Fields').item.json.name }}"
@@ -120,26 +120,6 @@
         "pineconeApi": {
           "id": "Z9u8b4aC41MhCOqZ",
           "name": "Pinecone account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelName": "intfloat/multilingual-e5-large",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        720
-      ],
-      "id": "52bb2384-9b7b-4bc2-b02a-f771ba31a5ae",
-      "name": "Embeddings HuggingFace Inference",
-      "credentials": {
-        "huggingFaceApi": {
-          "id": "5f2gT9e9e2CrRAHI",
-          "name": "Hugging Face account"
         }
       }
     },
@@ -220,7 +200,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        1968,
+        1920,
         1280
       ],
       "id": "78098114-4551-4e6b-8f1f-c64fdbd7255e",
@@ -234,7 +214,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        1840,
+        1792,
         1584
       ],
       "id": "91da0674-2763-4a45-bfe0-b8d92d65c3c0",
@@ -254,7 +234,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
       "typeVersion": 1.1,
       "position": [
-        2176,
+        2128,
         1616
       ],
       "id": "a0d56317-f928-4c8d-94a4-cc81b8a80464",
@@ -264,9 +244,9 @@
       "parameters": {
         "pineconeIndex": {
           "__rl": true,
-          "value": "krokettrestaurantdatabase",
+          "value": "krokett",
           "mode": "list",
-          "cachedResultName": "krokettrestaurantdatabase"
+          "cachedResultName": "krokett"
         },
         "options": {
           "pineconeNamespace": "krokett_restaurant_database.md"
@@ -275,7 +255,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        1904,
+        1856,
         1808
       ],
       "id": "04e1eed2-33cd-4b06-9e34-06c4f04ee926",
@@ -289,33 +269,13 @@
     },
     {
       "parameters": {
-        "modelName": "intfloat/multilingual-e5-large",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        2032
-      ],
-      "id": "c3344360-ce4a-4e4e-bde3-3c963ad63781",
-      "name": "Embeddings HuggingFace Inference1",
-      "credentials": {
-        "huggingFaceApi": {
-          "id": "5f2gT9e9e2CrRAHI",
-          "name": "Hugging Face account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "modelName": "models/gemini-3.1-flash-lite",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        2384,
+        2336,
         1824
       ],
       "id": "790d14d1-3896-45a7-9509-52ad5c7bac4d",
@@ -336,7 +296,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.4,
       "position": [
-        2016,
+        1968,
         1488
       ],
       "id": "946c5959-cfbf-4dd4-ad70-c669920b4792",
@@ -1223,7 +1183,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// 1) قراءة مخرجات الـ AI Agent مباشرة بأمان تام\nlet rawText = \"\";\ntry {\n  const aiData = $('AI Agent').first().json;\n  rawText = aiData.output || aiData.text || aiData.message || (typeof aiData === 'string' ? aiData : JSON.stringify(aiData));\n} catch (e) {\n  rawText = $input.first().json.output || $input.first().json.text || \"\";\n}\n\nlet isOrder = false;\nlet customerName = \"غير محدد\";\nlet phoneNumber = \"غير محدد\";\nlet deliveryAddress = \"غير محدد\";\nlet orderedItems = \"غير محدد\";\nlet subtotalPrice = 0;\nlet paymentMethod = \"كاش\";\nlet replyMessage = \"\";\n\n// 2) تفكيك الـ JSON القادم من الـ AI Agent\nlet parsed = null;\ntry {\n  let cleaned = rawText.replace(/```json|```/g, \"\").trim();\n  const jsonMatch = cleaned.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    parsed = JSON.parse(jsonMatch[0]);\n  }\n} catch (e) {\n  parsed = null;\n}\n\n// 3) تحديد نوع الرد\nif (parsed) {\n  isOrder = parsed.is_order === true;\n  replyMessage = parsed.reply_message || \"\";\n  \n  if (isOrder) {\n    customerName = parsed.customer_name || customerName;\n    phoneNumber = parsed.phone_number || phoneNumber;\n    deliveryAddress = parsed.delivery_address || deliveryAddress;\n    orderedItems = parsed.ordered_items || orderedItems;\n    paymentMethod = parsed.payment_method || paymentMethod;\n    \n    // total_price يمثل المجموع الفرعي للأصناف فقط من الـ AI\n    subtotalPrice = Number(parsed.total_price) || 0;\n  }\n} else {\n  replyMessage = rawText;\n}\n\n// تنظيف الـ reply_message من رموز \\n النصية\nreplyMessage = replyMessage\n  .replace(/\\\\n/g, '\\n')\n  .replace(/\\\\\"/g, '\"')\n  .replace(/\\\\/g, '')\n  .trim();\n\n// ==========================================\n// حالة 1: الرد عادي (شات / استفسار / لم يكتمل الأوردر)\n// ==========================================\nif (!isOrder) {\n  return [{\n    json: {\n      is_order: false,\n      reply_message: replyMessage\n    }\n  }];\n}\n\n// ==========================================\n// حالة 2: أوردر مكتمل ومؤكد (is_order: true)\n// ==========================================\nconst chatId = $('Prepare Input').item.json.chat_id;\n\n// 4) حساب أحدث رقم أوردر شامل للمطعم ككل (من نود Get Last Order)\nlet nextOrderNumber = 1;\n\ntry {\n  // يقرأ كافة الأوردرات القادمة من الجوجل شيت لجميع العملاء\n  const allOrders = $('Get Last Order').all();\n  \n  if (allOrders && allOrders.length > 0) {\n    // جلب آخر صف متسجل في الشيت\n    const lastRow = allOrders[allOrders.length - 1].json;\n    const lastOrderId = lastRow.order_id || lastRow[\"Order_ID\"] || lastRow[\"Order ID\"] || \"\";\n    \n    // استخراج أرقام الأوردر (مثلاً من ONL-15 يخرج 15)\n    const matchNum = String(lastOrderId).match(/\\d+/);\n    if (matchNum) {\n      nextOrderNumber = parseInt(matchNum[0], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (e) {\n  nextOrderNumber = 1;\n}\n\nconst orderId = `ONL-${nextOrderNumber}`;\n\n// 5) الحسابات المالية الواضحة (سعر الأصناف + التوصيل مرة واحدة فقط)\nconst deliveryFee = 35; // رسوم التوصيل الثابتة\nconst grandTotal = subtotalPrice + deliveryFee; // المجموع الكلي النهائي\nconst dateTime = new Date().toLocaleString(\"ar-EG\", { timeZone: \"Africa/Cairo\" });\n\n// 6) تجهيز رسالة تأكيد الأوردر المنسقة للعميل\nconst finalOrderMessage = \n`🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\n\nرقم الأوردر: ${orderId}\n----------------------------------------\n📋 تفاصيل الطلب:\n${orderedItems}\n\n👤 الاسم: ${customerName}\n📞 رقم التواصل: ${phoneNumber}\n📍 عنوان التوصيل: ${deliveryAddress}\n💳 طريقة الدفع: ${paymentMethod}\n----------------------------------------\n💵 سعر الأصناف: ${subtotalPrice} ج.م\n🚚 التوصيل: ${deliveryFee} ج.م\n💰 الإجمالي النهائي: ${grandTotal} ج.م\n\nجاري تحضير الأوردر الآن في المطبخ ليصلك سخن وطازة! 🚀\nشكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️`;\n\nreturn [{\n  json: {\n    is_order: true,\n    order_type: \"Online Order\",\n    order_id: orderId,\n    date_time: dateTime,\n    chat_id: chatId,\n    customer_name: customerName,\n    phone_number: phoneNumber,\n    delivery_address: deliveryAddress,\n    ordered_items: orderedItems,\n    subtotal: subtotalPrice,\n    delivery_fee: deliveryFee,\n    grand_total: grandTotal,\n    payment_method: paymentMethod,\n    order_status: \"قيد التحضير\",\n    reply_message: finalOrderMessage\n  }\n}];"
+        "jsCode": "\nfunction getValue(obj, key, fallback) {\n  if (\n    obj &&\n    obj[key] !== undefined &&\n    obj[key] !== null &&\n    obj[key] !== \"\"\n  ) {\n    return obj[key];\n  }\n\n  return fallback;\n}\n\n// 1. Read AI Agent output\nvar rawText = \"\";\n\ntry {\n  var aiData = $(\"AI Agent\").first().json;\n\n  if (typeof aiData === \"string\") {\n    rawText = aiData;\n  } else {\n    rawText = getValue(aiData, \"output\", \"\");\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"text\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"message\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = JSON.stringify(aiData);\n    }\n  }\n} catch (error) {\n  var inputData = $input.first().json;\n\n  rawText = getValue(inputData, \"output\", \"\");\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"text\", \"\");\n  }\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"message\", \"\");\n  }\n}\n\nrawText = String(rawText || \"\").trim();\n\n// 2. Parse AI response JSON\nvar parsed = null;\n\ntry {\n  var cleaned = rawText\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim()\n    .replace(/^json\\s*/i, \"\");\n\n  var firstBrace = cleaned.indexOf(\"{\");\n  var lastBrace = cleaned.lastIndexOf(\"}\");\n\n  if (firstBrace >= 0 && lastBrace > firstBrace) {\n    cleaned = cleaned.substring(firstBrace, lastBrace + 1);\n  }\n\n  parsed = JSON.parse(cleaned);\n} catch (error) {\n  parsed = null;\n}\n\n// 3. Initialize order data\nvar isOrder = false;\nvar customerName = \"غير محدد\";\nvar phoneNumber = \"غير محدد\";\nvar deliveryAddress = \"غير محدد\";\nvar orderedItems = \"غير محدد\";\nvar subtotalPrice = 0;\nvar paymentMethod = \"كاش\";\nvar replyMessage = rawText;\n\nif (parsed && typeof parsed === \"object\") {\n  isOrder = parsed.is_order === true;\n\n  replyMessage = String(\n    getValue(parsed, \"reply_message\", \"\")\n  );\n\n  if (isOrder) {\n    customerName = getValue(\n      parsed,\n      \"customer_name\",\n      customerName\n    );\n\n    phoneNumber = getValue(\n      parsed,\n      \"phone_number\",\n      phoneNumber\n    );\n\n    deliveryAddress = getValue(\n      parsed,\n      \"delivery_address\",\n      deliveryAddress\n    );\n\n    orderedItems = getValue(\n      parsed,\n      \"ordered_items\",\n      orderedItems\n    );\n\n    paymentMethod = getValue(\n      parsed,\n      \"payment_method\",\n      paymentMethod\n    );\n\n    var priceValue = Number(parsed.total_price);\n\n    if (isFinite(priceValue) && priceValue >= 0) {\n      subtotalPrice = priceValue;\n    }\n  }\n}\n\n// 4. Clean reply message\nreplyMessage = String(replyMessage)\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .trim();\n\n// 5. Return normal AI replies without creating an order\nif (!isOrder) {\n  return [\n    {\n      json: {\n        is_order: false,\n        reply_message: replyMessage\n      }\n    }\n  ];\n}\n\n// 6. Read Chat ID\nvar chatId = \"\";\n\ntry {\n  chatId = getValue(\n    $(\"Prepare Input\").first().json,\n    \"chat_id\",\n    \"\"\n  );\n} catch (error) {\n  chatId = getValue(\n    $input.first().json,\n    \"chat_id\",\n    \"\"\n  );\n}\n\n// 7. Generate order number\nvar nextOrderNumber = 1;\n\ntry {\n  var allOrders = $(\"Get Last Order\").all();\n\n  if (allOrders.length > 0) {\n    var lastRow = allOrders[allOrders.length - 1].json;\n\n    var lastOrderId = getValue(\n      lastRow,\n      \"order_id\",\n      \"\"\n    );\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order_ID\",\n        \"\"\n      );\n    }\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order ID\",\n        \"\"\n      );\n    }\n\n    var match = String(lastOrderId).match(/(\\d+)$/);\n\n    if (match) {\n      nextOrderNumber = parseInt(match[1], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (error) {\n  nextOrderNumber = 1;\n}\n\nvar orderId = \"ONL-\" + nextOrderNumber;\n\n// 8. Calculate prices\nvar deliveryFee = 35;\nvar grandTotal = subtotalPrice + deliveryFee;\n\n// 9. Date and time\nvar dateTime = new Date().toLocaleString(\"en-GB\", {\n  timeZone: \"Africa/Cairo\"\n});\n\n// 10. Payment status\n// All new orders start unpaid.\n// Payment confirmation must happen in a separate workflow.\nvar paymentStatus = \"pending\";\n\n// 11. Initial order status\nvar orderStatus = \"قيد التحضير\";\n\n// 12. Build customer confirmation message\nvar messageLines = [\n  \"🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\",\n  \"\",\n  \"رقم الأوردر: \" + orderId,\n  \"----------------------------------------\",\n  \"📋 تفاصيل الطلب:\",\n  String(orderedItems),\n  \"\",\n  \"👤 الاسم: \" + customerName,\n  \"📞 رقم التواصل: \" + phoneNumber,\n  \"📍 عنوان التوصيل: \" + deliveryAddress,\n  \"💳 طريقة الدفع: \" + paymentMethod,\n  \"----------------------------------------\",\n  \"💵 سعر الأصناف: \" + subtotalPrice + \" ج.م\",\n  \"🚚 التوصيل: \" + deliveryFee + \" ج.م\",\n  \"💰 الإجمالي النهائي: \" + grandTotal + \" ج.م\",\n  \"\",\n  \"شكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️\"\n];\n\nvar finalOrderMessage = messageLines.join(\"\\n\");\n\n// 13. Return complete order data\nreturn [\n  {\n    json: {\n      is_order: true,\n      order_type: \"Online Order\",\n      order_id: orderId,\n      date_time: dateTime,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      subtotal: subtotalPrice,\n      delivery_fee: deliveryFee,\n      grand_total: grandTotal,\n      payment_method: paymentMethod,\n      payment_status: paymentStatus,\n      order_status: orderStatus,\n      reply_message: finalOrderMessage\n    }\n  }\n];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1263,7 +1223,8 @@
             "Total_Price": "={{ $json.grand_total }}",
             "Payment_Method": "={{ $json.payment_method }}",
             "Order_Type": "={{ $json.order_type }}",
-            "Chat_ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+            "Chat_ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "Payment_Status": "={{ $json.payment_status }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1360,6 +1321,16 @@
             {
               "id": "Payment_Method",
               "displayName": "Payment_Method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Payment_Status",
+              "displayName": "Payment_Status",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1540,8 +1511,8 @@
           "conditions": [
             {
               "id": "55d9a734-e52e-44d9-a2fe-f22872011336",
-              "leftValue": "={{ $json.payment_method }}",
-              "rightValue": "كاش - cach",
+              "leftValue": "={{ $json.Payment_Method }}",
+              "rightValue": "كاش",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -1875,7 +1846,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2608,
+        2576,
         1152
       ],
       "id": "344b34ef-4843-46d5-a8d4-dd0dbddcf6c7",
@@ -1924,7 +1895,7 @@
             },
             {
               "fieldId": "total_price",
-              "fieldValue": "={{$json.total_price}}"
+              "fieldValue": "={{ $json.grand_total }}"
             },
             {
               "fieldId": "payment_method",
@@ -1989,61 +1960,43 @@
           "name": "Supabase account"
         }
       }
-    }
-  ],
-  "pinData": {
-    "Payment Success": [
-      {
-        "json": {
-          "headers": {
-            "host": "palm-varying-actors-julia.trycloudflare.com",
-            "user-agent": "node",
-            "content-length": "306",
-            "accept": "*/*",
-            "accept-encoding": "gzip",
-            "accept-language": "*",
-            "cache-control": "no-cache",
-            "cdn-loop": "cloudflare; loops=1; subreqs=1",
-            "cf-connecting-ip": "54.159.92.35",
-            "cf-ew-via": "15",
-            "cf-ipcountry": "US",
-            "cf-ray": "a466a9532ba9d6db-MRS",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "cf-warp-tag-id": "f6207dc0-2f81-450c-83ce-532faaa36f1f",
-            "cf-worker": "trycloudflare.com",
-            "connection": "keep-alive",
-            "content-type": "application/json",
-            "pragma": "no-cache",
-            "sec-fetch-mode": "cors",
-            "x-forwarded-for": "54.159.92.35",
-            "x-forwarded-proto": "https",
-            "x-invocation-id": "fra1::nt7k4-1791310630293-d66072074d9a",
-            "x-vercel-id": "fra1::nt7k4-1791310630293-d66072074d9a"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "event": "payment.success",
-            "payment_id": "MOCK-1791310630582",
-            "payment_status": "paid",
-            "payment_method": "card",
-            "order_id": "DEMO-1001",
-            "customer_name": "أحمد",
-            "phone_number": "01000000000",
-            "ordered_items": "وجبة كفتة × 2",
-            "grand_total": 250,
-            "chat_id": "demo-chat",
-            "paid_at": "2026-10-06T18:17:10.582Z"
-          },
-          "webhookUrl": "https://palm-varying-actors-julia.trycloudflare.com/webhook-test/krokett-payment-success",
-          "executionMode": "test"
-        },
-        "pairedItem": {
-          "item": 0
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        2032
+      ],
+      "id": "863365d4-2b0a-4246-86d6-dd5d6e9f84ca",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
         }
       }
-    ]
-  },
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        720
+      ],
+      "id": "e594a8c4-9b10-4084-b68e-3dd590832e20",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "15ccxy7q5GvxCXT4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
@@ -2084,17 +2037,6 @@
           {
             "node": "Extract from File",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Embeddings HuggingFace Inference": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Pinecone Vector Store",
-            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -2161,17 +2103,6 @@
           {
             "node": "Answer questions with a vector store",
             "type": "ai_vectorStore",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Embeddings HuggingFace Inference1": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Pinecone Vector Store1",
-            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -2623,6 +2554,28 @@
           }
         ]
       ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -2630,7 +2583,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "38695500-868e-43a8-adf0-5a4b3d29ea2e",
+  "versionId": "f6ba3618-1516-4529-b1e8-3592f7bf88d1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
@@ -2660,17 +2613,17 @@
       "description": "فحص رسالة العميل  وتوجيهها للمسار الصحيح سواء تتبع الطلب او تكرار اخر طلب او طلب جديد"
     },
     {
-      "id": "7e2f4af8-9205-4475-9fb5-5edabd09cc14",
-      "name": "AI Agent",
+      "id": "f3ddb199-c6e8-407c-a34e-4e5e58320ca5",
       "nodeIds": [
         "78098114-4551-4e6b-8f1f-c64fdbd7255e",
         "91da0674-2763-4a45-bfe0-b8d92d65c3c0",
         "a0d56317-f928-4c8d-94a4-cc81b8a80464",
         "04e1eed2-33cd-4b06-9e34-06c4f04ee926",
-        "c3344360-ce4a-4e4e-bde3-3c963ad63781",
         "790d14d1-3896-45a7-9509-52ad5c7bac4d",
-        "946c5959-cfbf-4dd4-ad70-c669920b4792"
-      ]
+        "946c5959-cfbf-4dd4-ad70-c669920b4792",
+        "863365d4-2b0a-4246-86d6-dd5d6e9f84ca"
+      ],
+      "name": "AI Agent"
     }
   ],
   "id": "1gPQ6nWLaLzgrZJc",
