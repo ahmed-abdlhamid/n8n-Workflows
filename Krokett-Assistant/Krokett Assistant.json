@@ -962,7 +962,7 @@
                   {
                     "text": "👨‍🍳 قيد التحضير",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|قيد التحضير"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|preparing"
                     }
                   }
                 ]
@@ -974,7 +974,7 @@
                   {
                     "text": "🛵 خرج للتوصيل",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|في الطريق إليك"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|out_for_delivery"
                     }
                   }
                 ]
@@ -986,7 +986,7 @@
                   {
                     "text": "✅ تم التسليم",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|تم التسليم"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|completed"
                     }
                   }
                 ]
@@ -1130,8 +1130,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.customer_chat_id }}",
-        "text": "={{ $json.customer_message }}",
+        "chatId": "={{ $('Track Status').item.json.customer_chat_id }}",
+        "text": "={{ $('Track Status').item.json.customer_message }}",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -1154,7 +1154,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const callbackData = $input.first().json.callback_query?.data || $('Callback Trigger').item.json.callback_query.data || \"\";\nconst parts = callbackData.split('|');\n\nif (parts[0] !== 'status') return [];\n\nreturn [{\n  json: {\n    order_id: parts[1],\n    customer_chat_id: parts[2],\n    new_status: parts[3],\n    customer_message: `🔔 تحديث جديد بخصوص طلبك رقم #${parts[1]}:\\nحالة الأوردر الآن: ${parts[3]} 🚀`\n  }\n}];"
+        "jsCode": "\nvar callbackData = \"\";\ntry {\n  callbackData = $input.first().json.callback_query.data;\n} catch (error) {\n  callbackData = \"\";\n}\nif (!callbackData) {\n  try {\n    callbackData = $(\"Callback Trigger\").item.json.callback_query.data;\n  } catch (error) {\n    callbackData = \"\";\n  }\n}\n\nvar parts = String(callbackData || \"\").split(\"|\");\nvar action = parts[0] || \"\";\nvar orderId = parts[1] || \"\";\nvar customerChatId = parts[2] || \"\";\n\nif (action === \"payment\") {\n  return [{\n    json: {\n      action: \"payment\",\n      order_id: orderId,\n      customer_chat_id: customerChatId,\n      new_payment_status: parts[3] || \"paid\",\n      customer_message: \"تم تأكيد استلام الدفع النقدي للطلب رقم \" + orderId + \" بنجاح. شكرًا لك ❤️\"\n    }\n  }];\n}\n\nif (action !== \"status\") {\n  return [];\n}\n\nvar statusCode = parts[3] || \"preparing\";\nvar statusLabels = {\n  pending: \"قيد الانتظار\",\n  preparing: \"قيد التحضير\",\n  out_for_delivery: \"خرج للتوصيل\",\n  completed: \"تم التسليم\",\n  cancelled: \"تم إلغاء الطلب\"\n};\nvar statusLabel = statusLabels[statusCode] || statusCode;\n\nreturn [{\n  json: {\n    action: \"status\",\n    order_id: orderId,\n    customer_chat_id: customerChatId,\n    new_status: statusCode,\n    customer_message: \"🔔 تحديث جديد بخصوص طلبك رقم #\" + orderId + \":\\nحالة الأوردر الآن: \" + statusLabel + \" 🚀\"\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1183,7 +1183,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nfunction getValue(obj, key, fallback) {\n  if (\n    obj &&\n    obj[key] !== undefined &&\n    obj[key] !== null &&\n    obj[key] !== \"\"\n  ) {\n    return obj[key];\n  }\n\n  return fallback;\n}\n\n// 1. Read AI Agent output\nvar rawText = \"\";\n\ntry {\n  var aiData = $(\"AI Agent\").first().json;\n\n  if (typeof aiData === \"string\") {\n    rawText = aiData;\n  } else {\n    rawText = getValue(aiData, \"output\", \"\");\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"text\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"message\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = JSON.stringify(aiData);\n    }\n  }\n} catch (error) {\n  var inputData = $input.first().json;\n\n  rawText = getValue(inputData, \"output\", \"\");\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"text\", \"\");\n  }\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"message\", \"\");\n  }\n}\n\nrawText = String(rawText || \"\").trim();\n\n// 2. Parse AI response JSON\nvar parsed = null;\n\ntry {\n  var cleaned = rawText\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim()\n    .replace(/^json\\s*/i, \"\");\n\n  var firstBrace = cleaned.indexOf(\"{\");\n  var lastBrace = cleaned.lastIndexOf(\"}\");\n\n  if (firstBrace >= 0 && lastBrace > firstBrace) {\n    cleaned = cleaned.substring(firstBrace, lastBrace + 1);\n  }\n\n  parsed = JSON.parse(cleaned);\n} catch (error) {\n  parsed = null;\n}\n\n// 3. Initialize order data\nvar isOrder = false;\nvar customerName = \"غير محدد\";\nvar phoneNumber = \"غير محدد\";\nvar deliveryAddress = \"غير محدد\";\nvar orderedItems = \"غير محدد\";\nvar subtotalPrice = 0;\nvar paymentMethod = \"كاش\";\nvar replyMessage = rawText;\n\nif (parsed && typeof parsed === \"object\") {\n  isOrder = parsed.is_order === true;\n\n  replyMessage = String(\n    getValue(parsed, \"reply_message\", \"\")\n  );\n\n  if (isOrder) {\n    customerName = getValue(\n      parsed,\n      \"customer_name\",\n      customerName\n    );\n\n    phoneNumber = getValue(\n      parsed,\n      \"phone_number\",\n      phoneNumber\n    );\n\n    deliveryAddress = getValue(\n      parsed,\n      \"delivery_address\",\n      deliveryAddress\n    );\n\n    orderedItems = getValue(\n      parsed,\n      \"ordered_items\",\n      orderedItems\n    );\n\n    paymentMethod = getValue(\n      parsed,\n      \"payment_method\",\n      paymentMethod\n    );\n\n    var priceValue = Number(parsed.total_price);\n\n    if (isFinite(priceValue) && priceValue >= 0) {\n      subtotalPrice = priceValue;\n    }\n  }\n}\n\n// 4. Clean reply message\nreplyMessage = String(replyMessage)\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .trim();\n\n// 5. Return normal AI replies without creating an order\nif (!isOrder) {\n  return [\n    {\n      json: {\n        is_order: false,\n        reply_message: replyMessage\n      }\n    }\n  ];\n}\n\n// 6. Read Chat ID\nvar chatId = \"\";\n\ntry {\n  chatId = getValue(\n    $(\"Prepare Input\").first().json,\n    \"chat_id\",\n    \"\"\n  );\n} catch (error) {\n  chatId = getValue(\n    $input.first().json,\n    \"chat_id\",\n    \"\"\n  );\n}\n\n// 7. Generate order number\nvar nextOrderNumber = 1;\n\ntry {\n  var allOrders = $(\"Get Last Order\").all();\n\n  if (allOrders.length > 0) {\n    var lastRow = allOrders[allOrders.length - 1].json;\n\n    var lastOrderId = getValue(\n      lastRow,\n      \"order_id\",\n      \"\"\n    );\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order_ID\",\n        \"\"\n      );\n    }\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order ID\",\n        \"\"\n      );\n    }\n\n    var match = String(lastOrderId).match(/(\\d+)$/);\n\n    if (match) {\n      nextOrderNumber = parseInt(match[1], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (error) {\n  nextOrderNumber = 1;\n}\n\nvar orderId = \"ONL-\" + nextOrderNumber;\n\n// 8. Calculate prices\nvar deliveryFee = 35;\nvar grandTotal = subtotalPrice + deliveryFee;\n\n// 9. Date and time\nvar dateTime = new Date().toLocaleString(\"en-GB\", {\n  timeZone: \"Africa/Cairo\"\n});\n\n// 10. Payment status\n// All new orders start unpaid.\n// Payment confirmation must happen in a separate workflow.\nvar paymentStatus = \"pending\";\n\n// 11. Initial order status\nvar orderStatus = \"قيد التحضير\";\n\n// 12. Build customer confirmation message\nvar messageLines = [\n  \"🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\",\n  \"\",\n  \"رقم الأوردر: \" + orderId,\n  \"----------------------------------------\",\n  \"📋 تفاصيل الطلب:\",\n  String(orderedItems),\n  \"\",\n  \"👤 الاسم: \" + customerName,\n  \"📞 رقم التواصل: \" + phoneNumber,\n  \"📍 عنوان التوصيل: \" + deliveryAddress,\n  \"💳 طريقة الدفع: \" + paymentMethod,\n  \"----------------------------------------\",\n  \"💵 سعر الأصناف: \" + subtotalPrice + \" ج.م\",\n  \"🚚 التوصيل: \" + deliveryFee + \" ج.م\",\n  \"💰 الإجمالي النهائي: \" + grandTotal + \" ج.م\",\n  \"\",\n  \"شكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️\"\n];\n\nvar finalOrderMessage = messageLines.join(\"\\n\");\n\n// 13. Return complete order data\nreturn [\n  {\n    json: {\n      is_order: true,\n      order_type: \"Online Order\",\n      order_id: orderId,\n      date_time: dateTime,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      subtotal: subtotalPrice,\n      delivery_fee: deliveryFee,\n      grand_total: grandTotal,\n      payment_method: paymentMethod,\n      payment_status: paymentStatus,\n      order_status: orderStatus,\n      reply_message: finalOrderMessage\n    }\n  }\n];\n"
+        "jsCode": "\nfunction getValue(obj, key, fallback) {\n  if (\n    obj &&\n    obj[key] !== undefined &&\n    obj[key] !== null &&\n    obj[key] !== \"\"\n  ) {\n    return obj[key];\n  }\n\n  return fallback;\n}\n\n// 1. Read AI Agent output\nvar rawText = \"\";\n\ntry {\n  var aiData = $(\"AI Agent\").first().json;\n\n  if (typeof aiData === \"string\") {\n    rawText = aiData;\n  } else {\n    rawText = getValue(aiData, \"output\", \"\");\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"text\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"message\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = JSON.stringify(aiData);\n    }\n  }\n} catch (error) {\n  var inputData = $input.first().json;\n\n  rawText = getValue(inputData, \"output\", \"\");\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"text\", \"\");\n  }\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"message\", \"\");\n  }\n}\n\nrawText = String(rawText || \"\").trim();\n\n// 2. Parse AI response JSON\nvar parsed = null;\n\ntry {\n  var cleaned = rawText\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim()\n    .replace(/^json\\s*/i, \"\");\n\n  var firstBrace = cleaned.indexOf(\"{\");\n  var lastBrace = cleaned.lastIndexOf(\"}\");\n\n  if (firstBrace >= 0 && lastBrace > firstBrace) {\n    cleaned = cleaned.substring(firstBrace, lastBrace + 1);\n  }\n\n  parsed = JSON.parse(cleaned);\n} catch (error) {\n  parsed = null;\n}\n\n// 3. Initialize order data\nvar isOrder = false;\nvar customerName = \"غير محدد\";\nvar phoneNumber = \"غير محدد\";\nvar deliveryAddress = \"غير محدد\";\nvar orderedItems = \"غير محدد\";\nvar subtotalPrice = 0;\nvar paymentMethod = \"كاش\";\nvar replyMessage = rawText;\n\nif (parsed && typeof parsed === \"object\") {\n  isOrder = parsed.is_order === true;\n\n  replyMessage = String(\n    getValue(parsed, \"reply_message\", \"\")\n  );\n\n  if (isOrder) {\n    customerName = getValue(\n      parsed,\n      \"customer_name\",\n      customerName\n    );\n\n    phoneNumber = getValue(\n      parsed,\n      \"phone_number\",\n      phoneNumber\n    );\n\n    deliveryAddress = getValue(\n      parsed,\n      \"delivery_address\",\n      deliveryAddress\n    );\n\n    orderedItems = getValue(\n      parsed,\n      \"ordered_items\",\n      orderedItems\n    );\n\n    paymentMethod = getValue(\n      parsed,\n      \"payment_method\",\n      paymentMethod\n    );\n\n    var priceValue = Number(parsed.total_price);\n\n    if (isFinite(priceValue) && priceValue >= 0) {\n      subtotalPrice = priceValue;\n    }\n  }\n}\n\n// 4. Clean reply message\nreplyMessage = String(replyMessage)\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .trim();\n\n// 5. Return normal AI replies without creating an order\nif (!isOrder) {\n  return [\n    {\n      json: {\n        is_order: false,\n        reply_message: replyMessage\n      }\n    }\n  ];\n}\n\n// 6. Read Chat ID\nvar chatId = \"\";\n\ntry {\n  chatId = getValue(\n    $(\"Prepare Input\").first().json,\n    \"chat_id\",\n    \"\"\n  );\n} catch (error) {\n  chatId = getValue(\n    $input.first().json,\n    \"chat_id\",\n    \"\"\n  );\n}\n\n// 7. Generate order number\nvar nextOrderNumber = 1;\n\ntry {\n  var allOrders = $(\"Get Last Order\").all();\n\n  if (allOrders.length > 0) {\n    var lastRow = allOrders[allOrders.length - 1].json;\n\n    var lastOrderId = getValue(\n      lastRow,\n      \"order_id\",\n      \"\"\n    );\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order_ID\",\n        \"\"\n      );\n    }\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order ID\",\n        \"\"\n      );\n    }\n\n    var match = String(lastOrderId).match(/(\\d+)$/);\n\n    if (match) {\n      nextOrderNumber = parseInt(match[1], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (error) {\n  nextOrderNumber = 1;\n}\n\nvar orderId = \"ONL-\" + nextOrderNumber;\n\n// 8. Calculate prices\nvar deliveryFee = 35;\nvar grandTotal = subtotalPrice + deliveryFee;\n\n// 9. Date and time\nvar dateTime = new Date().toLocaleString(\"en-GB\", {\n  timeZone: \"Africa/Cairo\"\n});\n\n// 10. Payment status\n// All new orders start unpaid.\n// Payment confirmation must happen in a separate workflow.\nvar paymentStatus = \"pending\";\n\n// 11. Initial order status\nvar orderStatus = \"pending\";\n\n// 12. Build customer confirmation message\nvar messageLines = [\n  \"🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\",\n  \"\",\n  \"رقم الأوردر: \" + orderId,\n  \"----------------------------------------\",\n  \"📋 تفاصيل الطلب:\",\n  String(orderedItems),\n  \"\",\n  \"👤 الاسم: \" + customerName,\n  \"📞 رقم التواصل: \" + phoneNumber,\n  \"📍 عنوان التوصيل: \" + deliveryAddress,\n  \"💳 طريقة الدفع: \" + paymentMethod,\n  \"----------------------------------------\",\n  \"💵 سعر الأصناف: \" + subtotalPrice + \" ج.م\",\n  \"🚚 التوصيل: \" + deliveryFee + \" ج.م\",\n  \"💰 الإجمالي النهائي: \" + grandTotal + \" ج.م\",\n  \"\",\n  \"شكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️\"\n];\n\nvar finalOrderMessage = messageLines.join(\"\\n\");\n\n// 13. Return complete order data\nreturn [\n  {\n    json: {\n      is_order: true,\n      order_type: \"Online Order\",\n      order_id: orderId,\n      date_time: dateTime,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      subtotal: subtotalPrice,\n      delivery_fee: deliveryFee,\n      grand_total: grandTotal,\n      payment_method: paymentMethod,\n      payment_status: paymentStatus,\n      order_status: orderStatus,\n      reply_message: finalOrderMessage\n    }\n  }\n];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1424,6 +1424,23 @@
         "text": "=رقم الاوردر : {{ $json.Order_ID }}\n\n👤 العميل: {{ $json.Customer_Name }}\n📞 الهاتف: {{ $json.Phone_Number }}\n📍 العنوان/الفرع: {{ $json.Delivery_Address }}\n💳 طريقة الدفع: {{ $json.Payment_Method }}\n\n🛒 الطلبات:\n{{ $json.Ordered_Items }}\n\n💵 سعر الأصناف: {{ $('Get Order Details').item.json.subtotal }} ج.م\n🚚 التوصيل: {{ $('Get Order Details').item.json.delivery_fee }} ج.م\n💰 الإجمالي: {{ $('Get Order Details').item.json.grand_total }} ج.م",
         "additionalFields": {
           "appendAttribution": false
+        },
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "💵 تم استلام الكاش",
+                    "additionalFields": {
+                      "callback_data": "=payment|{{ $json.Order_ID }}|{{ $json.Chat_ID }}|paid"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -1539,7 +1556,7 @@
         "url": "https://krokett-payment-gate.vercel.app/api/create-payment",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"order_id\": \"={{ $json.order_id }}\",\n  \"customer_name\": \"={{ $json.customer_name }}\",\n  \"phone_number\": \"={{ $json.phone_number }}\",\n  \"ordered_items\": \"={{ $json.ordered_items }}\",\n  \"grand_total\": \"={{ $json.grand_total }}\",\n  \"chat_id\": \"={{ $json.chat_id }}\"\n}",
+        "jsonBody": "={{ {\n  \"order_id\": $(\"Append Orders\").item.json.Order_ID,\n  \"customer_name\": $(\"Append Orders\").item.json.Customer_Name,\n  \"phone_number\": $(\"Append Orders\").item.json.Phone_Number,\n  \"ordered_items\": $(\"Append Orders\").item.json.Ordered_Items,\n  \"grand_total\": $(\"Append Orders\").item.json.Total_Price,\n  \"chat_id\": $(\"Append Orders\").item.json.Chat_ID\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1904,6 +1921,10 @@
             {
               "fieldId": "payment_status",
               "fieldValue": "={{$json.payment_status}}"
+            },
+            {
+              "fieldId": "order_status",
+              "fieldValue": "={{$json.order_status}}"
             }
           ]
         }
@@ -1933,7 +1954,12 @@
             {
               "keyName": "order_id",
               "condition": "eq",
-              "keyValue": "=={{ $('Payment Success').item.json.body.order_id }}"
+              "keyValue": "={{ $('Payment Success').item.json.body.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
             }
           ]
         },
@@ -1992,6 +2018,210 @@
         "googlePalmApi": {
           "id": "15ccxy7q5GvxCXT4",
           "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "id": "d3c7a8b1-2e4f-4c6a-9b8d-1f2a3c4d5e60",
+      "name": "Send Payment Link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4112,
+        1472
+      ],
+      "parameters": {
+        "chatId": "={{ $('Append Orders').item.json.Chat_ID }}",
+        "text": "=💳 لإتمام طلبك رقم {{ $('Append Orders').item.json.Order_ID }}، افتح رابط الدفع التجريبي التالي:\n\n{{ $json.payment_url }}\n\n⚠️ بوابة الدفع الحالية تجريبية ولا تخصم أموالًا حقيقية.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4789-8123-456789abcdef",
+      "name": "Mark Payment Failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3152,
+        2016
+      ],
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Payment Success').item.json.body.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "failed"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "b2c3d4e5-f678-4890-9234-56789abcdef0",
+      "name": "Callback Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1888,
+        2032
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c3d4e5f6-7890-4123-8456-789abcdef012",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "payment",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c4d5e6f7-8901-4234-8567-89abcdef0123",
+      "name": "Mark Cash Paid",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        2160
+      ],
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "paid"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "d5e6f789-0123-4345-9678-9abcdef01234",
+      "name": "Update Order Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        1904
+      ],
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "={{ $json.new_status }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "e6f78901-2345-4456-a789-abcdef012345",
+      "name": "Notify Cash Payment Confirmed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2352,
+        2160
+      ],
+      "parameters": {
+        "chatId": "={{ $('Track Status').item.json.customer_chat_id }}",
+        "text": "={{ $('Track Status').item.json.customer_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
         }
       }
     }
@@ -2396,7 +2626,7 @@
       "main": [
         [
           {
-            "node": "Track Message",
+            "node": "Callback Action?",
             "type": "main",
             "index": 0
           }
@@ -2428,11 +2658,6 @@
     "Order Complete?": {
       "main": [
         [
-          {
-            "node": "Append Orders",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Create a row",
             "type": "main",
@@ -2495,16 +2720,11 @@
             "node": "update payment status",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Update a row",
-            "type": "main",
-            "index": 0
           }
         ],
         [
           {
-            "node": "Notify Customer Failure",
+            "node": "Mark Payment Failed",
             "type": "main",
             "index": 0
           }
@@ -2526,7 +2746,7 @@
       "main": [
         [
           {
-            "node": "Restaurant Notification Payment",
+            "node": "Update a row",
             "type": "main",
             "index": 0
           }
@@ -2572,6 +2792,90 @@
           {
             "node": "Pinecone Vector Store",
             "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Append Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Payment Session": {
+      "main": [
+        [
+          {
+            "node": "Send Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Restaurant Notification Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Payment Failed": {
+      "main": [
+        [
+          {
+            "node": "Notify Customer Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback Action?": {
+      "main": [
+        [
+          {
+            "node": "Mark Cash Paid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Cash Paid": {
+      "main": [
+        [
+          {
+            "node": "Notify Cash Payment Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order Status": {
+      "main": [
+        [
+          {
+            "node": "Track Message",
+            "type": "main",
             "index": 0
           }
         ]
