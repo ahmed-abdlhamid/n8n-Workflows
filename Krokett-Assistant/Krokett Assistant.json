@@ -1,15 +1,15 @@
 {
-  "name": "Krokett Assistant",
+  "name": "Krokett Assistant v.2",
   "nodes": [
     {
       "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        544
+        80,
+        224
       ],
-      "id": "d0c7a630-6a41-47ac-a756-e267754fdf4a",
+      "id": "fd495f3d-01a1-491a-bc0b-f70833695863",
       "name": "When clicking ‘Execute workflow’"
     },
     {
@@ -29,10 +29,10 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        224,
-        544
+        304,
+        224
       ],
-      "id": "f9e6e192-1a85-4214-bc21-221d0159c4ce",
+      "id": "7c899551-3b62-4cd9-a7ec-6d5bfd614fe5",
       "name": "Search files and folders",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -64,10 +64,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        448,
-        544
+        528,
+        224
       ],
-      "id": "faf4a61c-e6d2-4a89-84d1-f41d3583e62a",
+      "id": "e8bfb9d1-f243-436d-b71f-5b13fe9e9aa4",
       "name": "Edit Fields"
     },
     {
@@ -83,10 +83,10 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        656,
-        544
+        736,
+        224
       ],
-      "id": "bd4eb326-43d5-4ed2-86f3-09eadd647ace",
+      "id": "52a48651-6209-4c7a-9f8a-86325fbcc681",
       "name": "Download file",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -111,10 +111,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        1168,
-        416
+        1248,
+        96
       ],
-      "id": "75abecc3-9cc2-429c-b561-715cbd42ac8f",
+      "id": "95d6278e-e694-498a-a4cd-bcb60ac4a691",
       "name": "Pinecone Vector Store",
       "credentials": {
         "pineconeApi": {
@@ -130,10 +130,10 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        1296,
-        720
+        1376,
+        400
       ],
-      "id": "2384a7a1-5180-436f-9a6b-528be6367532",
+      "id": "efb6e113-b6fb-433e-b771-c5f62625d315",
       "name": "Default Data Loader"
     },
     {
@@ -144,10 +144,10 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        864,
-        544
+        944,
+        224
       ],
-      "id": "e9edd478-909f-41b4-81b6-d635fc2f45d0",
+      "id": "dd954d89-ca45-4f6d-8532-ad7478c75228",
       "name": "Extract from File"
     },
     {
@@ -160,10 +160,10 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        320
+        0,
+        0
       ],
-      "id": "6fdd2b55-0aeb-4d40-b246-d06640e86696",
+      "id": "83c68ea6-9e41-4193-bb3c-ae3499949e93",
       "name": "Sticky Note"
     },
     {
@@ -176,10 +176,10 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.5,
       "position": [
-        -1232,
-        1584
+        -1152,
+        1264
       ],
-      "id": "68e5db06-9257-4a1c-a9e6-71afc048901a",
+      "id": "5fb8f314-37e7-40bd-b41d-b10c9ff9a9fc",
       "name": "Telegram Trigger",
       "webhookId": "ef96aee6-32a4-4ba3-a804-152e731364bf",
       "credentials": {
@@ -200,10 +200,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        1920,
-        1280
+        2000,
+        960
       ],
-      "id": "78098114-4551-4e6b-8f1f-c64fdbd7255e",
+      "id": "328b64e1-d17b-479b-a5b9-366a935bb4d7",
       "name": "AI Agent"
     },
     {
@@ -214,10 +214,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        1792,
-        1584
+        1872,
+        1264
       ],
-      "id": "91da0674-2763-4a45-bfe0-b8d92d65c3c0",
+      "id": "bb13e292-0ee0-42f0-adb6-83c8147a45b9",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -234,10 +234,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
       "typeVersion": 1.1,
       "position": [
-        2128,
-        1616
+        2208,
+        1296
       ],
-      "id": "a0d56317-f928-4c8d-94a4-cc81b8a80464",
+      "id": "1a612294-fe61-4458-b9ff-a49791fc7f12",
       "name": "Answer questions with a vector store"
     },
     {
@@ -255,10 +255,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        1856,
-        1808
+        1936,
+        1488
       ],
-      "id": "04e1eed2-33cd-4b06-9e34-06c4f04ee926",
+      "id": "fa2b2f6e-ca10-4c1a-92b0-bd534447b95d",
       "name": "Pinecone Vector Store1",
       "credentials": {
         "pineconeApi": {
@@ -275,10 +275,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        2336,
-        1824
+        2416,
+        1504
       ],
-      "id": "790d14d1-3896-45a7-9509-52ad5c7bac4d",
+      "id": "5bca168c-dcb2-4326-825a-ac6339fb0c8f",
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
@@ -296,10 +296,10 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.4,
       "position": [
-        1968,
-        1488
+        2048,
+        1168
       ],
-      "id": "946c5959-cfbf-4dd4-ad70-c669920b4792",
+      "id": "cf996f92-5560-4757-8086-264f8f7d16b8",
       "name": "Simple Memory"
     },
     {
@@ -309,10 +309,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1008,
-        1584
+        -928,
+        1264
       ],
-      "id": "9b58e1d1-7614-4e63-ae56-7b1711c4ce21",
+      "id": "4b863ce0-a235-466f-b3ba-0abe9fe79114",
       "name": "Prepare Input"
     },
     {
@@ -343,10 +343,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -816,
-        1584
+        -736,
+        1264
       ],
-      "id": "662e8b0e-f3ae-4c88-990e-3747e5c9f22d",
+      "id": "b3e25f41-705f-454f-bfb9-76430e770e1a",
       "name": "Route: Voice Message?"
     },
     {
@@ -358,10 +358,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -624,
-        1328
+        -544,
+        1008
       ],
-      "id": "59007a8d-54c7-4d48-b860-02b8e88b2878",
+      "id": "1dcb9787-8132-4cf1-a6c3-5313268de7be",
       "name": "Download Voice File",
       "webhookId": "f44a2350-732e-466f-ae8f-819fe2a12e5b",
       "credentials": {
@@ -378,10 +378,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -416,
-        1328
+        -336,
+        1008
       ],
-      "id": "b1d9d6b5-302d-4d8c-bb64-4773b149b000",
+      "id": "b579ac89-fd44-4508-957a-2ec86005b6e7",
       "name": "Merge Transcribed Text"
     },
     {
@@ -412,10 +412,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -160,
-        1600
+        -80,
+        1280
       ],
-      "id": "9e4da0ab-135a-4501-b94b-65ac061ceac3",
+      "id": "0acb1e95-8e26-4136-86d2-5caee07b73ad",
       "name": "Route: Start Command?"
     },
     {
@@ -466,10 +466,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        112,
-        1472
+        192,
+        1152
       ],
-      "id": "ae5aa68b-5a55-41e8-a69a-2e293ad27f76",
+      "id": "f34efb72-81f5-4465-ba85-0b7b655ccbb4",
       "name": "Send Welcome Message",
       "webhookId": "db167b49-503f-475a-8976-633e22565748",
       "credentials": {
@@ -507,10 +507,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        96,
-        1728
+        176,
+        1408
       ],
-      "id": "23e1bf8f-b8bf-4373-8665-7017decaac7a",
+      "id": "90f7de28-b69c-4384-8592-ba5678db4fbe",
       "name": "Route: Track Order?"
     },
     {
@@ -542,10 +542,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        432,
-        1392
+        512,
+        1072
       ],
-      "id": "393a7a51-b313-403e-8fa8-a2edc67afba1",
+      "id": "0f310879-2ee9-4272-921d-e45145966e7f",
       "name": "Get Orders (Track)",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -582,10 +582,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        432,
-        1904
+        512,
+        1584
       ],
-      "id": "b6fd3581-4266-412d-976f-adef38a8554e",
+      "id": "40d7db01-79e0-4cd2-8a7c-939376b7facb",
       "name": "Route: Repeat Order?"
     },
     {
@@ -616,10 +616,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        608,
-        2128
+        688,
+        1808
       ],
-      "id": "fc3cda67-8a37-426a-a0b3-286046f71469",
+      "id": "9cd2dd58-a005-4ec5-99f6-2d46aaaa61f1",
       "name": "Route: Rating?"
     },
     {
@@ -720,10 +720,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        816,
-        1984
+        896,
+        1664
       ],
-      "id": "55383068-689b-48b9-944c-e13ebc7b10c3",
+      "id": "bffbcb99-1db4-48ab-be81-d0c09ed7a5b9",
       "name": "Append Rating",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -743,10 +743,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1008,
-        1984
+        1088,
+        1664
       ],
-      "id": "1f6ed36d-bb35-4635-831b-12f9efb93193",
+      "id": "53a18e5c-4a94-4b46-9975-fe1a8847078a",
       "name": "Thank You Rating",
       "webhookId": "896ccbc7-a4fb-47e4-880f-7cef89176e6b",
       "credentials": {
@@ -764,10 +764,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1472,
-        2144
+        1552,
+        1824
       ],
-      "id": "01cafadf-5a1a-4e69-93f5-0ec785be99f5",
+      "id": "482a792d-950d-48bb-be3e-ba291dd2b023",
       "name": "Send Typing Action",
       "webhookId": "73a74960-8e1b-4b9b-ad8f-928a9ab23970",
       "credentials": {
@@ -799,10 +799,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4480,
-        1712
+        4704,
+        1408
       ],
-      "id": "667e47bb-85aa-4cb5-a2fc-da158eb597c7",
+      "id": "481aed63-75cd-4461-ac3f-c123c80f068e",
       "name": "Ask For Rating",
       "webhookId": "bfe65af2-4894-426c-9633-0ef1ac323978",
       "credentials": {
@@ -820,10 +820,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        4336,
-        1712
+        4544,
+        1408
       ],
-      "id": "2fcc50ad-7990-43c5-bf40-4c045b6ae306",
+      "id": "0f2f8d85-2d0d-4178-a1ef-4d9db5ac089a",
       "name": "Wait",
       "webhookId": "90e5971d-8bde-4cd6-935e-9208d4bf24be"
     },
@@ -856,10 +856,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2672,
-        1360
+        2752,
+        1040
       ],
-      "id": "e7b5b01f-12ab-4c54-a5ef-0fa5ff4315c7",
+      "id": "f0caa375-967f-4d81-9230-2051a051a198",
       "name": "Get Last Order",
       "alwaysOutputData": true,
       "credentials": {
@@ -897,10 +897,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        816,
-        1392
+        896,
+        1072
       ],
-      "id": "f2345f46-6c80-43cf-9e29-b03d626e5ef3",
+      "id": "4bb3afff-5480-475f-bae0-a39ae69d22c4",
       "name": "can track ?"
     },
     {
@@ -912,10 +912,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1008,
-        1872
+        -928,
+        1552
       ],
-      "id": "320008b6-e707-41fd-aee5-be91ba8fa9a8",
+      "id": "2e09ed54-2bab-4c4b-abf0-690225b3c83e",
       "name": "Answer Query a callback",
       "webhookId": "d9d54614-91ff-4a3a-8953-fa273d41c3e1",
       "credentials": {
@@ -936,10 +936,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1088,
-        1280
+        1168,
+        960
       ],
-      "id": "2b044d52-195e-41bb-8a22-415b0ff9ce5b",
+      "id": "60be9d8c-297a-4a84-bebb-262a07014bc0",
       "name": "Track message to customer",
       "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
       "credentials": {
@@ -962,7 +962,7 @@
                   {
                     "text": "👨‍🍳 قيد التحضير",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|قيد التحضير"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|preparing"
                     }
                   }
                 ]
@@ -974,7 +974,7 @@
                   {
                     "text": "🛵 خرج للتوصيل",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|في الطريق إليك"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|out_for_delivery"
                     }
                   }
                 ]
@@ -986,7 +986,7 @@
                   {
                     "text": "✅ تم التسليم",
                     "additionalFields": {
-                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|تم التسليم"
+                      "callback_data": "=status|{{ $('can track ?').item.json.order_id }}|{{ $('can track ?').item.json.chat_id }}|completed"
                     }
                   }
                 ]
@@ -1001,10 +1001,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1328,
-        1280
+        1408,
+        960
       ],
-      "id": "a6b85535-0e4f-4542-8cb1-d74bc508722b",
+      "id": "6c15883e-8f76-45b1-94c5-c879dfd6946b",
       "name": "Track message to krokett",
       "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
       "credentials": {
@@ -1021,10 +1021,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1392
+        704,
+        1072
       ],
-      "id": "cdbee18c-e328-4094-8219-663f91feea25",
+      "id": "b2020e94-275e-4ff2-8c0e-31390ef028bf",
       "name": "Track Code"
     },
     {
@@ -1038,10 +1038,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1088,
-        1520
+        1168,
+        1200
       ],
-      "id": "9c9afa0d-54e7-4f09-93e9-c9c625ecbfc1",
+      "id": "4d93687d-a35b-4a54-9e71-769aecea0494",
       "name": "Alert message to customer",
       "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
       "credentials": {
@@ -1058,10 +1058,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        864,
-        1712
+        944,
+        1392
       ],
-      "id": "4ede87a5-9af6-4f01-a68c-0138b559dfcc",
+      "id": "3e8a4fff-66da-49ac-a9d4-ff38abee561f",
       "name": "Build Repeat Prompt"
     },
     {
@@ -1093,10 +1093,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        608,
-        1712
+        688,
+        1392
       ],
-      "id": "1d208fe3-a250-46f5-a0e2-cf1492b09cef",
+      "id": "283d930d-fc1f-46f7-9f00-555631817fc4",
       "name": "Get Orders (Repeat)",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1115,10 +1115,10 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.5,
       "position": [
-        -1232,
-        1872
+        -1152,
+        1552
       ],
-      "id": "dab9a94c-b28f-4915-bc5a-419a1a26e8d1",
+      "id": "5276071c-1ebf-4357-99fb-d3aae7a20134",
       "name": "Callback Trigger",
       "webhookId": "bf495b69-65f3-49ac-a1ec-ae504c7adc0f",
       "credentials": {
@@ -1130,8 +1130,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.customer_chat_id }}",
-        "text": "={{ $json.customer_message }}",
+        "chatId": "={{ $('Track Status').item.json.customer_chat_id }}",
+        "text": "={{ $('Track Status').item.json.customer_message }}",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -1139,10 +1139,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -560,
-        1872
+        -304,
+        2272
       ],
-      "id": "d39cd81c-1f56-4690-b505-6877fc673b8f",
+      "id": "82d8c66c-bdef-42c2-8cb4-d49cb2f20598",
       "name": "Track Message",
       "webhookId": "89152082-c4d0-4e62-8fc8-8f4a18493b43",
       "credentials": {
@@ -1154,15 +1154,15 @@
     },
     {
       "parameters": {
-        "jsCode": "const callbackData = $input.first().json.callback_query?.data || $('Callback Trigger').item.json.callback_query.data || \"\";\nconst parts = callbackData.split('|');\n\nif (parts[0] !== 'status') return [];\n\nreturn [{\n  json: {\n    order_id: parts[1],\n    customer_chat_id: parts[2],\n    new_status: parts[3],\n    customer_message: `🔔 تحديث جديد بخصوص طلبك رقم #${parts[1]}:\\nحالة الأوردر الآن: ${parts[3]} 🚀`\n  }\n}];"
+        "jsCode": "\nvar callbackData = \"\";\ntry {\n  callbackData = $input.first().json.callback_query.data;\n} catch (error) {\n  callbackData = \"\";\n}\nif (!callbackData) {\n  try {\n    callbackData = $(\"Callback Trigger\").item.json.callback_query.data;\n  } catch (error) {\n    callbackData = \"\";\n  }\n}\n\nvar parts = String(callbackData || \"\").split(\"|\");\nvar action = parts[0] || \"\";\nvar orderId = parts[1] || \"\";\nvar customerChatId = parts[2] || \"\";\n\nif (action === \"payment\") {\n  return [{\n    json: {\n      action: \"payment\",\n      order_id: orderId,\n      customer_chat_id: customerChatId,\n      new_payment_status: parts[3] || \"paid\",\n      customer_message: \"تم تأكيد استلام الدفع النقدي للطلب رقم \" + orderId + \" بنجاح. شكرًا لك ❤️\"\n    }\n  }];\n}\n\nif (action !== \"status\") {\n  return [];\n}\n\nvar statusCode = parts[3] || \"preparing\";\nvar statusLabels = {\n  pending: \"قيد الانتظار\",\n  preparing: \"قيد التحضير\",\n  out_for_delivery: \"خرج للتوصيل\",\n  completed: \"تم التسليم\",\n  cancelled: \"تم إلغاء الطلب\"\n};\nvar statusLabel = statusLabels[statusCode] || statusCode;\n\nreturn [{\n  json: {\n    action: \"status\",\n    order_id: orderId,\n    customer_chat_id: customerChatId,\n    new_status: statusCode,\n    customer_message: \"🔔 تحديث جديد بخصوص طلبك رقم #\" + orderId + \":\\nحالة الأوردر الآن: \" + statusLabel + \" 🚀\"\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -784,
-        1872
+        -704,
+        1552
       ],
-      "id": "3a447d68-f7f2-41f1-ac20-4442ec722d6f",
+      "id": "bd206f81-51c0-41b8-a932-132d96d28539",
       "name": "Track Status"
     },
     {
@@ -1175,23 +1175,23 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1280,
-        1264
+        -1200,
+        944
       ],
-      "id": "9df40fad-7568-46d5-a5e5-0eec4188030b",
+      "id": "4f9f016a-6d30-44f5-8bb8-776ba09fa874",
       "name": "Sticky Note2"
     },
     {
       "parameters": {
-        "jsCode": "\nfunction getValue(obj, key, fallback) {\n  if (\n    obj &&\n    obj[key] !== undefined &&\n    obj[key] !== null &&\n    obj[key] !== \"\"\n  ) {\n    return obj[key];\n  }\n\n  return fallback;\n}\n\n// 1. Read AI Agent output\nvar rawText = \"\";\n\ntry {\n  var aiData = $(\"AI Agent\").first().json;\n\n  if (typeof aiData === \"string\") {\n    rawText = aiData;\n  } else {\n    rawText = getValue(aiData, \"output\", \"\");\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"text\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"message\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = JSON.stringify(aiData);\n    }\n  }\n} catch (error) {\n  var inputData = $input.first().json;\n\n  rawText = getValue(inputData, \"output\", \"\");\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"text\", \"\");\n  }\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"message\", \"\");\n  }\n}\n\nrawText = String(rawText || \"\").trim();\n\n// 2. Parse AI response JSON\nvar parsed = null;\n\ntry {\n  var cleaned = rawText\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim()\n    .replace(/^json\\s*/i, \"\");\n\n  var firstBrace = cleaned.indexOf(\"{\");\n  var lastBrace = cleaned.lastIndexOf(\"}\");\n\n  if (firstBrace >= 0 && lastBrace > firstBrace) {\n    cleaned = cleaned.substring(firstBrace, lastBrace + 1);\n  }\n\n  parsed = JSON.parse(cleaned);\n} catch (error) {\n  parsed = null;\n}\n\n// 3. Initialize order data\nvar isOrder = false;\nvar customerName = \"غير محدد\";\nvar phoneNumber = \"غير محدد\";\nvar deliveryAddress = \"غير محدد\";\nvar orderedItems = \"غير محدد\";\nvar subtotalPrice = 0;\nvar paymentMethod = \"كاش\";\nvar replyMessage = rawText;\n\nif (parsed && typeof parsed === \"object\") {\n  isOrder = parsed.is_order === true;\n\n  replyMessage = String(\n    getValue(parsed, \"reply_message\", \"\")\n  );\n\n  if (isOrder) {\n    customerName = getValue(\n      parsed,\n      \"customer_name\",\n      customerName\n    );\n\n    phoneNumber = getValue(\n      parsed,\n      \"phone_number\",\n      phoneNumber\n    );\n\n    deliveryAddress = getValue(\n      parsed,\n      \"delivery_address\",\n      deliveryAddress\n    );\n\n    orderedItems = getValue(\n      parsed,\n      \"ordered_items\",\n      orderedItems\n    );\n\n    paymentMethod = getValue(\n      parsed,\n      \"payment_method\",\n      paymentMethod\n    );\n\n    var priceValue = Number(parsed.total_price);\n\n    if (isFinite(priceValue) && priceValue >= 0) {\n      subtotalPrice = priceValue;\n    }\n  }\n}\n\n// 4. Clean reply message\nreplyMessage = String(replyMessage)\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .trim();\n\n// 5. Return normal AI replies without creating an order\nif (!isOrder) {\n  return [\n    {\n      json: {\n        is_order: false,\n        reply_message: replyMessage\n      }\n    }\n  ];\n}\n\n// 6. Read Chat ID\nvar chatId = \"\";\n\ntry {\n  chatId = getValue(\n    $(\"Prepare Input\").first().json,\n    \"chat_id\",\n    \"\"\n  );\n} catch (error) {\n  chatId = getValue(\n    $input.first().json,\n    \"chat_id\",\n    \"\"\n  );\n}\n\n// 7. Generate order number\nvar nextOrderNumber = 1;\n\ntry {\n  var allOrders = $(\"Get Last Order\").all();\n\n  if (allOrders.length > 0) {\n    var lastRow = allOrders[allOrders.length - 1].json;\n\n    var lastOrderId = getValue(\n      lastRow,\n      \"order_id\",\n      \"\"\n    );\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order_ID\",\n        \"\"\n      );\n    }\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order ID\",\n        \"\"\n      );\n    }\n\n    var match = String(lastOrderId).match(/(\\d+)$/);\n\n    if (match) {\n      nextOrderNumber = parseInt(match[1], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (error) {\n  nextOrderNumber = 1;\n}\n\nvar orderId = \"ONL-\" + nextOrderNumber;\n\n// 8. Calculate prices\nvar deliveryFee = 35;\nvar grandTotal = subtotalPrice + deliveryFee;\n\n// 9. Date and time\nvar dateTime = new Date().toLocaleString(\"en-GB\", {\n  timeZone: \"Africa/Cairo\"\n});\n\n// 10. Payment status\n// All new orders start unpaid.\n// Payment confirmation must happen in a separate workflow.\nvar paymentStatus = \"pending\";\n\n// 11. Initial order status\nvar orderStatus = \"قيد التحضير\";\n\n// 12. Build customer confirmation message\nvar messageLines = [\n  \"🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\",\n  \"\",\n  \"رقم الأوردر: \" + orderId,\n  \"----------------------------------------\",\n  \"📋 تفاصيل الطلب:\",\n  String(orderedItems),\n  \"\",\n  \"👤 الاسم: \" + customerName,\n  \"📞 رقم التواصل: \" + phoneNumber,\n  \"📍 عنوان التوصيل: \" + deliveryAddress,\n  \"💳 طريقة الدفع: \" + paymentMethod,\n  \"----------------------------------------\",\n  \"💵 سعر الأصناف: \" + subtotalPrice + \" ج.م\",\n  \"🚚 التوصيل: \" + deliveryFee + \" ج.م\",\n  \"💰 الإجمالي النهائي: \" + grandTotal + \" ج.م\",\n  \"\",\n  \"شكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️\"\n];\n\nvar finalOrderMessage = messageLines.join(\"\\n\");\n\n// 13. Return complete order data\nreturn [\n  {\n    json: {\n      is_order: true,\n      order_type: \"Online Order\",\n      order_id: orderId,\n      date_time: dateTime,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      subtotal: subtotalPrice,\n      delivery_fee: deliveryFee,\n      grand_total: grandTotal,\n      payment_method: paymentMethod,\n      payment_status: paymentStatus,\n      order_status: orderStatus,\n      reply_message: finalOrderMessage\n    }\n  }\n];\n"
+        "jsCode": "\nfunction getValue(obj, key, fallback) {\n  if (\n    obj &&\n    obj[key] !== undefined &&\n    obj[key] !== null &&\n    obj[key] !== \"\"\n  ) {\n    return obj[key];\n  }\n\n  return fallback;\n}\n\n// 1. Read AI Agent output\nvar rawText = \"\";\n\ntry {\n  var aiData = $(\"AI Agent\").first().json;\n\n  if (typeof aiData === \"string\") {\n    rawText = aiData;\n  } else {\n    rawText = getValue(aiData, \"output\", \"\");\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"text\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = getValue(aiData, \"message\", \"\");\n    }\n\n    if (!rawText) {\n      rawText = JSON.stringify(aiData);\n    }\n  }\n} catch (error) {\n  var inputData = $input.first().json;\n\n  rawText = getValue(inputData, \"output\", \"\");\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"text\", \"\");\n  }\n\n  if (!rawText) {\n    rawText = getValue(inputData, \"message\", \"\");\n  }\n}\n\nrawText = String(rawText || \"\").trim();\n\n// 2. Parse AI response JSON\nvar parsed = null;\n\ntry {\n  var cleaned = rawText\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim()\n    .replace(/^json\\s*/i, \"\");\n\n  var firstBrace = cleaned.indexOf(\"{\");\n  var lastBrace = cleaned.lastIndexOf(\"}\");\n\n  if (firstBrace >= 0 && lastBrace > firstBrace) {\n    cleaned = cleaned.substring(firstBrace, lastBrace + 1);\n  }\n\n  parsed = JSON.parse(cleaned);\n} catch (error) {\n  parsed = null;\n}\n\n// 3. Initialize order data\nvar isOrder = false;\nvar customerName = \"غير محدد\";\nvar phoneNumber = \"غير محدد\";\nvar deliveryAddress = \"غير محدد\";\nvar orderedItems = \"غير محدد\";\nvar subtotalPrice = 0;\nvar paymentMethod = \"كاش\";\nvar replyMessage = rawText;\n\nif (parsed && typeof parsed === \"object\") {\n  isOrder = parsed.is_order === true;\n\n  replyMessage = String(\n    getValue(parsed, \"reply_message\", \"\")\n  );\n\n  if (isOrder) {\n    customerName = getValue(\n      parsed,\n      \"customer_name\",\n      customerName\n    );\n\n    phoneNumber = getValue(\n      parsed,\n      \"phone_number\",\n      phoneNumber\n    );\n\n    deliveryAddress = getValue(\n      parsed,\n      \"delivery_address\",\n      deliveryAddress\n    );\n\n    orderedItems = getValue(\n      parsed,\n      \"ordered_items\",\n      orderedItems\n    );\n\n    paymentMethod = getValue(\n      parsed,\n      \"payment_method\",\n      paymentMethod\n    );\n\n    var priceValue = Number(parsed.total_price);\n\n    if (isFinite(priceValue) && priceValue >= 0) {\n      subtotalPrice = priceValue;\n    }\n  }\n}\n\n// 4. Clean reply message\nreplyMessage = String(replyMessage)\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .trim();\n\n// 5. Return normal AI replies without creating an order\nif (!isOrder) {\n  return [\n    {\n      json: {\n        is_order: false,\n        reply_message: replyMessage\n      }\n    }\n  ];\n}\n\n// 6. Read Chat ID\nvar chatId = \"\";\n\ntry {\n  chatId = getValue(\n    $(\"Prepare Input\").first().json,\n    \"chat_id\",\n    \"\"\n  );\n} catch (error) {\n  chatId = getValue(\n    $input.first().json,\n    \"chat_id\",\n    \"\"\n  );\n}\n\n// 7. Generate order number\nvar nextOrderNumber = 1;\n\ntry {\n  var allOrders = $(\"Get Last Order\").all();\n\n  if (allOrders.length > 0) {\n    var lastRow = allOrders[allOrders.length - 1].json;\n\n    var lastOrderId = getValue(\n      lastRow,\n      \"order_id\",\n      \"\"\n    );\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order_ID\",\n        \"\"\n      );\n    }\n\n    if (!lastOrderId) {\n      lastOrderId = getValue(\n        lastRow,\n        \"Order ID\",\n        \"\"\n      );\n    }\n\n    var match = String(lastOrderId).match(/(\\d+)$/);\n\n    if (match) {\n      nextOrderNumber = parseInt(match[1], 10) + 1;\n    } else {\n      nextOrderNumber = allOrders.length + 1;\n    }\n  }\n} catch (error) {\n  nextOrderNumber = 1;\n}\n\nvar orderId = \"ONL-\" + nextOrderNumber;\n\n// 8. Calculate prices\nvar deliveryFee = 35;\nvar grandTotal = subtotalPrice + deliveryFee;\n\n// 9. Date and time\nvar dateTime = new Date().toLocaleString(\"en-GB\", {\n  timeZone: \"Africa/Cairo\"\n});\n\n// 10. Payment status\n// All new orders start unpaid.\n// Payment confirmation must happen in a separate workflow.\nvar paymentStatus = \"pending\";\n\n// 11. Initial order status\nvar orderStatus = \"pending\";\n\n// 12. Build customer confirmation message\nvar messageLines = [\n  \"🎉 تم تأكيد طلبك بنجاح من مطعم كوركيت 🥩\",\n  \"\",\n  \"رقم الأوردر: \" + orderId,\n  \"----------------------------------------\",\n  \"📋 تفاصيل الطلب:\",\n  String(orderedItems),\n  \"\",\n  \"👤 الاسم: \" + customerName,\n  \"📞 رقم التواصل: \" + phoneNumber,\n  \"📍 عنوان التوصيل: \" + deliveryAddress,\n  \"💳 طريقة الدفع: \" + paymentMethod,\n  \"----------------------------------------\",\n  \"💵 سعر الأصناف: \" + subtotalPrice + \" ج.م\",\n  \"🚚 التوصيل: \" + deliveryFee + \" ج.م\",\n  \"💰 الإجمالي النهائي: \" + grandTotal + \" ج.م\",\n  \"\",\n  \"شكراً لاختيارك كوركيت وبالهناء والشفاء! ❤️\"\n];\n\nvar finalOrderMessage = messageLines.join(\"\\n\");\n\n// 13. Return complete order data\nreturn [\n  {\n    json: {\n      is_order: true,\n      order_type: \"Online Order\",\n      order_id: orderId,\n      date_time: dateTime,\n      chat_id: chatId,\n      customer_name: customerName,\n      phone_number: phoneNumber,\n      delivery_address: deliveryAddress,\n      ordered_items: orderedItems,\n      subtotal: subtotalPrice,\n      delivery_fee: deliveryFee,\n      grand_total: grandTotal,\n      payment_method: paymentMethod,\n      payment_status: paymentStatus,\n      order_status: orderStatus,\n      reply_message: finalOrderMessage\n    }\n  }\n];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2880,
-        1360
+        2944,
+        1040
       ],
-      "id": "93b0604e-42a9-443d-8dc7-08064d1468c3",
+      "id": "ad3d6994-9d33-42ac-802a-f6435860e7c0",
       "name": "Get Order Details"
     },
     {
@@ -1220,11 +1220,12 @@
             "Phone_Number": "={{ $json.phone_number }}",
             "Delivery_Address": "={{ $json.delivery_address }}",
             "Ordered_Items": "={{ $json.ordered_items }}",
-            "Total_Price": "={{ $json.grand_total }}",
+            "Total_Price": "={{ $json.total_price }}",
             "Payment_Method": "={{ $json.payment_method }}",
             "Order_Type": "={{ $json.order_type }}",
             "Chat_ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-            "Payment_Status": "={{ $json.payment_status }}"
+            "Payment_Status": "={{ $json.payment_status }}",
+            "order_status": "={{ $json.order_status }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1337,6 +1338,16 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": false
+            },
+            {
+              "id": "order_status",
+              "displayName": "order_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -1347,10 +1358,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3264,
-        1184
+        3536,
+        1024
       ],
-      "id": "8daab7c7-7938-487c-83b6-14744190f667",
+      "id": "ed5dd043-2fce-4181-b00b-edb10c96d63e",
       "name": "Append Orders",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1387,10 +1398,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3072,
-        1360
+        3152,
+        1040
       ],
-      "id": "f07815f5-139c-4c16-b5bf-7c36e6086b3d",
+      "id": "d820c8c2-d2ad-4187-a798-c1c405f29c4a",
       "name": "Order Complete?"
     },
     {
@@ -1405,10 +1416,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3264,
-        1520
+        3376,
+        1216
       ],
-      "id": "4b34c438-3038-4295-87df-2e289dbf1c2a",
+      "id": "fcaa7594-9564-4184-8fb7-6fa6fed6572d",
       "name": "Continue Chat",
       "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
       "credentials": {
@@ -1422,6 +1433,23 @@
       "parameters": {
         "chatId": "279688324",
         "text": "=رقم الاوردر : {{ $json.Order_ID }}\n\n👤 العميل: {{ $json.Customer_Name }}\n📞 الهاتف: {{ $json.Phone_Number }}\n📍 العنوان/الفرع: {{ $json.Delivery_Address }}\n💳 طريقة الدفع: {{ $json.Payment_Method }}\n\n🛒 الطلبات:\n{{ $json.Ordered_Items }}\n\n💵 سعر الأصناف: {{ $('Get Order Details').item.json.subtotal }} ج.م\n🚚 التوصيل: {{ $('Get Order Details').item.json.delivery_fee }} ج.م\n💰 الإجمالي: {{ $('Get Order Details').item.json.grand_total }} ج.م",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "💵 تم استلام الكاش",
+                    "additionalFields": {
+                      "callback_data": "=payment|{{ $json.Order_ID }}|{{ $json.Chat_ID }}|paid"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
         "additionalFields": {
           "appendAttribution": false
         }
@@ -1429,10 +1457,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3872,
-        1264
+        3984,
+        912
       ],
-      "id": "1ce71e65-d056-4dcd-bbf6-977a0bae5184",
+      "id": "5edd70eb-3fe0-4de9-a40d-af0a96fa9e9c",
       "name": "Notify Krokett",
       "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
       "credentials": {
@@ -1486,10 +1514,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4112,
-        1264
+        4240,
+        912
       ],
-      "id": "cc6a52b3-3a70-4d9b-9a79-45f2153f6aa6",
+      "id": "27673856-2ba9-46e8-9065-15a8df6d4be4",
       "name": "Notify Customer",
       "webhookId": "16a7500c-ee32-4ff6-843e-269604e521d7",
       "credentials": {
@@ -1527,28 +1555,28 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3632,
-        1344
+        3728,
+        1024
       ],
-      "id": "1cd5f9f3-a5e9-4593-aeeb-30693fa1fd8b",
+      "id": "e0f16d97-c7c6-4a28-8bb6-86ec9b2a9dca",
       "name": "Payment Method?"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://krokett-payment-gate.vercel.app/api/create-payment",
+        "url": "https://krokett-paymentgate.vercel.app//api/create-payment",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"order_id\": \"={{ $json.order_id }}\",\n  \"customer_name\": \"={{ $json.customer_name }}\",\n  \"phone_number\": \"={{ $json.phone_number }}\",\n  \"ordered_items\": \"={{ $json.ordered_items }}\",\n  \"grand_total\": \"={{ $json.grand_total }}\",\n  \"chat_id\": \"={{ $json.chat_id }}\"\n}",
+        "jsonBody": "={{ {\n  \"order_id\": $(\"Append Orders\").item.json.Order_ID,\n  \"customer_name\": $(\"Append Orders\").item.json.Customer_Name,\n  \"phone_number\": $(\"Append Orders\").item.json.Phone_Number,\n  \"ordered_items\": $(\"Append Orders\").item.json.Ordered_Items,\n  \"grand_total\": $(\"Append Orders\").item.json.Total_Price,\n  \"chat_id\": $(\"Append Orders\").item.json.Chat_ID\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        3856,
-        1472
+        4000,
+        1152
       ],
-      "id": "52cbb8b0-a19e-4acd-84e9-50b6c7867d4f",
+      "id": "3f105b58-c91c-4652-959f-7b4a83a4ce76",
       "name": "Create Payment Session"
     },
     {
@@ -1579,10 +1607,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2896,
-        1872
+        2976,
+        1552
       ],
-      "id": "3f8e6bd2-221c-47e6-a528-2f6c16d05820",
+      "id": "e5ebc2de-c5f5-4072-935a-9810688bd5bb",
       "name": "payment status"
     },
     {
@@ -1723,6 +1751,16 @@
               "removed": false
             },
             {
+              "id": "order_status",
+              "displayName": "order_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
               "id": "row_number",
               "displayName": "row_number",
               "required": false,
@@ -1742,10 +1780,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3152,
-        1712
+        3280,
+        1408
       ],
-      "id": "11b64d7f-507a-4d26-83c6-abf9d1541f21",
+      "id": "48205c53-fb68-45c1-a4e0-684d79a705b5",
       "name": "update payment status",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1763,10 +1801,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.2,
       "position": [
-        2688,
-        1872
+        2768,
+        1552
       ],
-      "id": "14243a6e-3ddb-4ce8-81a5-32816b5b51b4",
+      "id": "6a6ac497-f583-41b0-b891-d75b5a2bc0e2",
       "name": "Payment Success",
       "webhookId": "abdda7e6-b861-408e-b705-30c5325ee45d"
     },
@@ -1774,15 +1812,17 @@
       "parameters": {
         "chatId": "=279688324",
         "text": "=🔔 طلب جديد — تم الدفع بنجاح ✅\n\n🧾 رقم الطلب:\n{{ $('Payment Success').item.json.body.order_id }}\n\n👤 العميل:\n{{ $('Payment Success').item.json.body.customer_name }}\n\n📞 الهاتف:\n{{ $('Payment Success').item.json.body.phone_number }}\n\n🍔 الطلب:\n{{ $('Payment Success').item.json.body.ordered_items }}\n\n💰 الإجمالي:\n{{ $('Payment Success').item.json.body.grand_total }} جنيه\n\n💳 طريقة الدفع:\n{{ $('Payment Success').item.json.body.payment_method }}\n\n✅ الحالة:\nمدفوع — يرجى البدء في تجهيز الطلب",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3600,
-        1712
+        3792,
+        1408
       ],
-      "id": "d5f539e7-9721-4cde-b9a8-a187b7d2ac24",
+      "id": "62888fe4-b62a-45d1-ace3-bd8ccc2a2394",
       "name": "Restaurant Notification Payment",
       "webhookId": "f329a01b-aec4-426b-b15d-db44f7f32b6b",
       "credentials": {
@@ -1796,15 +1836,17 @@
       "parameters": {
         "chatId": "={{ $('Payment Success').item.json.body.chat_id }}",
         "text": "=تم تأكيد الدفع بنجاح ✅\nرقم الطلب:{{ $('Payment Success').item.json.body.order_id }}  الإجمالي: {{ $('Payment Success').item.json.body.grand_total }} جنيه \nطلبك أصبح مؤكدًا وجاري تجهيزه 🍔",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3904,
-        1712
+        4032,
+        1408
       ],
-      "id": "fb794425-376f-4ede-91b7-edafe9e23dec",
+      "id": "245a9f48-85fa-4141-beff-5af4c293ed57",
       "name": "Customer Notification Payment",
       "webhookId": "f329a01b-aec4-426b-b15d-db44f7f32b6b",
       "credentials": {
@@ -1818,15 +1860,17 @@
       "parameters": {
         "chatId": "={{ $('Payment Success').item.json.body.chat_id }}",
         "text": "=⚠️ تعذر إتمام عملية الدفع  يا فندم\nعملية الدفع الخاصة بالطلب رقم: {{ $('Payment Success').item.json.body.order_id }}  لم تكتمل بنجاح. \nممكن تحاول الدفع مرة تانية ، ولو حابب تقدر تختار طريقة دفع أخرى\nلو محتاج مساعدة، إحنا معاك ❤️",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3152,
-        2016
+        3536,
+        1712
       ],
-      "id": "f5814058-7ec0-4d40-b3c0-85edf4f849d1",
+      "id": "0f063f70-9c15-4189-9e6a-e32d69e6af87",
       "name": "Notify Customer Failure",
       "webhookId": "0b8dabcc-92fd-4091-924e-bf94ebb5c613",
       "credentials": {
@@ -1840,16 +1884,16 @@
       "parameters": {
         "content": "## Order Processing \n",
         "height": 1056,
-        "width": 2048,
+        "width": 2240,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2576,
-        1152
+        2656,
+        832
       ],
-      "id": "344b34ef-4843-46d5-a8d4-dd0dbddcf6c7",
+      "id": "64c1c3df-2b30-4e92-945c-cc6f50c16951",
       "name": "Sticky Note1"
     },
     {
@@ -1904,6 +1948,10 @@
             {
               "fieldId": "payment_status",
               "fieldValue": "={{$json.payment_status}}"
+            },
+            {
+              "fieldId": "order_status",
+              "fieldValue": "={{$json.order_status}}"
             }
           ]
         }
@@ -1912,9 +1960,9 @@
       "typeVersion": 1,
       "position": [
         3360,
-        1344
+        896
       ],
-      "id": "5020d29e-6d22-41c6-bc23-695c33b52201",
+      "id": "03003782-5d28-4da9-986f-2309400200b9",
       "name": "Create a row",
       "credentials": {
         "supabaseApi": {
@@ -1933,7 +1981,12 @@
             {
               "keyName": "order_id",
               "condition": "eq",
-              "keyValue": "=={{ $('Payment Success').item.json.body.order_id }}"
+              "keyValue": "={{ $('Payment Success').item.json.body.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
             }
           ]
         },
@@ -1949,10 +2002,10 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        3296,
-        1856
+        3536,
+        1408
       ],
-      "id": "ec5ef388-69d2-453f-bc65-3339444d7465",
+      "id": "17416b5e-1664-4f70-8bb3-3bf47c8e3e81",
       "name": "Update a row",
       "credentials": {
         "supabaseApi": {
@@ -1966,10 +2019,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1856,
-        2032
+        1936,
+        1712
       ],
-      "id": "863365d4-2b0a-4246-86d6-dd5d6e9f84ca",
+      "id": "2e7f5eb9-e976-4bfa-9db0-5fd43110be62",
       "name": "Embeddings Google Gemini",
       "credentials": {
         "googlePalmApi": {
@@ -1983,15 +2036,221 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1072,
-        720
+        1152,
+        400
       ],
-      "id": "e594a8c4-9b10-4084-b68e-3dd590832e20",
+      "id": "5b3131ab-26fa-41ea-ac3c-32cfba9d09ee",
       "name": "Embeddings Google Gemini1",
       "credentials": {
         "googlePalmApi": {
           "id": "15ccxy7q5GvxCXT4",
           "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Append Orders').item.json.Chat_ID }}",
+        "text": "=💳 لإتمام طلبك رقم {{ $('Append Orders').item.json.Order_ID }}، افتح رابط الدفع التجريبي التالي:\n\n{{ $json.payment_url }}\n\n⚠️ بوابة الدفع الحالية تجريبية ولا تخصم أموالًا حقيقية.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "8167a5a5-efae-4932-974e-e9dc73608014",
+      "name": "Send Payment Link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4240,
+        1152
+      ],
+      "webhookId": "2575d869-a18f-4210-a95c-b8ee34660176",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Payment Success').item.json.body.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "failed"
+            }
+          ]
+        }
+      },
+      "id": "e92f26f0-d048-4fc1-a704-8818fed5f0e5",
+      "name": "Mark Payment Failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3280,
+        1712
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c3d4e5f6-7890-4123-8456-789abcdef012",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "payment",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5a1bae43-3f78-4f50-8d1f-5ea4efd1fc89",
+      "name": "Callback Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -816,
+        2144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            },
+            {
+              "keyName": "payment_status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "payment_status",
+              "fieldValue": "paid"
+            }
+          ]
+        }
+      },
+      "id": "2c1a4b4b-4b43-49fa-9c49-59cc4bd90c07",
+      "name": "Mark Cash Paid",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        2032
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "={{ $json.new_status }}"
+            }
+          ]
+        }
+      },
+      "id": "e512edf8-28da-4f46-8185-e65a72f0bf8b",
+      "name": "Update Order Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        2256
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "K666JJjxu256jcCX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Track Status').item.json.customer_chat_id }}",
+        "text": "={{ $('Track Status').item.json.customer_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "5c4700fa-1a7f-4c2f-bbe6-26f5f4b824fd",
+      "name": "Notify Cash Payment Confirmed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        2032
+      ],
+      "webhookId": "6a1f3179-fc63-480b-9aa1-ad494d6d9726",
+      "credentials": {
+        "telegramApi": {
+          "id": "BlO1Dzcex4mGIZcq",
+          "name": "Krokett"
         }
       }
     }
@@ -2396,7 +2655,7 @@
       "main": [
         [
           {
-            "node": "Track Message",
+            "node": "Callback Action?",
             "type": "main",
             "index": 0
           }
@@ -2428,11 +2687,6 @@
     "Order Complete?": {
       "main": [
         [
-          {
-            "node": "Append Orders",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Create a row",
             "type": "main",
@@ -2495,16 +2749,11 @@
             "node": "update payment status",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Update a row",
-            "type": "main",
-            "index": 0
           }
         ],
         [
           {
-            "node": "Notify Customer Failure",
+            "node": "Mark Payment Failed",
             "type": "main",
             "index": 0
           }
@@ -2526,7 +2775,7 @@
       "main": [
         [
           {
-            "node": "Restaurant Notification Payment",
+            "node": "Update a row",
             "type": "main",
             "index": 0
           }
@@ -2576,6 +2825,90 @@
           }
         ]
       ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Append Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Payment Session": {
+      "main": [
+        [
+          {
+            "node": "Send Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Restaurant Notification Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Payment Failed": {
+      "main": [
+        [
+          {
+            "node": "Notify Customer Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback Action?": {
+      "main": [
+        [
+          {
+            "node": "Mark Cash Paid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Cash Paid": {
+      "main": [
+        [
+          {
+            "node": "Notify Cash Payment Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order Status": {
+      "main": [
+        [
+          {
+            "node": "Track Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -2583,49 +2916,48 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "f6ba3618-1516-4529-b1e8-3592f7bf88d1",
+  "versionId": "9ca93907-3d0d-4bae-ad5d-374cca5fe352",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "d9d7e8b2ae074c1bfb476fb04e2fa487d81ebca93e3a85099b01d4618b8e1237"
   },
   "nodeGroups": [
     {
-      "id": "dad3416f-c557-4e84-afa7-bf189ba10d6e",
+      "id": "9506fa50-e815-42b8-b4f5-00ab6621f4d2",
       "name": "Message Routing",
       "nodeIds": [
-        "9e4da0ab-135a-4501-b94b-65ac061ceac3",
-        "ae5aa68b-5a55-41e8-a69a-2e293ad27f76",
-        "23e1bf8f-b8bf-4373-8665-7017decaac7a",
-        "393a7a51-b313-403e-8fa8-a2edc67afba1",
-        "b6fd3581-4266-412d-976f-adef38a8554e",
-        "fc3cda67-8a37-426a-a0b3-286046f71469",
-        "55383068-689b-48b9-944c-e13ebc7b10c3",
-        "1f6ed36d-bb35-4635-831b-12f9efb93193",
-        "01cafadf-5a1a-4e69-93f5-0ec785be99f5",
-        "f2345f46-6c80-43cf-9e29-b03d626e5ef3",
-        "2b044d52-195e-41bb-8a22-415b0ff9ce5b",
-        "a6b85535-0e4f-4542-8cb1-d74bc508722b",
-        "cdbee18c-e328-4094-8219-663f91feea25",
-        "9c9afa0d-54e7-4f09-93e9-c9c625ecbfc1",
-        "4ede87a5-9af6-4f01-a68c-0138b559dfcc",
-        "1d208fe3-a250-46f5-a0e2-cf1492b09cef"
+        "0acb1e95-8e26-4136-86d2-5caee07b73ad",
+        "f34efb72-81f5-4465-ba85-0b7b655ccbb4",
+        "90f7de28-b69c-4384-8592-ba5678db4fbe",
+        "0f310879-2ee9-4272-921d-e45145966e7f",
+        "40d7db01-79e0-4cd2-8a7c-939376b7facb",
+        "9cd2dd58-a005-4ec5-99f6-2d46aaaa61f1",
+        "bffbcb99-1db4-48ab-be81-d0c09ed7a5b9",
+        "53a18e5c-4a94-4b46-9975-fe1a8847078a",
+        "482a792d-950d-48bb-be3e-ba291dd2b023",
+        "4bb3afff-5480-475f-bae0-a39ae69d22c4",
+        "60be9d8c-297a-4a84-bebb-262a07014bc0",
+        "6c15883e-8f76-45b1-94c5-c879dfd6946b",
+        "b2020e94-275e-4ff2-8c0e-31390ef028bf",
+        "4d93687d-a35b-4a54-9e71-769aecea0494",
+        "3e8a4fff-66da-49ac-a9d4-ff38abee561f",
+        "283d930d-fc1f-46f7-9f00-555631817fc4"
       ],
       "description": "فحص رسالة العميل  وتوجيهها للمسار الصحيح سواء تتبع الطلب او تكرار اخر طلب او طلب جديد"
     },
     {
-      "id": "f3ddb199-c6e8-407c-a34e-4e5e58320ca5",
+      "id": "05586ae4-e2f0-44c0-a612-2644e6dab7b7",
+      "name": "AI Agent",
       "nodeIds": [
-        "78098114-4551-4e6b-8f1f-c64fdbd7255e",
-        "91da0674-2763-4a45-bfe0-b8d92d65c3c0",
-        "a0d56317-f928-4c8d-94a4-cc81b8a80464",
-        "04e1eed2-33cd-4b06-9e34-06c4f04ee926",
-        "790d14d1-3896-45a7-9509-52ad5c7bac4d",
-        "946c5959-cfbf-4dd4-ad70-c669920b4792",
-        "863365d4-2b0a-4246-86d6-dd5d6e9f84ca"
-      ],
-      "name": "AI Agent"
+        "328b64e1-d17b-479b-a5b9-366a935bb4d7",
+        "bb13e292-0ee0-42f0-adb6-83c8147a45b9",
+        "1a612294-fe61-4458-b9ff-a49791fc7f12",
+        "fa2b2f6e-ca10-4c1a-92b0-bd534447b95d",
+        "5bca168c-dcb2-4326-825a-ac6339fb0c8f",
+        "cf996f92-5560-4757-8086-264f8f7d16b8",
+        "2e7f5eb9-e976-4bfa-9db0-5fd43110be62"
+      ]
     }
   ],
-  "id": "1gPQ6nWLaLzgrZJc",
+  "id": "UxBL9bjT9XEdRL5Q",
   "tags": []
 }
